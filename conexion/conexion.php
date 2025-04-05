@@ -16,7 +16,7 @@ try {
     // Conectar a la base de datos con PDO
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, $options);
 
-    echo "Conexión exitosa";
+    //echo "Conexión exitosa";
 
 } catch (PDOException $e) {
     // Manejo seguro de errores
