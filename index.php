@@ -29,7 +29,7 @@ if ($_POST) {
             $_SESSION['avatar'] = $row['avatar'];			
             $_SESSION['activo'] = $row['activo'];
 
-            header("location: principal/dashboard.php");
+            header("location: usuarios/usuarios_nuevos.php");
             exit();
         } else {
             header("location: index.php?mensaje=password");
