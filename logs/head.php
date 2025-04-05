@@ -6,19 +6,15 @@
     <meta name="Carlos Valencia" content="" />
 
     <html lang="es">
-    
-    <title>Parqueadero 1.1</title>
+    <link rel="icon" href="../assets/img/logo1.jpg" type="image/jpg">	
+    <title>Parqueadero 1.2</title>
 
     <link rel='stylesheet' type='text/css' href='../css/styles.css'>
     <link rel='stylesheet' type='text/css' href='../css/estilos.css'>
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>	
 
-    <script src="../js/scripts.js" >
-		setInterval(function() {
-			location.reload();
-		}, 300000); // 300000 milisegundos = 5 minutos
-	</script>
+    
     
     <!-- include the style -->
     <link rel="stylesheet" href="../modulos/alertifyjs/css/alertify.min.css" />
@@ -27,6 +23,7 @@
 
     <!-- include the script -->
     <script src="../modulos/alertifyjs/alertify.min.js"></script>
+    <script src="../js/mensajes.js"></script>
 
     	 
 	

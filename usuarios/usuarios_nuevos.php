@@ -1,5 +1,5 @@
 <?php
-require "../conexion/conexion.php";
+require_once "../conexion/conexion.php";
     // REGISTRAR USUARIO NUEVO
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = trim($_POST['id']);
@@ -37,10 +37,13 @@ require "../conexion/conexion.php";
                     'contabilidad' => $contabilidad
                 ]);
                 echo "Usuario registrado correctamente.";
+                header("location: usuarios_nuevos.php?mensaje=Usuario registrado correctamente.");
                 // header("Location: usuarios.php"); // si deseas redirigir
             } catch (PDOException $e) {
                 echo "Error al registrar usuario: " . $e->getMessage();
+                header("location: usuarios_nuevos.php?mensaje=Error al registrar usuario");
             }
+           
         }
     // REGISTRAR USUARIO NUEVO
     // CONSULTA A TIPO DE CARGO PARA SELECT    
@@ -100,12 +103,11 @@ require "../conexion/conexion.php";
 <html lang="es">
 
 <head>
-    <?php
-    require '../logs/head.php';
-    ?>
+    <?php require '../logs/head.php'; ?>
 </head>
 
 <body>
+
     <!-- modal ingreso empleados -->
     <!-- Modal Body-->
 
@@ -118,6 +120,33 @@ require "../conexion/conexion.php";
                 <!-- formulario ingresar USUARIO -->
                 <div class="col-md-12">
                     <div class="card border-4 rounded-3">
+                        <!-- Mensajes -->	
+										<!-- Mensaje error password -->
+										<?php
+                                        if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'Usuario registrado correctamente.') {
+                                            ?>
+                                                <div class="alerta alert alert-success alert-dismissible fade show" role="alert">
+                                                    <strong>OK !</strong> Usuario registrado
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                                </div>
+                                            <?php
+                                            }
+                                            ?>
+                                        <?php
+										if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'Error al registrar usuario') {
+										?>
+											<div class="alerta alert alert-danger alert-dismissible fade show" role="alert">
+												<strong>Error !</strong> No se puede ingresar usuario!
+												<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+											</div>
+										<?php
+										}
+										?>
+										<!-- fin Mensaje error password -->
+										<!-- Mensaje error usuario -->			
+										
+										<!-- fin Mensaje error usuario -->
+									<!-- Mensajes -->
                         <form id="usuario" name="usuario" class="row g-0 p-2" action="usuarios_nuevos.php" method="POST">
                             <div class="input-group mb-2">
                                 <input type="hidden" class="form-control" id="id" name="id" placeholder="id" aria-label="cedula" aria-describedby="basic-addon1" required autofocus>
@@ -162,7 +191,7 @@ require "../conexion/conexion.php";
                             </div>
                             <input value="../assets/img/logo.png" type="hidden" class="form-control" id="avatar" name="avatar" placeholder="avatar" aria-label="foto" aria-describedby="basic-addon1" required autofocus>
 
-                            <input value="SI" type="hidden" class="form-control" id="activo" name="activo" placeholder="activo" aria-label="activo" aria-describedby="basic-addon1" required autofocus>
+                            <input value="1" type="hidden" class="form-control" id="activo" name="activo" placeholder="activo" aria-label="activo" aria-describedby="basic-addon1" required autofocus>
 
                             <div class="mb-1">
                                 <label class="form-label"></label>
@@ -179,7 +208,7 @@ require "../conexion/conexion.php";
                                 </div>
                             </div>
                             <div class="input-group mb-2">
-                                <input type="hidden" class="form-control" value="SI" id="contabilidad" name="contabilidad" placeholder="contabilidad" aria-label="contabilidad" aria-describedby="basic-addon1" required autofocus>
+                                <input type="hidden" class="form-control" value="1" id="contabilidad" name="contabilidad" placeholder="contabilidad" aria-label="contabilidad" aria-describedby="basic-addon1" required autofocus>
                             </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-secondary btn btn-block" name="register" href="usuarios_nuevos.php"><i class="bi bi-plus-lg text-white">&nbsp;GUARDAR</i></button>
@@ -190,9 +219,7 @@ require "../conexion/conexion.php";
                 <!-- fin formulario ingresar guias -->
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
+        
     </div>
 
     <!-- Modal Body-->

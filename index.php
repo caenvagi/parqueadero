@@ -17,28 +17,27 @@ if ($_POST) {
     if ($row) {
         // Comparar contraseñas (puedes mantener md5 si ya están así guardadas)
         $password_bd = $row['clave'];
-        $pass_c = md5($password);
+    // Comparar usando password_verify
+	if (password_verify($password, $password_bd)) {
+		$_SESSION['id'] = $row['id'];
+		$_SESSION['nombre'] = $row['nombre'];
+		$_SESSION['tipo_cargo'] = $row['tipo_cargo'];			
+		$_SESSION['telefono'] = $row['telefono'];			
+		$_SESSION['usuario'] = $row['usuario'];			
+		$_SESSION['tipo_usuario'] = $row['tipo_usuario'];			
+		$_SESSION['avatar'] = $row['avatar'];			
+		$_SESSION['activo'] = $row['activo'];
 
-        if ($password_bd === $pass_c) {
-            $_SESSION['id'] = $row['id'];
-            $_SESSION['nombre'] = $row['nombre'];
-            $_SESSION['tipo_cargo'] = $row['tipo_cargo'];			
-            $_SESSION['telefono'] = $row['telefono'];			
-            $_SESSION['usuario'] = $row['usuario'];			
-            $_SESSION['tipo_usuario'] = $row['tipo_usuario'];			
-            $_SESSION['avatar'] = $row['avatar'];			
-            $_SESSION['activo'] = $row['activo'];
-
-            header("location: usuarios/usuarios_nuevos.php");
-            exit();
-        } else {
-            header("location: index.php?mensaje=password");
-            exit();
-        }
-    } else {
-        header("location: index.php?mensaje=usuario");
-        exit();
-    }
+		header("location: usuarios/usuarios_nuevos.php");
+		exit();
+	} else {
+		header("location: index.php?mensaje=password");
+		exit();
+	}
+} else {
+	header("location: index.php?mensaje=usuario");
+	exit();
+}
 }
 
 ?>
@@ -51,7 +50,7 @@ if ($_POST) {
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<meta name="description" content="" />
 	<meta name="author" content="" />
-	<title>Parqueadero 1.1</title>
+	<title>Parqueadero 1.2</title>
 	<link rel="icon" href="assets/img/logo1.jpg" type="image/jpg">	
 		
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
