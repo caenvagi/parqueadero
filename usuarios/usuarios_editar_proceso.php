@@ -4,9 +4,9 @@ require_once "../conexion/conexion.php";
 if (
     isset($_POST['id']) &&
     isset($_POST['nombre']) &&
-    isset($_POST['tipo_cargo']) &&
+    isset($_POST['cargo']) &&
     isset($_POST['telefono']) &&
-    isset($_POST['usuario']) &&
+    isset($_POST['user']) &&
     isset($_POST['tipo_usuario']) &&
     isset($_POST['avatar']) &&
     isset($_POST['activo']) &&
@@ -14,13 +14,15 @@ if (
 ) {
     $id             = $_POST['id'];
     $nombre         = $_POST['nombre'];
-    $tipo_cargo     = $_POST['tipo_cargo'];
+    $tipo_cargo     = $_POST['cargo'];
     $telefono       = $_POST['telefono'];
-    $usuario        = $_POST['usuario'];
+    $usuario        = $_POST['user'];
     $tipo_usuario   = $_POST['tipo_usuario'];
     $avatar         = $_POST['avatar'];
     $activo         = $_POST['activo'];
     $contabilidad   = $_POST['contabilidad'];
+
+    
 
     // Solo actualizar clave si se proporcionó
     $clave = !empty($_POST['clave']) ? password_hash($_POST['clave'], PASSWORD_DEFAULT) : null;
@@ -79,7 +81,8 @@ if (
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
-        echo "Usuario actualizado correctamente. <a href='usuarios_editar_ajax.php?id=$id'>Volver</a>";
+        header("location: usuarios_editar.php?id=$id");
+        //echo "Usuario actualizado correctamente. <a href='usuarios_editar.php?id=$id'>Volver</a>";
 
     } catch (PDOException $e) {
         error_log("Error al actualizar usuario: " . $e->getMessage());

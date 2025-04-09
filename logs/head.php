@@ -14,7 +14,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>	
 
-    
+    <?php date_default_timezone_set('America/New_York'); ?>
     
     <!-- include the style -->
     <link rel="stylesheet" href="../modulos/alertifyjs/css/alertify.min.css" />
@@ -24,6 +24,7 @@
     <!-- include the script -->
     <script src="../modulos/alertifyjs/alertify.min.js"></script>
     <script src="../js/mensajes.js"></script>
+    <script src="../js/scripts.js"></script>
 
     	 
 	
