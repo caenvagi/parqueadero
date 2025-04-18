@@ -1,3 +1,20 @@
+
+/* imagenes avatar*/
+        .avatar {
+            width: 6em;
+        }
+        .avatar4 {
+            width: 4em;
+            border-radius: 20px;
+            filter: grayscale(0);
+        }
+
+        .avatar5 {
+            width: 4em;
+            border-radius: 20px;
+            filter: grayscale(1);
+        }  
+
 /* mensajes toast */
         :root {
             --exito: #3ab65c;

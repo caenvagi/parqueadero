@@ -9,7 +9,8 @@ require_once "../conexion/conexion.php";
         // Preparar la consulta
         $stmt = $pdo->prepare("  SELECT id,nombre,avatar,activo,tipo_cargo,usuario,cargo_nombre
                                         FROM usuarios as US
-                                        INNER JOIN tipo_cargo as TC ON TC.id_cargo = US.tipo_cargo");
+                                        INNER JOIN tipo_cargo as TC ON TC.id_cargo = US.tipo_cargo
+                                        ORDER BY activo DESC");
 
         // Ejecutar la consulta
         $stmt->execute();
@@ -86,21 +87,6 @@ require_once "../conexion/conexion.php";
                             </tr>
                         </thead>
                         <tbody>
-                            
-                                <style>
-                                    .avatar4 {
-                                        width: 3em;
-                                        border-radius: 20px;
-                                        filter: grayscale(0);
-                                    }
-
-                                    .avatar5 {
-                                        width: 3em;
-                                        border-radius: 20px;
-                                        filter: grayscale(1);
-                                    }
-                                </style>
-
                                 <?php foreach ($usuarios_activos as $usuario): ?>
                                 
                                 <tr>
@@ -119,9 +105,9 @@ require_once "../conexion/conexion.php";
                                     
                                     <?php
                                         if (isset($usuario['activo']) && $usuario['activo'] == "1") {
-                                            echo "<td> SI </td>";
+                                            echo "<td data-activo='1'> <h3 style=color:green><i class='bi bi-person-check-fill'></i></h3> </td>";
                                         } else {
-                                            echo "<td> NO </td>";
+                                            echo "<td data-activo='0'> <h3 style=color:grey><i class='bi bi-person-x-fill'></i></h3> </td>";
                                         }
                                         ?>
                                     <td align="center"><a href="usuarios_editar.php?id=<?= htmlspecialchars($usuario['id']) ?>" title="Editar" class="btn btn-outline-success btn-xs">
@@ -137,54 +123,21 @@ require_once "../conexion/conexion.php";
                 </div>
             <!-- fin tabla empleados -->
         </main>
-    </div>                                    
-    <!-- <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: center;
-        }
-    </style>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>NOMBRE</th>
-            <th>CARGO</th>
-            <th>TELEFONO</th>
-            <th>USUARIO</th>
-            <th>CLAVE</th>
-            <th>TIPO</th>
-            <th>AVATAR</th>
-            <th>ACTIVO</th>
-            <th>CONTABILIDAD</th>
-            <th></th>
-        </tr>
-
-        <?php foreach ($usuarios as $usuario): ?>
-            <tr>
-                <td><?= htmlspecialchars($usuario['id']) ?></td>
-                <td><?= htmlspecialchars($usuario['nombre']) ?></td>
-                <td><?= htmlspecialchars($usuario['tipo_cargo']) ?></td>
-                <td><?= htmlspecialchars($usuario['telefono']) ?></td>
-                <td><?= htmlspecialchars($usuario['usuario']) ?></td>
-                <td><?= htmlspecialchars($usuario['clave']) ?></td>
-                <td><?= htmlspecialchars($usuario['tipo_usuario']) ?></td>
-                <td><?= htmlspecialchars($usuario['avatar']) ?></td>
-                <td><?= htmlspecialchars($usuario['activo']) ?></td>
-                <td><?= htmlspecialchars($usuario['contabilidad']) ?></td>
-            </tr>
-        <?php endforeach; ?>
-
-    </table> -->
-
-
-
+    </div>
 </body>
+<script>
+            const table = document.getElementById("tabla_empleados");
+const rows = table.getElementsByTagName("tr");
 
+for (let z = 1; z < rows.length; z++) {
+    const activoCell = rows[z].cells[4];
+    const estado = activoCell.getAttribute("data-activo");
+
+    if (estado === "1") {
+        rows[z].style.backgroundColor = "";
+    } else {
+        rows[z].style.backgroundColor = "lightgray";
+    }
+}
+        </script>
 </html>
