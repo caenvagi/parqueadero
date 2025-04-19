@@ -30,18 +30,14 @@ try {
     error_log("Error en la consulta: " . $e->getMessage());
     echo "Error al consultar los usuarios.";
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
     <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
-    <script src="../modulos/DataTables/datatables.js"></script>
-    <link rel="stylesheet" href="../modulos/DataTables/datatables.css">
+    <?php require '../logs/datatables.php'; ?>
 </head>
 
 <body>
@@ -57,7 +53,7 @@ try {
                     <a class="nav-link active" aria-current="page" href="usuarios_lista.php">Listado</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="mensualidades_list.php">Edicion</a>
+                    <a class="nav-link" href="#">Edicion</a>
                 </li>
                 <!-- <li class="nav-item">
                         <a class="nav-link" href="mensualidades_list.php">Listado de mensualidades</a>
@@ -91,7 +87,6 @@ try {
                             </thead>
                             <tbody>
                                 <?php foreach ($usuarios_activos as $usuario): ?>
-
                                     <tr>
                                         <td align="center"><a href=""><?= htmlspecialchars($usuario['nombre']) ?></a></td>
 
@@ -128,10 +123,12 @@ try {
         </main>
     </div>
 </body>
-
+<!-- datatable lista usuarios -->
 <script>
     $(document).ready(function() {
         $('#tabla_empleados').DataTable({
+
+
 
             responsive: true,
             dom: 'Bfrtilp',
@@ -157,49 +154,41 @@ try {
             },
             buttons: [{
                     extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> ',
+                    text: '<i class="bi bi-file-earmark-x"></i> ',
                     titleAttr: 'Exportar a Excel',
                     className: 'btn btn-success'
                 },
                 {
                     extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i> ',
+                    text: '<i class="bi bi-file-earmark-pdf"></i> ',
                     titleAttr: 'Exportar a PDF',
                     className: 'btn btn-danger'
                 },
                 {
                     extend: 'print',
-                    text: '<i class="fa fa-print"></i> ',
+                    text: '<i class="bi bi-printer"></i> ',
                     titleAttr: 'Imprimir',
                     className: 'btn btn-info'
                 },
             ],
-
-
             "order": [
-                [0, "desc"]
+                [4, "asc"]
             ],
             'pageLength': 25,
 
+            createdRow: function(row, data, dataIndex) {
+                const estado = $('td:eq(4)', row).attr('data-activo');
+                if (estado === "0") {
+                    $(row).addClass('fila-inactiva');
+                }
+            }
 
         });
 
     });
 </script>
-<script>
-    const table = document.getElementById("tabla_empleados");
-    const rows = table.getElementsByTagName("tr");
+<!-- datatable lista usuarios -->
 
-    for (let z = 1; z < rows.length; z++) {
-        const activoCell = rows[z].cells[4];
-        const estado = activoCell.getAttribute("data-activo");
 
-        if (estado === "1") {
-            rows[z].style.backgroundColor = "";
-        } else {
-            rows[z].style.backgroundColor = "lightgray";
-        }
-    }
-</script>
 
 </html>

@@ -1,4 +1,8 @@
 
+.fila-inactiva {
+    background-color: red !important;
+}
+
 /* imagenes avatar*/
         .avatar {
             width: 6em;
