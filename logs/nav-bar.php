@@ -287,9 +287,9 @@ if ($tipo_usuario == 1) {
                         <!-- MENU USUARIOS-->
                             <?php if ($tipo_usuario == 1) { ?>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-configuracion" aria-expanded="false" aria-controls="collapseLayouts">
-                                    <div><i style="font-size:24px" class="fa">&#xf013;</i></div>
+                                    <div><i style="font-size:24px" class="bi bi-people-fill"></i></div>
                                     &nbsp;&nbsp;&nbsp;Usuarios
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                                 </a>
                                 <div class="collapse" id="collapse-configuracion" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
