@@ -151,6 +151,7 @@ try {
 
 <head>
     <?php require '../logs/head.php'; ?>
+    <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -229,13 +230,13 @@ try {
                                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-phone"></i>&nbsp;Clave&nbsp;&nbsp;</span>
                                         </div>
                                         <input type="password" class="form-control" name="clave" id="clave" placeholder="clave" value="<?= htmlspecialchars($usuario_lista['clave']) ?>" aria-label="tel" aria-describedby="basic-addon1" minlength="5" maxlength="10" required autofocus>
-                                        <button class="btn btn-secondary" onclick="mostrarPassword1()" type="button" id="button-addon1"><span class="fa fa-eye-slash icon"></span></button>        
+                                        <button class="btn btn-secondary" onclick="mostrarPassword1()" type="button" id="button-addon1"><span class="bi bi-eye-slash"></span></button>        
                                     </div>
                                     <div class="mb-2">
                                     <label class="form-label"></label>
                                     <div class="input-group mb-1">
                                         <div class="input-group-prepend">
-                                            <label class="input-group-text" for="inputGroupSelect01"><i class='fas fa-user-tie'></i>&nbsp;usuario</label>
+                                            <label class="input-group-text" for="inputGroupSelect01"><i class='fas fa-user-tie'></i>&nbsp;Rol</label>
                                         </div>
                                         <select class="form-select custom-select" id="tipo_usuario" name="tipo_usuario" required autofocus>
                                             <option value="<?= htmlspecialchars($usuario_lista['id_tipo_usuario']) ?>"><?= htmlspecialchars($usuario_lista['tipo_usuario']) ?></option>
@@ -257,6 +258,8 @@ try {
                                             <label class="form-check-label" for="inlineCheckbox2">NO</label>
                                         </div>
                                     </div>
+
+                                    <input type="hidden" name="fecha_salida" id="fecha_salida" value="<?php echo date("Y-m-d")?>">
                                 </div>
                                 <div class="footer">
                                 <button type="submit" value="editar" class="btn btn-primary btn btn-block">Guardar cambios</button>
@@ -270,17 +273,76 @@ try {
         </main>
     </div>
 </body>
-<!-- mostrar contaseña javascript -->        
-<script type="text/javascript">
+<!-- mostrar contaseña javascript --> 
+<script src="../modulos/sweetalert/sweetalert2.all.min.js"></script>       
+            <script type="text/javascript">
                 function mostrarPassword1(){
                     var cambio = document.getElementById("clave");
                         if(cambio.type == "password"){
                             cambio.type = "text";
-                            $('.icon').removeClass('fa fa-eye-slash').addClass('fa fa-eye');
+                            console.log($('.icon').removeClass('bi bi-eye-slash').addClass('bi bi-eye'));
                         }else{
                             cambio.type = "password";
-                            $('.icon').removeClass('fa fa-eye').addClass('fa fa-eye-slash');
+                            $('.icon').removeClass('bi bi-eye').addClass('bi bi-eye-slash');
                         }
                     }
-                </script>
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const radioNo = document.getElementById('inlineCheckbox2');
+                    const radioSi = document.getElementById('inlineCheckbox1');
+                    const fechaSalidaInput = document.getElementById('fecha_salida');
+
+                    radioNo.addEventListener('change', function(event) {
+                        if (radioNo.checked) {
+                            Swal.fire({
+                                title: '¿Estás seguro?',
+                                text: "Estás marcando al empleado como INACTIVO. ¿Deseas continuar?",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Sí, continuar',
+                                cancelButtonText: 'No, cancelar'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    const hoy = new Date();
+                                    const fechaActual = hoy.toISOString().split('T')[0];
+                                    fechaSalidaInput.value = fechaActual;
+                                } else {
+                                    radioSi.checked = true;
+                                    radioNo.checked = false;
+                                    fechaSalidaInput.value = '';
+                                }
+                            });
+                        }
+                    });
+                    radioSi.addEventListener('change', function() {
+                        if (radioSi.checked) {
+                            fechaSalidaInput.value = '';
+                        }
+                    });
+                });
+            </script>
+            <?php if (isset($_SESSION['success'])): ?>
+            <script>
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '<?= $_SESSION['success'] ?>',
+                confirmButtonColor: '#3085d6'
+            });
+            </script>
+            <?php unset($_SESSION['success']); endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+            <script>
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: '<?= $_SESSION['error'] ?>',
+                confirmButtonColor: '#d33'
+            });
+            </script>
+            <?php unset($_SESSION['error']); endif; ?>
 </html>

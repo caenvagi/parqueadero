@@ -88,7 +88,7 @@ try {
                             <tbody>
                                 <?php foreach ($usuarios_activos as $usuario): ?>
                                     <tr>
-                                        <td align="center"><a href=""><?= htmlspecialchars($usuario['nombre']) ?></a></td>
+                                        <td align="center"><?= htmlspecialchars($usuario['nombre']) ?></td>
 
                                         <td><?php
                                             if (isset($usuario['activo']) && $usuario['activo'] == "1") {

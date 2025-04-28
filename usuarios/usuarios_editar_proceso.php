@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "../conexion/conexion.php";
 
 if (
@@ -10,7 +11,9 @@ if (
     isset($_POST['tipo_usuario']) &&
     isset($_POST['avatar']) &&
     isset($_POST['activo']) &&
-    isset($_POST['contabilidad'])
+    isset($_POST['fecha_salida'])&&
+    isset($_POST['contabilidad']) 
+    
 ) {
     $id             = $_POST['id'];
     $nombre         = $_POST['nombre'];
@@ -20,7 +23,9 @@ if (
     $tipo_usuario   = $_POST['tipo_usuario'];
     $avatar         = $_POST['avatar'];
     $activo         = $_POST['activo'];
+    $fecha_salida   = $_POST['fecha_salida'];
     $contabilidad   = $_POST['contabilidad'];
+    
 
     
 
@@ -38,6 +43,7 @@ if (
                         tipo_usuario = :tipo_usuario,
                         avatar = :avatar,
                         activo = :activo,
+                        fecha_salida = :fecha_salida,
                         contabilidad = :contabilidad
                     WHERE id = :id";
 
@@ -50,6 +56,7 @@ if (
                 ':tipo_usuario'   => $tipo_usuario,
                 ':avatar'         => $avatar,
                 ':activo'         => $activo,
+                ':fecha_salida'   => $fecha_salida,
                 ':contabilidad'   => $contabilidad,
                 ':id'             => $id
             ];
@@ -62,6 +69,7 @@ if (
                         tipo_usuario = :tipo_usuario,
                         avatar = :avatar,
                         activo = :activo,
+                        fecha_salida = :fecha_salida,
                         contabilidad = :contabilidad
                     WHERE id = :id";
 
@@ -73,6 +81,7 @@ if (
                 ':tipo_usuario'   => $tipo_usuario,
                 ':avatar'         => $avatar,
                 ':activo'         => $activo,
+                ':fecha_salida'   => $fecha_salida,
                 ':contabilidad'   => $contabilidad,
                 ':id'             => $id
             ];
@@ -81,12 +90,13 @@ if (
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
-        header("location: usuarios_editar.php?id=$id");
-        //echo "Usuario actualizado correctamente. <a href='usuarios_editar.php?id=$id'>Volver</a>";
+        header("location: usuarios_editar.php?id=$id");        
+        $_SESSION['success'] = "Usuario actualizado correctamente.";
+        header("Location: usuarios_editar.php?id=" . $id);
 
     } catch (PDOException $e) {
-        error_log("Error al actualizar usuario: " . $e->getMessage());
-        echo "Hubo un error al actualizar el usuario.";
+        $_SESSION['error'] = "Hubo un error al actualizar el usuario.";
+        header("Location: usuarios_editar.php?id=" . $id);
     }
 } else {
     echo "Faltan datos.";

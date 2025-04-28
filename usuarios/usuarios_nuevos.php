@@ -13,14 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $foto = trim($_POST['avatar']);
     $activo = trim($_POST['activo']);
     $contabilidad = trim($_POST['contabilidad']);
+    $fecha_ingreso = trim($_POST['fecha_ingreso']);
 
     // Hashear la clave con password_hash()
     $claveHash = password_hash($clave, PASSWORD_DEFAULT);
 
     $sql = "INSERT INTO usuarios 
-                    (id, nombre, tipo_cargo, telefono, usuario, clave, tipo_usuario, avatar, activo, contabilidad)
+                    (id, nombre, tipo_cargo, telefono, usuario, clave, tipo_usuario, avatar, activo, fecha_ingreso, contabilidad)
                     VALUES 
-                    (:id, :nombre, :cargo, :telefono, :usuario, :clave, :tipo, :foto, :activo, :contabilidad)";
+                    (:id, :nombre, :cargo, :telefono, :usuario, :clave, :tipo, :foto, :activo, :fecha_ingreso, :contabilidad)";
 
     $stmt = $pdo->prepare($sql);
 
@@ -35,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'tipo' => $tipo,
             'foto' => $foto,
             'activo' => $activo,
+            'fecha_ingreso' => $fecha_ingreso,
             'contabilidad' => $contabilidad
         ]);
         echo "Usuario registrado correctamente.";
@@ -234,6 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
 
                                         <input type="hidden" class="form-control" value="1" id="contabilidad" name="contabilidad" placeholder="contabilidad" aria-label="contabilidad" aria-describedby="basic-addon1" required autofocus>
+                                        <input type="hidden" class="form-control" value="<?php echo date('Y-m-d')?>" id="fecha_ingreso" name="fecha_ingreso" placeholder="fecha_ingreso" aria-label="fecha_ingreso" aria-describedby="basic-addon1" required autofocus>               
 
                                         <div class="d-grid gap-2">
                                             <button type="submit" class="btn btn-secondary btn btn-block" name="register" href="usuarios_nuevos.php"><i class="bi bi-plus-lg text-white">&nbsp;GUARDAR</i></button>
