@@ -139,7 +139,11 @@ if ($tipo_usuario == 1) {
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4" id="navbar-nav">
             <li class="nav-item dropdown">
                 
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">&nbsp;&nbsp;&nbsp;<img class="avatar2" src="<?php foreach ($usuarios as $usuario): ?><?= htmlspecialchars($usuario['avatar']) ?>" /><!-- &nbsp;&nbsp;<i class="fas fa-user fa-fw"></i>--></a>
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" 
+                    data-bs-toggle="dropdown" aria-expanded="false"><?php foreach ($usuarios as $usuario): ?>
+                        <?= htmlspecialchars($usuario['nombre']) ?>&nbsp;&nbsp;&nbsp;<img class="avatar2" 
+                    src="<?= htmlspecialchars($usuario['avatar']) ?>" />
+                    <!-- &nbsp;&nbsp;<i class="fas fa-user fa-fw"></i>--></a>
                 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="../usuarios/usuario_perfil.php?id="><i class="fa fa-user-circle"></i>&nbsp;Perfil</a></li>

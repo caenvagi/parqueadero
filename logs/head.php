@@ -24,7 +24,8 @@
     <!-- include the script -->
     <script src="../modulos/alertifyjs/alertify.min.js"></script>
     <script src="../js/mensajes.js"></script>
-    <script src="../js/scripts.js"></script>   	 
+    <script src="../js/scripts.js"></script> 
+    <script src="../modulos/popper/popper.min.js"></script>  	 
 	
     
     <!-- Bootstrap CSS-->
