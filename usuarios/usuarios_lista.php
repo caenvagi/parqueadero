@@ -38,6 +38,7 @@ try {
     <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
+    <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -122,72 +123,86 @@ try {
             <!-- fin tabla empleados -->
         </main>
     </div>
+    <!-- sweet alert -->
+        <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script>
+    <!-- aviso de usuario actulizado con exito -->
+        <?php if (isset($_SESSION['success'])): ?>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: '<?= $_SESSION['success'] ?>',
+                confirmButtonColor: '#3085d6'
+            });
+        </script>
+        <?php unset($_SESSION['success']);
+        endif; ?>
+    <!-- aviso de usuario actulizado con exito -->
 </body>
-<!-- datatable lista usuarios -->
-<script>
-    $(document).ready(function() {
-        $('#tabla_empleados').DataTable({
+    <!-- datatable lista usuarios -->
+        <script>
+            $(document).ready(function() {
+                $('#tabla_empleados').DataTable({
+                    responsive: true,
+                    dom: 'Bfrtilp',
+                    language: {
+                        "decimal": "",
+                        "emptyTable": "No hay información",
+                        "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                        "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                        "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                        "infoPostFix": "",
+                        "thousands": ",",
+                        "lengthMenu": "Mostrar _MENU_ Entradas",
+                        "loadingRecords": "Cargando...",
+                        "processing": "Procesando...",
+                        "search": "Buscar:",
+                        "zeroRecords": "Sin resultados encontrados",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Ultimo",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    },
+                    buttons: [{
+                            extend: 'excelHtml5',
+                            text: '<i class="bi bi-file-earmark-x"></i> ',
+                            titleAttr: 'Exportar a Excel',
+                            className: 'btn btn-success'
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            text: '<i class="bi bi-file-earmark-pdf"></i> ',
+                            titleAttr: 'Exportar a PDF',
+                            className: 'btn btn-danger'
+                        },
+                        {
+                            extend: 'print',
+                            text: '<i class="bi bi-printer"></i> ',
+                            titleAttr: 'Imprimir',
+                            className: 'btn btn-info'
+                        },
+                    ],
+                    "order": [
+                        [4, "asc"]
+                    ],
+                    'pageLength': 25,
+
+                    createdRow: function(row, data, dataIndex) {
+                        const estado = $('td:eq(4)', row).attr('data-activo');
+                        if (estado === "0") {
+                            $(row).addClass('fila-inactiva');
+                        }
+                    }
+
+                });
+
+            });
+        </script>
+    <!-- datatable lista usuarios -->
 
 
-
-            responsive: true,
-            dom: 'Bfrtilp',
-            language: {
-                "decimal": "",
-                "emptyTable": "No hay información",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-                "infoPostFix": "",
-                "thousands": ",",
-                "lengthMenu": "Mostrar _MENU_ Entradas",
-                "loadingRecords": "Cargando...",
-                "processing": "Procesando...",
-                "search": "Buscar:",
-                "zeroRecords": "Sin resultados encontrados",
-                "paginate": {
-                    "first": "Primero",
-                    "last": "Ultimo",
-                    "next": "Siguiente",
-                    "previous": "Anterior"
-                },
-            },
-            buttons: [{
-                    extend: 'excelHtml5',
-                    text: '<i class="bi bi-file-earmark-x"></i> ',
-                    titleAttr: 'Exportar a Excel',
-                    className: 'btn btn-success'
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="bi bi-file-earmark-pdf"></i> ',
-                    titleAttr: 'Exportar a PDF',
-                    className: 'btn btn-danger'
-                },
-                {
-                    extend: 'print',
-                    text: '<i class="bi bi-printer"></i> ',
-                    titleAttr: 'Imprimir',
-                    className: 'btn btn-info'
-                },
-            ],
-            "order": [
-                [4, "asc"]
-            ],
-            'pageLength': 25,
-
-            createdRow: function(row, data, dataIndex) {
-                const estado = $('td:eq(4)', row).attr('data-activo');
-                if (estado === "0") {
-                    $(row).addClass('fila-inactiva');
-                }
-            }
-
-        });
-
-    });
-</script>
-<!-- datatable lista usuarios -->
 
 
 

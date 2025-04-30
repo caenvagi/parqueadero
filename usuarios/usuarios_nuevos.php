@@ -5,6 +5,7 @@ require_once "../conexion/conexion.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = trim($_POST['id']);
     $nombre = trim($_POST['nombre']);
+    $cedula = trim($_POST['cedula']);
     $cargo = trim($_POST['cargo']);
     $telefono = trim($_POST['telefono']);
     $usuario = trim($_POST['usuario']);
@@ -18,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Hashear la clave con password_hash()
     $claveHash = password_hash($clave, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO usuarios 
-                    (id, nombre, tipo_cargo, telefono, usuario, clave, tipo_usuario, avatar, activo, fecha_ingreso, contabilidad)
+    $sql = "        INSERT INTO usuarios 
+                    (id, nombre, cedula, tipo_cargo, telefono, usuario, clave, tipo_usuario, avatar, activo, fecha_ingreso, contabilidad)
                     VALUES 
-                    (:id, :nombre, :cargo, :telefono, :usuario, :clave, :tipo, :foto, :activo, :fecha_ingreso, :contabilidad)";
+                    (:id, :nombre, :cedula, :cargo, :telefono, :usuario, :clave, :tipo, :foto, :activo, :fecha_ingreso, :contabilidad)";
 
     $stmt = $pdo->prepare($sql);
 
@@ -29,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([
             'id' => $id,
             'nombre' => $nombre,
+            'cedula' => $cedula,
             'cargo' => $cargo,
             'telefono' => $telefono,
             'usuario' => $usuario,
@@ -39,12 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'fecha_ingreso' => $fecha_ingreso,
             'contabilidad' => $contabilidad
         ]);
+        // Obtener el ID recién insertado
+            $ultimo_id = $pdo->lastInsertId();
+        
+        // Insertar en la tabla usuarios_historia
+            $sql_historia = "INSERT INTO usuarios_historia (usuario, fecha_ingreso, cargo)
+            VALUES (:usuario, :fecha_ingreso, :cargo)";
+            $stmt_historia = $pdo->prepare($sql_historia);
+            $stmt_historia->execute([
+                'usuario' => $ultimo_id,
+                'fecha_ingreso' => $fecha_ingreso,
+                'cargo' => $cargo
+            ]);
+        
+        // Confirmar la transacción
+            $pdo->commit();
+
         echo "Usuario registrado correctamente.";
         header("location: usuarios_nuevos.php?mensaje=Usuario registrado correctamente.");
         // header("Location: usuarios.php"); // si deseas redirigir
     } catch (PDOException $e) {
-        echo "Error al registrar usuario: " . $e->getMessage();
-        header("location: usuarios_nuevos.php?mensaje=Error al registrar usuario");
+        echo "<br><br><br><br>" .  "Error al registrar usuario: " . $e->getMessage();
+        //header("location: usuarios_nuevos.php?mensaje=Error al registrar usuario");
     }
 }
 // REGISTRAR USUARIO NUEVO
@@ -183,6 +201,12 @@ try {
                                             <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-circle"></i>&nbsp;</span>
                                         </div>
                                         <input type="text" class="form-control" name="nombre" placeholder="Nombre" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
+                                    </div>
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-telephone"></i>&nbsp;</span>
+                                        </div>
+                                        <input value="" type="number" class="form-control" name="cedula" placeholder="Cedula" aria-label="tel" aria-describedby="basic-addon1" minlength="5" maxlength="10" required autofocus>
                                     </div>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">

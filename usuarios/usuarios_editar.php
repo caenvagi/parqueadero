@@ -259,7 +259,8 @@ try {
                                         </div>
                                     </div>
 
-                                    <input type="hidden" name="fecha_salida" id="fecha_salida" value="<?php echo date("Y-m-d")?>">
+                                    <input type="hidden" name="fecha_retiro" id="fecha_retiro" value="<?php echo date("Y-m-d")?>">
+                                    <input type="hidden" id="reactivado" name="reactivado" value="0">
                                 </div>
                                 <div class="footer">
                                 <button type="submit" value="editar" class="btn btn-primary btn btn-block">Guardar cambios</button>
@@ -288,42 +289,61 @@ try {
                     }
             </script>
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const radioNo = document.getElementById('inlineCheckbox2');
-                    const radioSi = document.getElementById('inlineCheckbox1');
-                    const fechaSalidaInput = document.getElementById('fecha_salida');
+document.addEventListener('DOMContentLoaded', function () {
+    const radioNo = document.getElementById('inlineCheckbox2');
+    const radioSi = document.getElementById('inlineCheckbox1');
+    const fechaSalidaInput = document.getElementById('fecha_salida');
+    const campoReactivado = document.getElementById('reactivado');
 
-                    radioNo.addEventListener('change', function(event) {
-                        if (radioNo.checked) {
-                            Swal.fire({
-                                title: '¿Estás seguro?',
-                                text: "Estás marcando al empleado como INACTIVO. ¿Deseas continuar?",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sí, continuar',
-                                cancelButtonText: 'No, cancelar'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    const hoy = new Date();
-                                    const fechaActual = hoy.toISOString().split('T')[0];
-                                    fechaSalidaInput.value = fechaActual;
-                                } else {
-                                    radioSi.checked = true;
-                                    radioNo.checked = false;
-                                    fechaSalidaInput.value = '';
-                                }
-                            });
-                        }
-                    });
-                    radioSi.addEventListener('change', function() {
-                        if (radioSi.checked) {
-                            fechaSalidaInput.value = '';
-                        }
-                    });
-                });
-            </script>
+    radioNo.addEventListener('change', function () {
+        if (radioNo.checked) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Estás marcando al empleado como INACTIVO. ¿Deseas continuar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'No, cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const hoy = new Date();
+                    const fechaActual = hoy.toISOString().split('T')[0];
+                    fechaSalidaInput.value = fechaActual;
+                    campoReactivado.value = "0";
+                } else {
+                    radioSi.checked = true;
+                    radioNo.checked = false;
+                }
+            });
+        }
+    });
+
+    radioSi.addEventListener('change', function () {
+        if (radioSi.checked) {
+            Swal.fire({
+                title: '¿Reactivar empleado?',
+                text: "Se registrará un nuevo ingreso para este empleado.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, registrar',
+                cancelButtonText: 'No, cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    campoReactivado.value = "1"; // señal para PHP de que fue reactivado
+                } else {
+                    radioNo.checked = true;
+                    radioSi.checked = false;
+                    campoReactivado.value = "0";
+                }
+            });
+        }
+    });
+});
+</script>
             <?php if (isset($_SESSION['success'])): ?>
             <script>
             Swal.fire({
