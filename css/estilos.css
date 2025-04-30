@@ -2,6 +2,8 @@
 .fila-inactiva {
     background-color: red !important;
 }
+#agregar_users{  
+    margin-left: 20px;}
 
 /* imagenes avatar*/
         .avatar {

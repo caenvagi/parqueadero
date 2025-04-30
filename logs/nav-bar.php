@@ -28,7 +28,8 @@ if ($tipo_usuario == 1) {
                                                     US.tipo_usuario,
                                                     Tu.tipo_usuario,                                                
                                                     US.telefono,
-                                                    US.avatar                                           
+                                                    US.avatar,
+                                                    US.id                                           
                                         FROM        usuarios US
                                         INNER JOIN  tipo_usuarios Tu ON US.tipo_usuario = Tu.id_tipo_usuario
                                         WHERE       id=$id");
@@ -146,7 +147,7 @@ if ($tipo_usuario == 1) {
                     <!-- &nbsp;&nbsp;<i class="fas fa-user fa-fw"></i>--></a>
                 
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="../usuarios/usuario_perfil.php?id="><i class="fa fa-user-circle"></i>&nbsp;Perfil</a></li>
+                    <li><a class="dropdown-item" href="../usuarios/usuario_perfil.php?id=<?= htmlspecialchars($usuario['id']) ?>"><i class="fa fa-user-circle"></i>&nbsp;Perfil</a></li>
                     <!--<li><a class="dropdown-item" href="#!">Otros</a></li>-->
                     <li>
                         <hr class="dropdown-divider" />

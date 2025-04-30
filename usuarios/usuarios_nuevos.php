@@ -1,6 +1,19 @@
 <?php
 session_start();
 require_once "../conexion/conexion.php";
+
+if (!isset($_SESSION['id'])) {
+    header("Location: index.php");
+}
+$id = $_SESSION['id'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
+}
+
 // REGISTRAR USUARIO NUEVO
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = trim($_POST['id']);
@@ -45,23 +58,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ultimo_id = $pdo->lastInsertId();
         
         // Insertar en la tabla usuarios_historia
-            $sql_historia = "INSERT INTO usuarios_historia (usuario, fecha_ingreso, cargo)
-            VALUES (:usuario, :fecha_ingreso, :cargo)";
+            $sql_historia = "INSERT INTO usuarios_historia (usuario, fecha_ingreso, cargo, user)
+            VALUES (:usuario, :fecha_ingreso, :cargo, :user)";
             $stmt_historia = $pdo->prepare($sql_historia);
             $stmt_historia->execute([
                 'usuario' => $ultimo_id,
                 'fecha_ingreso' => $fecha_ingreso,
-                'cargo' => $cargo
+                'cargo' => $cargo,
+                'user' => $_SESSION['id'],
             ]);
         
         // Confirmar la transacción
-            $pdo->commit();
+            //$pdo->commit();
 
-        echo "Usuario registrado correctamente.";
-        header("location: usuarios_nuevos.php?mensaje=Usuario registrado correctamente.");
+        //echo "Usuario registrado correctamente.";
+        header("location: usuarios_lista.php?mensaje=Usuario registrado correctamente.");
         // header("Location: usuarios.php"); // si deseas redirigir
     } catch (PDOException $e) {
-        echo "<br><br><br><br>" .  "Error al registrar usuario: " . $e->getMessage();
+        echo "<br><br><br><br>"."Error al registrar usuario: " . $e->getMessage();
         //header("location: usuarios_nuevos.php?mensaje=Error al registrar usuario");
     }
 }
@@ -122,7 +136,7 @@ try {
 // CONSULTA A TIPO DE USUARIO PARA SELECT    
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es">  
 
 <head>
     <?php require '../logs/head.php'; ?>
@@ -142,9 +156,7 @@ try {
                     <a class="nav-link " aria-current="page" href="usuarios_lista.php">Listado</a>
                 </li>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="mensualidades_list.php">Edicion</a>
-                </li>
+                
                 <!-- <li class="nav-item">
                         <a class="nav-link" href="mensualidades_list.php">Listado de mensualidades</a>
                     </li>
@@ -261,7 +273,7 @@ try {
 
                                     <input type="hidden" class="form-control" value="1" id="contabilidad" name="contabilidad" placeholder="contabilidad" aria-label="contabilidad" aria-describedby="basic-addon1" required autofocus>
                                     <input type="hidden" class="form-control" value="<?php echo date('Y-m-d') ?>" id="fecha_ingreso" name="fecha_ingreso" placeholder="fecha_ingreso" aria-label="fecha_ingreso" aria-describedby="basic-addon1" required autofocus>
-
+                                    <input type="hidden" class="form-control" value="<?php echo $id ?>" id="user" name="user" placeholder="user" aria-label="user" aria-describedby="basic-addon1" required autofocus>                
                                     <div class="d-grid gap-2">
                                         <button type="submit" class="btn btn-secondary btn btn-block" name="register" href="usuarios_nuevos.php"><i class="bi bi-plus-lg text-white">&nbsp;GUARDAR</i></button>
                                     </div>

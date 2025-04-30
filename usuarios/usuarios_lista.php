@@ -53,9 +53,7 @@ try {
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="usuarios_lista.php">Listado</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Edicion</a>
-                </li>
+                
                 <!-- <li class="nav-item">
                         <a class="nav-link" href="mensualidades_list.php">Listado de mensualidades</a>
                     </li>
@@ -69,13 +67,43 @@ try {
             <!-- navegacion horizontal -->
             <!-- tabla empleados -->
             <div class="justify-content-between m-0 col col-10 col-sm-10 col-md-12">
-                <div class="card m-2">
+                <!-- Mensajes -->
+                                <!-- Mensaje error password -->
+                                <?php
+                                if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'Usuario registrado correctamente.') {
+                                ?>
+                                    <div class="alerta alert alert-success alert-dismissible fade show" role="alert">
+                                        <strong>OK !</strong> Empleado registrado
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                                <?php
+                                if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'Error al registrar usuario') {
+                                ?>
+                                    <div class="alerta alert alert-danger alert-dismissible fade show" role="alert">
+                                        <strong>Error !</strong> No se puede ingresar usuario!
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                                <!-- fin Mensaje error password -->
+                                <!-- Mensaje error usuario -->
+
+                                <!-- fin Mensaje error usuario -->
+                                <!-- Mensajes -->
+                <div class="card m-2"id="span">
                     <div class="card-header">
-                        Empleados registrados:
+                        Empleados registrados: <a href="usuarios_nuevos.php" title="Crear Usuario" id="agregar_users" class="btn btn-outline-success btn-xs">
+                        <i class="bi bi-plus-square-fill"></i>&nbsp;&nbsp;Crear Usuario</a>
                     </div>
                     <div class="card-body">
+                    
                         <table id="tabla_empleados" class="table table table-sm table-borderless table-hover mt-3 table text-center table align-middle">
-                            <thead>
+                        
+                        <thead>
                                 <tr>
                                     <th align="center">NOMBRE</th>
                                     <th align="center">AVATAR</th>
