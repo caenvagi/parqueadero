@@ -2,6 +2,18 @@
 session_start();
 require_once "../conexion/conexion.php";
 
+if (!isset($_SESSION['id'])) {
+    header("Location: index.php");
+}
+$id = $_SESSION['id'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
+}
+
 // CONSULTA USUARIOS EN TABLA USUARIOS    
 try {
     // Verifica que $pdo esté definido correctamente
@@ -96,7 +108,7 @@ try {
                                 <!-- Mensajes -->
                 <div class="card m-2"id="span">
                     <div class="card-header">
-                        Empleados registrados: <a href="usuarios_nuevos.php" title="Crear Usuario" id="agregar_users" class="btn btn-outline-success btn-xs">
+                        <a href="usuarios_nuevos.php" title="Crear Usuario" id="agregar_users" class="btn btn-outline-success btn-xs">
                         <i class="bi bi-plus-square-fill"></i>&nbsp;&nbsp;Crear Usuario</a>
                     </div>
                     <div class="card-body">

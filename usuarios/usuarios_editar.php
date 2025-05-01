@@ -3,6 +3,18 @@ session_start();
 // Incluir archivo de conexión
 require_once "../conexion/conexion.php";
 
+if (!isset($_SESSION['id'])) {
+    header("Location: index.php");
+}
+$id = $_SESSION['id'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
+}
+
 // Validar que se reciben todos los datos necesarios
 if (
     isset($_POST['id']) &&
@@ -177,7 +189,7 @@ try {
                         </li> -->
                 </ul>
             <!-- navegacion horizontal -->
-
+        <div class="col-md-6">
             <form id="usuario" name="usuario" class="row g-0 p-2" action="usuarios_editar_proceso.php" method="POST">
                 <div class="card m-0" id="">
                     <div class="">
@@ -225,13 +237,13 @@ try {
                                         </div>
                                         <input type="text" class="form-control" name="user" id="user" placeholder="Usuario" value="<?= htmlspecialchars($usuario_lista['usuario']) ?>" aria-label="tel" aria-describedby="basic-addon1" minlength="10" maxlength="10" required autofocus>
                                     </div>
-                                    <div class="input-group mb-2">
+                                    <!-- <div class="input-group mb-2">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-phone"></i>&nbsp;Clave&nbsp;&nbsp;</span>
                                         </div>
                                         <input type="password" class="form-control" name="clave" id="clave" placeholder="clave" value="<?= htmlspecialchars($usuario_lista['clave']) ?>" aria-label="tel" aria-describedby="basic-addon1" minlength="5" maxlength="10" required autofocus>
                                         <button class="btn btn-secondary" onclick="mostrarPassword1()" type="button" id="button-addon1"><span class="bi bi-eye-slash"></span></button>        
-                                    </div>
+                                    </div> -->
                                     <div class="mb-2">
                                     <label class="form-label"></label>
                                     <div class="input-group mb-1">
@@ -262,15 +274,16 @@ try {
                                     <input type="hidden" name="fecha_retiro" id="fecha_retiro" value="<?php echo date("Y-m-d")?>">
                                     <input type="hidden" id="reactivado" name="reactivado" value="0">
                                 </div>
-                                <div class="footer">
-                                <button type="submit" value="editar" class="btn btn-primary btn btn-block">Guardar cambios</button>
-                            </div>
+                                <div class="footer mt-3">
+                                    <button type="submit" value="editar" class="btn btn-primary btn btn-block">Guardar cambios</button>
+                                </div>
                             </div>
                             
                         </div>
                     </div>
                 </div>
             </form>
+            </div>    
         </main>
     </div>
 </body>
