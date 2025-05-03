@@ -293,14 +293,18 @@ if ($tipo_usuario == 1) {
                             <?php if ($tipo_usuario == 1) { ?>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-configuracion" aria-expanded="false" aria-controls="collapseLayouts">
                                     <div><i style="font-size:24px" class="bi bi-people-fill"></i></div>
-                                    &nbsp;&nbsp;&nbsp;Usuarios
+                                    &nbsp;&nbsp;&nbsp;Empleados
                                     <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                                 </a>
                                 <div class="collapse" id="collapse-configuracion" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="../usuarios/usuarios_nuevos.php">
+                                        <a class="nav-link" href="../usuarios/usuarios_lista.php">
                                             <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Empleados
+                                        </a>
+                                        <a class="nav-link" href="../usuarios/usuarios_turnos_calendario.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Turnos
                                         </a>
                                         <a class="nav-link" href="../usuarios/tipo_cargo.php">
                                             <div><i class="fas fa-user-tie" style='font-size:24px'></i></div>

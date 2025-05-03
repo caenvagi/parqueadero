@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();  
 require_once "../conexion/conexion.php";
 
 if (!isset($_SESSION['id'])) {
@@ -145,7 +145,7 @@ try {
 <body>
     <?php require '../logs/nav-bar.php'; ?>
 
-    <div id="layoutSidenav_content">
+    <div id="layoutSidenav_content">  
         <main>
             <!-- navegacion horizontal -->
             <ul class="nav nav-tabs mt-3">
