@@ -203,79 +203,81 @@ if ($tipo_usuario == 1) {
               if (e.target.id === "crearModal") document.getElementById('crearModal').style.display = 'none';
             };
 
-            document.getElementById('formCrearTurno').addEventListener('submit', function(e) {
-              e.preventDefault();
-              const formData = new FormData(this);
+          //crear turno
+              document.getElementById('formCrearTurno').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
 
-              fetch('usuarios_turnos_crear.php', {
-                  method: 'POST',
-                  body: formData
-                })
-                .then(res => res.text())
-                .then(res => {
-                  if (res === "ok") {
-                    alert("Turno creado correctamente");
-                    document.getElementById('crearModal').style.display = 'none';
-                    calendar.refetchEvents();
-                  } else {
-                    alert("Error: " + res);
-                  }
-                })
-                .catch(err => alert("Error al crear turno"));
+                fetch('usuarios_turnos_crear.php', {
+                    method: 'POST',
+                    body: formData
+                  })
+                  .then(res => res.text())
+                  .then(res => {
+                    if (res === "ok") {
+                      alert("Turno creado correctamente");
+                      document.getElementById('crearModal').style.display = 'none';
+                      calendar.refetchEvents();
+                    } else {
+                      alert("Error: " + res);
+                    }
+                  })
+                  .catch(err => alert("Error al crear turno"));
+              });
+          //crear turno   
+          //editar turno  
+            document.getElementById('editarTurnoBtn').addEventListener('click', function() {
+            let turnos_id = document.getElementById("modalTurnoId").textContent;
+            //console.log(turno_id);
+            fetchTurnoParaEdicion(turnos_id);});
+            
+            function fetchTurnoParaEdicion(turno_id) {
+              let turnos_id = document.getElementById("modalTurnoId").textContent;
+              console.log("este el id" + " " + turnos_id);
+              fetch(`usuarios_turnos_obtener.php?id_turno=${turnos_id}`)            
+                .then(res => res.json())
+                .then(data => {
+                  //document.getElementById('modalId').value = data.id_turno;
+                  document.getElementById('nuevo_usuario_id').value = data.usuario_id;
+                  document.querySelector('#formCrearTurno [name="inicio"]').value = data.inicio;
+                  document.querySelector('#formCrearTurno [name="fin"]').value = data.fin;
+                  document.querySelector('#formCrearTurno [name="valor"]').value = data.valor;
+                  document.getElementById('crearModal').style.display = 'flex';
+                });
+            }
+          //editar turno
+          //eliminar turno
+            document.getElementById('eliminarTurnoBtn').addEventListener('click', function() {
+              const turnoId = id_turno;
+              if (!turnoId) {
+                alert("ID de turno no disponible");
+                return;
+              }
+              if (confirm("¿Seguro que quieres eliminar este turno?")) {
+                eliminarTurno(turnoId);
+              }
             });
-             document.getElementById('editarTurnoBtn').addEventListener('click', function() {
-              let turno_id = document.getElementById("modalTurnoId").textContent;
-              fetchTurnoParaEdicion(turno_id);
-              
-          });
-          
-          function fetchTurnoParaEdicion(turno_id) {
-            console.log(turno_id);
-            fetch(`usuarios_turnos_obtener.php?id_turno=${turno_id}`)
 
-              .then(res => res.json())
-              .then(data => {
-                document.getElementById('modalId').value = data.id_turno;
-                document.getElementById('nuevo_usuario_id').value = data.usuario_id;
-                document.querySelector('#formCrearTurno [name="inicio"]').value = data.inicio;
-                document.querySelector('#formCrearTurno [name="fin"]').value = data.fin;
-                document.querySelector('#formCrearTurno [name="valor"]').value = data.valor;
-                document.getElementById('crearModal').style.display = 'flex';
-              });
-          }
-          document.getElementById('eliminarTurnoBtn').addEventListener('click', function() {
-            const turnoId = id_turno;
-            if (!turnoId) {
-              alert("ID de turno no disponible");
-              return;
+            function eliminarTurno(turnoId) {            
+              let turno_id = document.getElementById("modalTurnoId").textContent;            
+              fetch(`usuarios_turnos_eliminar.php?id_turno=${turno_id}`, {
+                  method: 'POST'                
+                })
+                //console.log(`usuarios_turnos_eliminar.php?id_turno=${id_turno}`)
+                .then(res => res.text())
+                .then(data => {
+                  if (data === "ok") {
+                    //console.log(data);
+                    alert("Turno eliminado");
+                    calendar.refetchEvents();
+                    document.getElementById('turnoModal').style.display = 'none';
+                  } else {
+                    alert("Error al eliminar el turno");
+                  }
+                });
             }
-            if (confirm("¿Seguro que quieres eliminar este turno?")) {
-              eliminarTurno(turnoId);
-            }
-          });
-
-          function eliminarTurno(turnoId) {
-            
-            let turno_id = document.getElementById("modalTurnoId").textContent;
-            
-            fetch(`usuarios_turnos_eliminar.php?id_turno=${turno_id}`, {
-                method: 'POST'                
-              })
-              //console.log(`usuarios_turnos_eliminar.php?id_turno=${id_turno}`)
-              .then(res => res.text())
-              .then(data => {
-                if (data === "ok") {
-                  //console.log(data);
-                  alert("Turno eliminado");
-                  calendar.refetchEvents();
-                  document.getElementById('turnoModal').style.display = 'none';
-                } else {
-                  alert("Error al eliminar el turno");
-                }
-              });
-          }
-          });
-         
+            });
+          //eliminar turno
         </script>
       </div>
     </main>
