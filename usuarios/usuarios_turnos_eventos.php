@@ -1,16 +1,19 @@
 <?php
 require_once "../conexion/conexion.php";
+
 $usuario_id = $_GET['usuario_id'] ?? null;
+$fecha_inicio = $_GET['start'];
+$fecha_fin = $_GET['end'];
 
 $sql = "SELECT t.*, u.nombre 
         FROM usuarios_turnos t 
         JOIN usuarios u ON t.usuario_id = u.id 
-        WHERE CONCAT(t.fecha_inicio, ' ', t.hora_inicio) >= ? 
-          AND CONCAT(t.fecha_fin, ' ', t.hora_fin) <= ?";
-$params = [$_GET['start'], $_GET['end']];
+        WHERE t.fecha_inicio >= ? 
+          AND t.fecha_fin <= ?";
+$params = [$fecha_inicio, $fecha_fin];
 
 if (!empty($usuario_id)) {
-    $sql .= " AND u.id = ?";
+    $sql .= " AND t.usuario_id = ?";
     $params[] = $usuario_id;
 }
 
@@ -21,11 +24,11 @@ $eventos = [];
 
 foreach ($stmt as $row) {
     $eventos[] = [
-        'id' => $row['id_turno'], // ESTE ES EL CONSECUTIVO
+        'id'    => $row['id_turno'],
         'title' => $row['nombre'] . " - $" . $row['valor'],
-        'start' => $row['fecha_inicio'] . 'T' . $row['hora_inicio'],
-        'end'   => $row['fecha_fin'] . 'T' . $row['hora_fin'],
-        'color' => "#".substr(md5($row['usuario_id']), 0, 6) // color único por empleado
+        'start' => $row['fecha_inicio'],
+        'end'   => $row['fecha_fin'],
+        'color' => "#" . substr(md5($row['usuario_id']), 0, 6)
     ];
 }
 

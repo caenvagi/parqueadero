@@ -50,7 +50,6 @@ try {
     <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
-    <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -164,7 +163,7 @@ try {
         </main>
     </div>
     <!-- sweet alert -->
-        <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script>
+        
     <!-- aviso de usuario actulizado con exito -->
         <?php if (isset($_SESSION['success'])): ?>
         <script>
