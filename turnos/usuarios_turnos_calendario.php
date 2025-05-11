@@ -18,56 +18,15 @@ if ($tipo_usuario == 1) {
 <html lang="es">
 
 <head>
-  <?php require '../logs/head.php'; ?>
+  <?php require '../logs/head.php'; ?> 
+  
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+
+  <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
+  <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script></style>
   <style>
-    #calendar {
-      max-width: 900px;
-      margin: 40px auto;
-    }
-
-    #turnoModal,
-    #crearModal,
-    #editarModal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-
-    #turnoModal>div,
-    #crearModal>div,
-    #EditarModal>div {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      width: 350px;
-      position: relative;
-    }
-
-    #cerrarModal,
-    #cerrarCrear,
-    #editarModal {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      cursor: pointer;
-    }
-
-    #crearModal {
-      z-index: 1050 !important;
-    }
-
-    #turnoModal {
-      z-index: 1050 !important;
-    }
+    
   </style>
 </head>
 
@@ -92,16 +51,13 @@ if ($tipo_usuario == 1) {
             <span id="cerrarModal">✖</span>
             <h3>Detalle del Turno</h3>
             <input type="hidden" id="id_turno">
-
-            
-
             <p><strong>Turno id:</strong> <span id="modalTurnoId"></span></p>
             <p><strong>Empleado:</strong> <span id="modalEmpleado"></span></p>
             <p><strong>Inicio:</strong> <span id="modalInicio"></span></p>
             <p><strong>Fin:</strong> <span id="modalFin"></span></p>
             <p><strong>Valor:</strong>$<span id="modalValor"></span></p>
-            <button id="editarTurnoBtn">Editar</button>
-            <button id="eliminarTurnoBtn">Eliminar</button>
+            <button id="editarTurnoBtn" class="btn btn-secondary btn btn-block">Editar</button>
+            <button id="eliminarTurnoBtn" class="btn btn-secondary btn btn-block">Eliminar</button>
           </div>
         </div>
 
@@ -145,16 +101,20 @@ if ($tipo_usuario == 1) {
               <input type="datetime-local" name="fin" id="edit_fin" required style="width:100%;"><br>
               <label>Valor:</label><br>
               <input type="number" name="valor" id="edit_valor" required style="width:100%;"><br><br>
-              <button type="submit">Guardar Cambios</button>
+              <button type="submit" class="btn btn-secondary btn btn-block">Guardar Cambios</button>
             </form>
           </div>
         </div>
 
 
+    
         <script>
           document.addEventListener('DOMContentLoaded', function() {
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: 'dayGridMonth',
+              firstDay: 1, // Establece el lunes como el primer día de la semana
+              locale: 'es', // Opcional: para mostrar los días en español
               slotLabelFormat: {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -271,16 +231,26 @@ if ($tipo_usuario == 1) {
                     Swal.fire({
                       icon: 'success',
                       title: 'Turno creado',
-                      text: 'El turno se ha creado correctamente.'
+                      text: 'El turno se ha creado correctamente.',
+                      customClass: {
+                      container: 'customClassName'
+                    }
                     }).then(() => {
                       document.getElementById('crearModal').style.display = 'none';
                       calendar.refetchEvents();
                     });
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000); // 3000 milisegundos = 3 segundos
+
                   } else {
                     Swal.fire({
                       icon: 'error',
                       title: 'Error al crear turno',
-                      text: res
+                      text: res,
+                      customClass: {
+                      container: 'customClassName'
+                    }
                     });
                   }
                 })
@@ -288,7 +258,10 @@ if ($tipo_usuario == 1) {
                   Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al crear el turno. Intenta nuevamente.'
+                    text: 'Error al crear el turno. Intenta nuevamente.',
+                    customClass: {
+                      container: 'customClassName'
+                    }
                   });
                 });
             });
@@ -377,16 +350,25 @@ if ($tipo_usuario == 1) {
                     Swal.fire({
                       icon: 'success',
                       title: 'Turno actualizado',
-                      text: 'El turno fue modificado correctamente.'
+                      text: 'El turno fue modificado correctamente.',
+                      customClass: {
+                      container: 'customClassName'
+                      }
                     }).then(() => {
                       document.getElementById('editarModal').style.display = 'none';
                       calendar.refetchEvents();
+                      setTimeout(function() {
+                        location.reload();
+                    }, 3000); // 3000 milisegundos = 3 segundos
                     });
                   } else {
                     Swal.fire({
                       icon: 'error',
                       title: 'Error',
-                      text: 'No se pudo actualizar el turno.'
+                      text: 'No se pudo actualizar el turno.',
+                      customClass: {
+                      container: 'customClassName'
+                      }
                     });
                   }
                 });
@@ -399,7 +381,10 @@ if ($tipo_usuario == 1) {
                 Swal.fire({
                   icon: 'warning',
                   title: 'ID no disponible',
-                  text: 'No se puede eliminar el turno porque falta el ID.'
+                  text: 'No se puede eliminar el turno porque falta el ID.',
+                  customClass: {
+                  container: 'customClassName'
+                  }
                 });
                 return;
               }
@@ -413,7 +398,10 @@ if ($tipo_usuario == 1) {
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
+                cancelButtonText: 'Cancelar',
+                customClass: {
+                container: 'customClassName'
+                }
               }).then((result) => {
                 if (result.isConfirmed) {
                   eliminarTurno(turnoId);

@@ -302,7 +302,7 @@ if ($tipo_usuario == 1) {
                                             <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Empleados
                                         </a>
-                                        <a class="nav-link" href="../usuarios/usuarios_turnos_calendario.php">
+                                        <a class="nav-link" href="../turnos/usuarios_turnos_calendario.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Turnos
                                         </a>

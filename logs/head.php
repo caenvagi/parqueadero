@@ -21,8 +21,7 @@
     <!-- include a theme -->
     <link rel="stylesheet" href="../modulos/alertifyjs/css/themes/default.min.css" />
 
-    <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
-    <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script>
+    
 
     <!-- include the script -->
     <script src="../modulos/alertifyjs/alertify.min.js"></script>

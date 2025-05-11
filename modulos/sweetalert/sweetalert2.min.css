@@ -55,6 +55,21 @@
     }
 }
 
+.swal2-popup{
+    z-index: 2147483647 !important; 
+}
+.swal2-container{
+   z-index: 2147483647 !important; 
+}
+
+.customClassName {
+    z-index: 2147483647 !important;
+    
+    }/*max possible value for zindex*/
+
+:host   ::ng-deep .swal2-container {
+    z-index: 2147483647 !important;}
+
 body.swal2-shown:not(.swal2-no-backdrop, .swal2-toast-shown) {
     overflow: hidden
 }
@@ -138,6 +153,7 @@ body.swal2-toast-shown .swal2-container.swal2-bottom-end, body.swal2-toast-shown
         position: static !important
     }
 }
+
 
 div:where(.swal2-container) {
     display: grid;
