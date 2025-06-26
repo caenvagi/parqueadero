@@ -14,10 +14,12 @@ if ($tipo_usuario == 1) {
   $where = "WHERE id=$id";
 }
 
+$id = $_GET['id'];
+
 $sql = "SELECT t.id_turno, t.usuario_id, u.nombre, t.fecha_inicio, t.fecha_fin, t.valor
         FROM usuarios_turnos t
         JOIN usuarios u ON t.usuario_id = u.id
-        WHERE t.pagado = 0
+        WHERE t.pagado = 0 and u.id = $id
         ORDER BY t.usuario_id, t.fecha_inicio";
 
 $stmt = $pdo->query($sql);
@@ -60,84 +62,96 @@ $turnos = $stmt->fetchAll();
                 </tr>
               <?php endforeach; ?>
             </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="3" class="text-end">Total:</th>
+                <th id="total-valor"></th>
+                <th></th>
+              </tr>
+            </tfoot>
           </table>
           <br>
-          <button type="submit">Generar Recibo</button>
-        </form>
+          <div class="text-center mb-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-receipt"></i> Generar Recibo
+            </button>
+          </div>
       </div>
     </main>
     <!-- datatable lista usuarios -->
     <script>
       $(document).ready(function() {
-      $('#tabla-turnos').DataTable({
-        columnDefs: [{
-          targets: 3, // Índice de la columna que deseas formatear
-          render: function(data, type, row) {
-            // Formatear como moneda (ejemplo en pesos colombianos)
-            return new Intl.NumberFormat('es-CO', {
-              style: 'currency',
-              currency: 'COP',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0
-            }).format(data);
+        $('#tabla-turnos').DataTable({
+          columnDefs: [{
+            targets: 3,
+            render: function(data, type, row) {
+              return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }).format(data);
+            }
+          }],
+          responsive: true,
+          dom: 'Bfrtilp',
+          language: {
+            // ... tu configuración actual
+          },
+          buttons: [
+            // ... tus botones
+          ],
+          order: [
+            [0, "asc"]
+          ],
+          pageLength: 25,
+
+          footerCallback: function(row, data, start, end, display) {
+            var api = this.api();
+
+            // Remover formato y convertir a número
+            var intVal = function(i) {
+              return typeof i === 'string' ?
+                parseInt(i.replace(/[\$,\.]/g, '')) || 0 :
+                typeof i === 'number' ?
+                i :
+                0;
+            };
+
+            // Total en todas las páginas
+            var total = api
+              .column(3)
+              .data()
+              .reduce(function(a, b) {
+                return intVal(a) + intVal(b);
+              }, 0);
+
+            // Total en la página actual
+            var pageTotal = api
+              .column(3, {
+                page: 'current'
+              })
+              .data()
+              .reduce(function(a, b) {
+                return intVal(a) + intVal(b);
+              }, 0);
+
+            // Actualizar el footer
+            $(api.column(3).footer()).html(
+              new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }).format(pageTotal)
+            );
           }
-        }],
-        responsive: true,
-        dom: 'Bfrtilp',
-        language: {
-          "decimal": "",
-          "emptyTable": "No hay información",
-          "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-          "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-          "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-          "infoPostFix": "",
-          "thousands": ",",
-          "lengthMenu": "Mostrar _MENU_ Entradas",
-          "loadingRecords": "Cargando...",
-          "processing": "Procesando...",
-          "search": "Buscar:",
-          "zeroRecords": "Sin resultados encontrados",
-          "paginate": {
-            "first": "Primero",
-            "last": "Ultimo",
-            "next": "Siguiente",
-            "previous": "Anterior"
-          },
-        },
-        buttons: [{
-            extend: 'excelHtml5',
-            text: '<i class="bi bi-file-earmark-x"></i> ',
-            titleAttr: 'Exportar a Excel',
-            className: 'btn btn-success'
-          },
-          {
-            extend: 'pdfHtml5',
-            text: '<i class="bi bi-file-earmark-pdf"></i> ',
-            titleAttr: 'Exportar a PDF',
-            className: 'btn btn-danger'
-          },
-          {
-            extend: 'print',
-            text: '<i class="bi bi-printer"></i> ',
-            titleAttr: 'Imprimir',
-            className: 'btn btn-info'
-          },
-        ],
-        "order": [
-          [0, "asc"]
-        ],
-        'pageLength': 25,
+        });
 
-        // createdRow: function(row, data, dataIndex) {
-        //     const estado = $('td:eq(4)', row).attr('data-activo');
-        //     if (estado === "0") {
-        //         $(row).addClass('fila-inactiva');
-        //     }
-        // }
-
-      });
 
       });
     </script>
     <!-- datatable lista usuarios -->
 </body>
+
+</html>

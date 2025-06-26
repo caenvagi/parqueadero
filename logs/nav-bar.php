@@ -210,7 +210,7 @@ if ($tipo_usuario == 1) {
                         <!-- MENU PARQUEO FIN-->
 
                         <!-- MENU ALOJAMIENTO INICIO-->
-                            <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-alojamiento" aria-expanded="false" aria-controls="collapseLayouts">
+                            <!-- <a class="nav-link collapsed" href="../aloj/aloj_habitaciones.php" data-bs-toggle="collapse" data-bs-target="#collapse-alojamiento" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div><i class="fas fa-hotel" style='font-size:24px'></i></div>
                                 &nbsp;&nbsp;&nbsp;Alojamiento
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -235,7 +235,7 @@ if ($tipo_usuario == 1) {
                                     </a>
                                     <a class="nav-link" href="#">
                                         <div><i class='fas fa-calendar-check' style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Rack
+                                        &nbsp;&nbsp;&nbsp;Habitaciones
                                     </a>
                                 </nav>
                             </div> -->
@@ -288,6 +288,40 @@ if ($tipo_usuario == 1) {
                                 </nav>
                             </div> -->
                         <!-- MENU FIN-->
+
+                        <!-- MENU ALOJAMIENTO-->
+                            <?php if ($tipo_usuario == 1) { ?>
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-alojamiento" aria-expanded="false" aria-controls="collapseLayouts">
+                                    <div><i style="font-size:24px" class="bi bi-house-door-fill"></i></div>
+                                    &nbsp;&nbsp;&nbsp;Alojamiento
+                                    <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
+                                </a>
+                                <div class="collapse" id="collapse-alojamiento" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="../aloj/aloj_habitaciones.php">
+                                            <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Habitaciones
+                                        </a>
+                                        <a class="nav-link" href="../aloj/aloj_clientes.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Clientes
+                                        </a>
+                                        <!-- <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Nomina
+                                        </a>
+                                        <a class="nav-link" href="../usuarios/tipo_cargo.php">
+                                            <div><i class="fas fa-user-tie" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Cargos
+                                        </a>
+                                        <a class="nav-link" href="../usuarios/tipo_usuarios.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Roles user
+                                        </a> -->
+                                    </nav>
+                                </div>
+                            <?php  } ?>
+                        <!-- MENU USUARIOS FIN-->
                         
                         <!-- MENU USUARIOS-->
                             <?php if ($tipo_usuario == 1) { ?>
@@ -305,6 +339,10 @@ if ($tipo_usuario == 1) {
                                         <a class="nav-link" href="../turnos/usuarios_turnos_calendario.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Turnos
+                                        </a>
+                                        <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Nomina
                                         </a>
                                         <a class="nav-link" href="../usuarios/tipo_cargo.php">
                                             <div><i class="fas fa-user-tie" style='font-size:24px'></i></div>

@@ -89,24 +89,19 @@ foreach ($datos as $row) {
   // Crear instancia PDF
   $pdf = new FPDF();
     $pdf->AddPage();
+
     $pdf->SetFont('Arial','B',16);
     $pdf->SetXY(100, 10);
     $pdf->Cell(0,16,'Comprobante de Egreso','TLR',1,'C');
-    $pdf->SetXY(100, 25);
-    $pdf->Cell(0,10,"No: $nuevo_recibo_id",'BLR',1,'C');
-    $pdf->Ln(10);
-    $pdf->SetFont('Arial','',12);
+    
+    $pdf->SetFont('Arial', 'B', 20);
+    $pdf->SetXY(100, 20);
+    $pdf->Cell(0,10,"No: $nuevo_recibo_id",'BLR',0,'C');
 
-    // foreach ($datos as $row) {
-    //     $id_turno = $row['id_turno'];
-    //     $usuario_id = $row['usuario_id'];
-    //     $fecha_inicio = $row['fecha_inicio'];
-    //     $fecha_fin = $row['fecha_fin'];
-    //     $pagado = $row['pagado'];
-    //     $total = $row['total'];
+    $pdf->Ln(10); 
 
-        foreach ($usuarios_turnos as $usuario_id => $turnos_usuario) {
-    // Sumar el total de todos los turnos del usuario
+      foreach ($usuarios_turnos as $usuario_id => $turnos_usuario) {
+      // Sumar el total de todos los turnos del usuario
       $total = array_sum(array_column($turnos_usuario, 'valor'));
         $id_turno = $row['id_turno'];
         $usuario_id = $row['usuario_id'];
@@ -118,7 +113,7 @@ foreach ($datos as $row) {
 
         // Insertar recibo en la BD
         $insert = $pdo->prepare("INSERT INTO usuarios_recibos (recibos_id, recibo_fecha, recibo_usuario, recibo_concepto, recibo_valor, recibo_elaborado)
-                                 VALUES (?, ?, ?, 'Pago de turnos', ?, ?)");
+                                VALUES (?, ?, ?, 'Pago de turnos', ?, ?)");
         $insert->execute([$nuevo_recibo_id, $fecha_actual, $usuario_id, $total, $elaborado]);
 
         // Obtener nombre del usuario
@@ -128,37 +123,64 @@ foreach ($datos as $row) {
 
         $cedula = $pdo->prepare("SELECT cedula FROM usuarios WHERE id = ?");
         $cedula->execute([$usuario_id]);
-        $usuario_cedula = $cedula->fetchColumn();
-        
-       
-        
+        $usuario_cedula = $cedula->fetchColumn();      
 
         // Agregar al PDF
-        $pdf->SetXY(10, 35);
-        $pdf->Cell(0, 15, "  CIUDAD:   Montenegro - Quindio", 1, 0);
-        $pdf->SetXY(80, 35);
-        $pdf->Cell(0, 15, "  FECHA:       $fecha_formateada", 1, 1);
-        $pdf->SetXY(140, 35);
-        $pdf->Cell(0, 15, "  VALOR:       $ $total", 1, 1);
-        $pdf->SetXY(10, 50);
-        $pdf->Cell(0, 15, "  PAGADO A:         $usuario_nombre  C.C:  $usuario_cedula", 1, 1);
-          // 🟢 Aquí listamos todos los turnos de este usuario
+        $pdf->SetFont('Arial','B',14);
+        $pdf->SetXY(10, 30);
+        $pdf->Cell(0, 10, "  CIUDAD:", 1, 0);
+
+        $pdf->SetXY(40, 30);
+        $pdf->SetFont('Arial','',12);
+        $pdf->Cell(0, 10, " Montenegro - Quindio", 0, 0);
+
+        $pdf->SetXY(90, 30);
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(0, 10, "  FECHA:", 1, 1);
+        $pdf->SetXY(115, 30);
+        $pdf->SetFont('Arial','',12);
+        $pdf->Cell(0, 10, "$fecha_formateada", 0, 1);
+
+        $pdf->SetXY(150, 30);
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(0, 10, "VALOR:", 1, 1);
+        $pdf->SetXY(175, 30);
+        $pdf->SetFont('Arial','',12);
+        $pdf->Cell(0, 10, '$ ' . number_format($total, 0, ',', '.'), 0, 1);
+
+
+        $pdf->SetFont('Arial','B',14);
+        $pdf->SetXY(10, 40);
+        $pdf->Cell(0, 15, "  PAGADO A:  ", 1, 1);
+        $pdf->SetFont('Arial','',12);
+        $pdf->SetXY(50, 40);
+        $pdf->Cell(0, 15, "$usuario_nombre" . "  C.C:  " .  number_format($usuario_cedula, 0, ',', '.'), 0, 1);
+          
+        
+        // 🟢 Aquí listamos todos los turnos de este usuario
         $concepto = "  POR CONCEPTO DE:         ";
         foreach ($turnos_usuario as $t) {
-            $concepto .= "Turno #{$t['id_turno']} ({$t['fecha_inicio']}), ";
+            $concepto .= "Turno-{$t['id_turno']} ({$t['fecha_inicio']}) , ";
         }
         $concepto = rtrim($concepto, ', ');
-        $pdf->SetXY(10, 65);
+        $pdf->SetXY(10, 55);
         $pdf->MultiCell(0, 10, $concepto, 1);
-        $pdf->SetXY(10, 95);
-        $pdf->Cell(0, 15, "  LA SUMA DE: (en letras)       $valorenLetras", 1, 1);
-        $pdf->SetXY(10, 110);
-        $pdf->Cell(0, 15, "  ELABORO:      $nombre_usuario  -  USUARIO:      $elaborado", 1, 1);
-        $pdf->SetXY(10, 125);
+
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(0, 15, "  LA SUMA DE: (en letras)     $valorenLetras", 1, 1);
+        // $pdf->SetFont('Arial','',14);
+        // $pdf->SetXY(100, 85);
+        // $pdf->Cell(0, 15, "$valorenLetras", 0, 1);
+
+        $pdf->SetFont('Arial','B',14);
+        $pdf->Cell(0, 10, "  ELABORO:    $nombre_usuario     USUARIO: $elaborado", 1, 1);
+        // $pdf->SetFont('Arial','',12);
+        // $pdf->SetXY(50, 100);
+        // $pdf->Cell(0, 10, " $nombre_usuario     USUARIO: $elaborado", 0, 1);
+
+        $pdf->SetFont('Arial','B',14);
         $pdf->Cell(0, 10, "  FIRMA Y SELLO DEL BENEFICIARIO:", 'TLR', 1);
-        $pdf->SetXY(10, 135);
-        $pdf->Cell(0, 30, "", 'LR', 1);
-        $pdf->SetXY(10, 165);
+        $pdf->Cell(0, 20, "", 'LR', 1);
         $pdf->Cell(0, 10, "  C.C No:                                                             Fecha de recibido:", 'BLR', 1);
 
         

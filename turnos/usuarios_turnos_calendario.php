@@ -13,6 +13,7 @@ if ($tipo_usuario == 1) {
 } else if ($tipo_usuario == 2) {
   $where = "WHERE id=$id";
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,6 +26,14 @@ if ($tipo_usuario == 1) {
 
   <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
   <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script></style>
+
+  <!-- jsPDF y AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+<!-- SheetJS (XLSX) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 </head>
 
 <body>
@@ -34,13 +43,22 @@ if ($tipo_usuario == 1) {
       <div class="">
         <h2 style="text-align:center;">Calendario de Turnos</h2>
 
+        <div class="text-center my-3">
+          <button id="btnImprimirCalendario" class="btn btn-secondary">🖨️ Imprimir Calendario</button>
+          <button id="btnExportPDF" class="btn btn-danger">Exportar PDF</button>
+          <button id="btnExportExcel" class="btn btn-success">Exportar Excel</button>
+          <button hidden id="btnImprimir" class="btn btn-secondary">Imprimir</button>
+        </div>
+
         <label style="margin-left: 20px;">Empleado:
           <select id="usuario_id">
             <option value="">Todos</option>
           </select>
         </label>
 
-        <div id="calendar"></div>
+        <h1 id="tituloMesImpresion" class="d-none-print" style="text-align:center; font-size:32px; margin-bottom: 10px;"></h1>
+
+        <div id="calendar" class="col col-xl-12 col-md-12"></div>
 
         <!-- Modal Detalle Turno -->
         <div id="turnoModal">
@@ -48,13 +66,23 @@ if ($tipo_usuario == 1) {
             <span id="cerrarModal">✖</span>
             <h3>Detalle del Turno</h3>
             <input type="hidden" id="id_turno">
-            <p><strong>Turno id:</strong> <span id="modalTurnoId"></span></p>
             <p><strong>Empleado:</strong> <span id="modalEmpleado"></span></p>
             <p><strong>Inicio:</strong> <span id="modalInicio"></span></p>
-            <p><strong>Fin:</strong> <span id="modalFin"></span></p>
-            <p><strong>Valor:</strong>$<span id="modalValor"></span></p>
-            <button id="editarTurnoBtn" class="btn btn-secondary btn btn-block">Editar</button>
-            <button id="eliminarTurnoBtn" class="btn btn-secondary btn btn-block">Eliminar</button>
+            <!-- <p><strong>Fin visible:</strong> <span id="modalFin"></span></p> -->
+            <p><strong>Fin:</strong> <span id="modalHoraRealFin"></span></p>
+            <p><strong>Valor:</strong> $<span id="modalValor"></span></p>
+            <p><strong>Estado:</strong> <span id="modalEstado"></span></p>
+            <p style="display: none;"><span id="modalTurnoId"></span></p>
+            <!-- Editar botón envuelto para tooltip -->
+            <span id="tooltipEditarWrapper" class="tooltip-wrapper" data-bs-toggle="tooltip" title="">
+              <button id="editarTurnoBtn" class="btn btn-secondary" disabled>Editar</button>
+            </span>
+
+            <!-- Eliminar botón envuelto para tooltip -->
+            <span id="tooltipEliminarWrapper" class="tooltip-wrapper" data-bs-toggle="tooltip" title="">
+              <button id="eliminarTurnoBtn" class="btn btn-danger" disabled>Eliminar</button>
+            </span>
+
           </div>
         </div>
 
@@ -103,12 +131,39 @@ if ($tipo_usuario == 1) {
           </div>
         </div>
 
+        <!-- Tabla oculta para exportación -->
+         <!--  -->
+          <table id="tablaTurnos" class="table table-bordered table-striped m-0 p-0" style="display:none;">
+            <thead>
+              <tr>
+                <th>Empleado</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Valor</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+
 
     
         <script>
           document.addEventListener('DOMContentLoaded', function() {
+
+            document.addEventListener('DOMContentLoaded', function () {
+                          const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                          tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                            new bootstrap.Tooltip(tooltipTriggerEl);
+                          });
+                        });
+
+                        
+
+
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
+
               initialView: 'dayGridMonth',
               firstDay: 1, // Establece el lunes como el primer día de la semana
               locale: 'es', // Opcional: para mostrar los días en español
@@ -129,44 +184,312 @@ if ($tipo_usuario == 1) {
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listWeek'
               },
-              events: fetchTurnos,
-              eventClick: function(info) {
+              events:
+              fetchTurnos,
+                  eventClick: function(info) {
+                  const props = info.event.extendedProps;
 
-                const [nombre, valor] = info.event.title.split(' - $');
-                document.getElementById('modalEmpleado').textContent = nombre;
+                  const nombre = props.nombre || 'Sin nombre';
+                  const valor = props.valor || 0;
+                  const pagado = props.pagado == 1;
+                  const horaRealFin = props.hora_real_fin;
 
-                const opcionesFormato = {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  hour12: true // Esto activa el "a. m." / "p. m."
-                };
-                const inicio = new Date(info.event.start).toLocaleString('es-ES', opcionesFormato);
-                const fin = new Date(info.event.end).toLocaleString('es-ES', opcionesFormato);
+                  const opcionesFormato = {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  };
 
-                document.getElementById('modalInicio').textContent = inicio;
-                document.getElementById('modalFin').textContent = fin;
-                document.getElementById('modalValor').textContent = valor;
-                document.getElementById('modalTurnoId').textContent = info.event.id;
-                document.getElementById('turnoModal').style.display = 'flex';
-                const id_turno = document.getElementById('modalTurnoId').textContent = info.event.id;
-              },
+                  const inicio = new Date(info.event.start).toLocaleString('es-CO', opcionesFormato);
+                  const finVisible = new Date(info.event.end).toLocaleString('es-CO', opcionesFormato);
+                  const finReal = horaRealFin
+                    ? new Date(horaRealFin).toLocaleString('es-CO', opcionesFormato)
+                    : finVisible;
 
-              dateClick: function(info) {
-                const inicioInput = document.querySelector('#formCrearTurno [name="inicio"]');
-                const finInput = document.querySelector('#formCrearTurno [name="fin"]');
-                const valorInput = document.querySelector('#formCrearTurno [name="valor"]');
-                const fecha = info.dateStr;
-                inicioInput.value = fecha + "T19:00";
-                finInput.value = fecha + "T07:00";
-                valorInput.value = "65000";
-                document.getElementById('crearModal').style.display = 'flex';
-              }
-            });
+                    const estadoEl = document.getElementById('modalEstado');
 
-            calendar.render();
+                  if (pagado) {
+                    estadoEl.innerHTML = '<span class="badge bg-success">Pagado</span>';
+                  } else {
+                    estadoEl.innerHTML = '<span class="badge bg-danger">Por pagar</span>';
+                  }
+
+                  // Llenar campos del modal
+                  document.getElementById('modalEmpleado').textContent = nombre;
+                  document.getElementById('modalValor').textContent = valor.toLocaleString();
+                  document.getElementById('modalInicio').textContent = inicio;
+                  document.getElementById('modalHoraRealFin').textContent = finReal;
+                  document.getElementById('modalTurnoId').textContent = info.event.id;
+
+                  const btnEditar = document.getElementById('editarTurnoBtn');
+                  const btnEliminar = document.getElementById('eliminarTurnoBtn');
+
+                  const wrapperEditar = document.getElementById('tooltipEditarWrapper');
+                  const wrapperEliminar = document.getElementById('tooltipEliminarWrapper');
+
+                  if (pagado) {
+                    btnEditar.disabled = true;
+                    btnEliminar.disabled = true;
+
+                    wrapperEditar.setAttribute('title', 'Este turno ya fue pagado y no se puede editar');
+                    wrapperEliminar.setAttribute('title', 'Este turno ya fue pagado y no se puede eliminar');
+
+                    wrapperEditar.setAttribute('data-bs-toggle', 'tooltip');
+                    wrapperEliminar.setAttribute('data-bs-toggle', 'tooltip');
+                  } else {
+                    btnEditar.disabled = false;
+                    btnEliminar.disabled = false;
+
+                    wrapperEditar.removeAttribute('title');
+                    wrapperEliminar.removeAttribute('title');
+                    wrapperEditar.removeAttribute('data-bs-toggle');
+                    wrapperEliminar.removeAttribute('data-bs-toggle');
+                  }
+
+
+                  // Mostrar modal
+                  document.getElementById('turnoModal').style.display = 'flex';
+
+                  const tooltipList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                  tooltipList.forEach(function (el) {
+                    new bootstrap.Tooltip(el);
+                  });                  
+                },
+                
+
+
+
+                  dateClick: function(info) {
+                    const inicioInput = document.querySelector('#formCrearTurno [name="inicio"]');
+                    const finInput = document.querySelector('#formCrearTurno [name="fin"]');
+                    const valorInput = document.querySelector('#formCrearTurno [name="valor"]');
+                    const fecha = info.dateStr;
+                    inicioInput.value = fecha + "T19:00";
+                    finInput.value = fecha + "T07:00";
+                    valorInput.value = "65000";
+                    document.getElementById('crearModal').style.display = 'flex';
+                  },
+                  eventDidMount: function(info) {
+                      if (info.event.display === 'background') return;
+
+                      const nombre = info.event.extendedProps.nombre || 'Sin nombre';
+                      const valor = info.event.extendedProps.valor || 0;
+                      const pagado = info.event.extendedProps.pagado == 1;
+                      const horaRealFin = info.event.extendedProps.hora_real_fin;
+
+                      const estadoTexto = pagado ? 'Pagado' : 'Por pagar';
+                      const estadoClase = pagado ? 'text-success' : 'text-danger';
+                      const borderColor = pagado ? '#28a745' : '#dc3545'; // verde o rojo
+
+                      const horaInicio = new Date(info.event.start).toLocaleTimeString('es-CO', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                      });
+                      const horaFin = horaRealFin
+                        ? new Date(horaRealFin).toLocaleTimeString('es-CO', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                          })
+                        : '';
+                     
+                        
+                      info.el.innerHTML = `
+                        <div style="font-size: 0.85rem">
+                          <strong>${nombre}</strong><br>
+                          <span><i class="bi bi-clock"></i> ${horaInicio}</span> <br>
+                           a &nbsp; <span>${horaFin}</span><br>
+                          <span class="${estadoClase} fw-bold">${estadoTexto}</span>
+                        </div>
+                      `;
+
+                      // Estilo visual del evento
+                      info.el.style.backgroundColor = 'transparent';
+                      info.el.style.border = `1px solid ${borderColor}`;
+                      info.el.style.borderRadius = '6px';
+                      info.el.style.padding = '2px';
+                      info.el.style.color = 'inherit';
+
+                      // Popover
+                      const opciones = {
+                        day: '2-digit', month: '2-digit', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit', hour12: true
+                      };
+                      const inicio = new Date(info.event.start).toLocaleString('es-CO', opciones);
+
+                      const finReal = info.event.extendedProps.hora_real_fin;
+                      const fin = finReal
+                        ? new Date(finReal).toLocaleString('es-CO', opciones)
+                        : new Date(info.event.end).toLocaleString('es-CO', opciones);
+
+
+                      info.el.setAttribute('data-bs-toggle', 'popover');
+                      info.el.setAttribute('data-bs-trigger', 'hover focus');
+                      info.el.setAttribute('data-bs-placement', 'top');
+                      info.el.setAttribute('title', nombre);
+                      info.el.setAttribute('data-bs-html', 'true');
+                      info.el.setAttribute('data-bs-content', `
+                        <strong>Inicio:</strong> ${inicio}<br>
+                        <strong>Fin:</strong> ${fin}<br>
+                        <strong>Valor:</strong> $${valor.toLocaleString()}<br>
+                        <strong>Estado:</strong> ${estadoTexto}
+                      `);
+
+                      new bootstrap.Popover(info.el);
+                    }
+
+
+
+
+
+                });
+
+                function actualizarTablaTurnos(calendar) {
+  const eventos = calendar.getEvents();
+  const tbody = document.querySelector('#tablaTurnos tbody');
+  tbody.innerHTML = '';
+
+  eventos.forEach(evento => {
+    const props    = evento.extendedProps;
+    const nombre   = props.nombre || evento.title;
+    const valorNum = props.valor ? parseInt(props.valor) : 0;
+
+    // Fecha real de inicio y fin
+    const inicioReal = evento.start;
+    const finReal    = props.hora_real_fin 
+      ? new Date(props.hora_real_fin) 
+      : evento.end;
+
+    // Creamos la fila
+    const fila = document.createElement('tr');
+    fila.innerHTML = `
+      <td>${nombre}</td>
+      <td data-fecha-inicio="${inicioReal.toISOString()}">
+        ${inicioReal.toLocaleString('es-CO')}
+      </td>
+      <td data-fecha-fin="${finReal.toISOString()}">
+        ${finReal.toLocaleString('es-CO')}
+      </td>
+      <td data-valor="${valorNum}">$${valorNum.toLocaleString('es-CO')}</td>
+      <td>${props.pagado == 1 ? 'Pagado' : 'Por pagar'}</td>
+    `;
+    tbody.appendChild(fila);
+  });
+}
+
+
+                  calendar.render();
+
+                  
+
+                 document.getElementById('btnImprimirCalendario').addEventListener('click', () => {
+                      const fechaActual = calendar.getDate(); // obtiene el mes actual visible
+                      const opciones = { month: 'long', year: 'numeric' };
+                      const mesTexto = fechaActual.toLocaleDateString('es-CO', opciones);
+                      const titulo = document.getElementById('tituloMesImpresion');
+                      titulo.textContent = mesTexto.toUpperCase();
+                      titulo.style.display = 'block'; // mostrarlo antes de imprimir
+
+                      window.print();
+
+                      // Luego ocultarlo de nuevo por si el usuario sigue navegando
+                      setTimeout(() => {
+                        titulo.style.display = 'none';
+                      }, 1000);
+                    });
+
+                  // document.getElementById('btnImprimirCalendario').addEventListener('click', () => {
+                  //     window.print();
+                  //   });
+
+                  // Función auxiliar para formatear la fecha como "YYYY-MM-DD"
+                    function hoyComoString() {
+                      const d = new Date();
+                      const yyyy = d.getFullYear();
+                      const mm   = String(d.getMonth() + 1).padStart(2, '0');
+                      const dd   = String(d.getDate()).padStart(2, '0');
+                      return `${yyyy}${mm}${dd}`;
+                    }
+
+                              // 👉 Eventos para exportar
+                  // Exportar PDF con fecha en el nombre
+                    document.getElementById('btnExportPDF').addEventListener('click', () => {
+                      actualizarTablaTurnos(calendar);
+                      const { jsPDF } = window.jspdf;
+                      const doc = new jsPDF();
+                      doc.text("Turnos del mes actual", 14, 15);
+                      doc.autoTable({ html: '#tablaTurnos', startY: 20 });
+
+                      const fecha = hoyComoString();  
+                      doc.save(`turnos_${fecha}.pdf`);
+                    });
+
+                  document.getElementById('btnExportExcel').addEventListener('click', () => {
+  // Opciones para formatear con día de la semana, fecha y hora en 12 h
+  const opciones = {
+    weekday: 'long',   // día de la semana
+    day:     '2-digit',
+    month:   'long',
+    hour:    '2-digit',
+    minute:  '2-digit',
+    hour12:  true
+  };
+
+  // Mapear los eventos visibles
+  const data = calendar.getEvents().map(ev => {
+    const props = ev.extendedProps;
+
+    // formatea "martes 24 de junio 07:00 p. m."
+    const inicio = ev.start.toLocaleString('es-CO', opciones);
+    const finDate = props.hora_real_fin
+      ? new Date(props.hora_real_fin)
+      : ev.end;
+    const fin = finDate.toLocaleString('es-CO', opciones);
+
+    return {
+      Empleado: props.nombre || ev.title,
+      Inicio:   inicio,
+      Fin:      fin,
+      Valor:    props.valor ? parseInt(props.valor) : 0,
+      Estado:   props.pagado == 1 ? 'Pagado' : 'Por pagar'
+    };
+  });
+
+  // Genera el libro y la hoja
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(data);
+
+  // Ajusta anchos de columna
+  ws['!cols'] = [
+    { wch: 20 }, // Empleado
+    { wch: 30 }, // Inicio (más ancho para el día de la semana)
+    { wch: 30 }, // Fin
+    { wch: 10 }, // Valor
+    { wch: 12 }  // Estado
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Turnos');
+  const fecha = hoyComoString();
+  XLSX.writeFile(wb, `turnos_${fecha}.xlsx`);
+});
+                  document.getElementById('btnImprimir').addEventListener('click', () => {
+                    actualizarTablaTurnos(calendar);
+                    const contenido = document.getElementById('tablaTurnos').outerHTML;
+                    const ventana = window.open('', '', 'height=600,width=800');
+                    ventana.document.write('<html><head><title>Imprimir Turnos</title>');
+                    ventana.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">');
+                    ventana.document.write('</head><body>');
+                    ventana.document.write('<h3>Turnos visibles en calendario</h3>');
+                    ventana.document.write(contenido);
+                    ventana.document.write('</body></html>');
+                    ventana.document.close();
+                    ventana.print();
+                  });
+
 
             const select = document.getElementById('usuario_id');
             const nuevoUsuarioSelect = document.getElementById('nuevo_usuario_id');
@@ -297,35 +620,43 @@ if ($tipo_usuario == 1) {
               const empleado = document.getElementById('modalEmpleado').textContent;
 
               const inicioText = document.getElementById('modalInicio').textContent;
-              const finText = document.getElementById('modalFin').textContent;
+              const finText = document.getElementById('modalHoraRealFin').textContent;
               const valor = document.getElementById('modalValor').textContent;
+
+              // ✅ Obtener el evento actual
+              const evento = calendar.getEventById(id);
+              const horaRealFin = evento.extendedProps.hora_real_fin;
 
               document.getElementById('edit_id_turno').value = id;
               document.getElementById('edit_inicio').value = convertirFechaParaDatetime(inicioText);
-              document.getElementById('edit_fin').value = convertirFechaParaDatetime(finText);
-              document.getElementById('edit_valor').value = valor;
 
-              console.log(inicioText);
-              // Cargar select de usuarios si aún no está
-              const editarUsuarioSelect = document.getElementById('edit_usuario_id');
-              editarUsuarioSelect.innerHTML = '';
-              fetch('usuarios_turnos_obteneruser.php')
-                .then(res => res.json())
-                .then(data => {
-                  data.forEach(usuario => {
-                    const opt = document.createElement('option');
-                    opt.value = usuario.id;
-                    opt.textContent = usuario.nombre;
-                    if (usuario.nombre === empleado) {
-                      opt.selected = true;
-                    }
-                    editarUsuarioSelect.appendChild(opt);
-                  });
+            // ✅ Usar hora real para el campo fin
+            document.getElementById('edit_fin').value = horaRealFin
+              ? horaRealFin.slice(0, 16)
+              : convertirFechaParaDatetime(finText);
+
+            document.getElementById('edit_valor').value = valor;
+
+            // Cargar usuarios
+            const editarUsuarioSelect = document.getElementById('edit_usuario_id');
+            editarUsuarioSelect.innerHTML = '';
+            fetch('usuarios_turnos_obteneruser.php')
+              .then(res => res.json())
+              .then(data => {
+                data.forEach(usuario => {
+                  const opt = document.createElement('option');
+                  opt.value = usuario.id;
+                  opt.textContent = usuario.nombre;
+                  if (usuario.nombre === empleado) {
+                    opt.selected = true;
+                  }
+                  editarUsuarioSelect.appendChild(opt);
                 });
+              });
 
-              document.getElementById('turnoModal').style.display = 'none';
-              document.getElementById('editarModal').style.display = 'flex';
-            });
+            document.getElementById('turnoModal').style.display = 'none';
+            document.getElementById('editarModal').style.display = 'flex';
+          });
 
             // Cerrar modal editar
             document.getElementById('cerrarEditar').onclick = () => {
@@ -452,7 +783,11 @@ if ($tipo_usuario == 1) {
                 });
             }
             //eliminar turno
+             
           });
+
+          
+
         </script>
       </div>
     </main>

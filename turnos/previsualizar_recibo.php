@@ -48,7 +48,7 @@ require_once "../conexion/conexion.php";
                         $agrupado[$id]['total'] += $t['valor'];
                     }
 
-                    echo "<h2>Previsualización del Recibo</h2>";
+                    echo "<h4>Previsualización del Recibo</h4>";
                     foreach ($agrupado as $usuario_id => $info) {
                         echo "<h3>Empleado: {$info['nombre']} (ID: $usuario_id)</h3>";
                         echo "<ul>";
@@ -64,7 +64,11 @@ require_once "../conexion/conexion.php";
                     foreach ($turnos as $id) {
                         echo '<input type="hidden" name="turnos[]" value="' . htmlspecialchars($id) . '">';
                     }
-                    echo '<button type="submit">Confirmar y Generar Recibo PDF</button>';
+                    echo '<div class="text-center mb-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-receipt"></i> Confirmar y Generar Recibo
+            </button>
+          </div>';
                     echo '</form>';
                 } else {
                     echo "⚠️ No se seleccionaron turnos.";
@@ -77,7 +81,7 @@ require_once "../conexion/conexion.php";
     <script>
         function redirigirDespues() {
             setTimeout(function() {
-                window.location.href = "usuarios_turnos_recibos.php";
+                window.location.href = "usuarios_turnos_nomina.php";
             }, 1000); // redirige después de 1 segundo
         }
     </script>

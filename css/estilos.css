@@ -1,4 +1,65 @@
 
+    /* Oculta todo por defecto */
+    @media print {
+    @page {
+      size: landscape;
+      margin: 0;
+    }
+
+    html, body {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    nav, header, footer, .navbar, .sidebar, .layoutSidenav_nav,
+    #btnImprimirCalendario, #usuario_id, h2,h3,h4,h5,h6, label,.form-control, .btn {
+      display: none !important;
+    }
+
+    #tituloMesImpresion {
+      display: block !important;
+      margin: 10px auto;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    #calendar {
+      display: block;
+      width: 100% !important;
+      margin: 0 auto;
+      padding: 0 !important;
+      position: static !important;
+    }
+
+    .fc-event {
+      font-size: 13px !important;
+      padding: 3px 4px !important;
+    }
+  }
+
+
+  /* Ocultar título fuera de impresión */
+  #tituloMesImpresion {
+    display: none;
+  }
+    
+ 
+
+
+/* tooltips modal turno*/
+.tooltip-wrapper {
+  display: inline-block;
+  cursor: not-allowed;
+}
+
+.tooltip-wrapper .btn:disabled {
+  pointer-events: none;
+  opacity: 0.65;
+}
 
 
 /* modales clandario*/
