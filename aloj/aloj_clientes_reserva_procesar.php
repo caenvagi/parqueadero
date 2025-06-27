@@ -2,6 +2,12 @@
 session_start();
 require_once "../conexion/conexion.php";
 
+
+// Obtener el próximo ID de reserva (AUTO_INCREMENT)
+$stmtAI = $pdo->query("SHOW TABLE STATUS LIKE 'aloj_reservas'");
+$tabla = $stmtAI->fetch();
+$proximo_reserva_id = $tabla['Auto_increment'];
+
 if (!isset($_SESSION['id'])) {
     die("No autorizado.");
 }
@@ -42,6 +48,8 @@ try {
         $cliente_id = $pdo->lastInsertId();
     }
 
+    
+
     // =============================
     // 2. DATOS DE LA RESERVA
     // =============================
@@ -78,21 +86,20 @@ try {
     // =============================
     // 3. GUARDAR RESERVA
     // =============================
-    $stmt = $pdo->prepare("INSERT INTO aloj_reservas 
-        (cliente_id, habitacion_id, fecha_ingreso, fecha_salida, cantidad_personas, valor_total, estado, usuario_id, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    
-    $stmt->execute([
-        $cliente_id,
-        $habitacion_id,
-        $fecha_ingreso,
-        $fecha_salida,
-        $cantidad_personas,
-        $valor_total,
-        $estado,
-        $usuario_id,
-        $created_at
-    ]);
+    $stmt = $pdo->prepare("
+    INSERT INTO aloj_reservas (id, cliente_id, habitacion_id, fecha_ingreso, fecha_salida, cantidad_personas, valor_total, estado, usuario_id, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'pendiente', ?, NOW())
+");
+$stmt->execute([
+    $proximo_reserva_id,
+    $cliente_id,
+    $habitacion_id,
+    $fecha_ingreso,
+    $fecha_salida,
+    $cantidad_personas,
+    $valor_total,
+    $_SESSION['id']
+]);
 
    $reserva_id = $pdo->lastInsertId();
 
@@ -106,5 +113,26 @@ echo "<script>
     echo "❌ Error: " . $e->getMessage();
 } catch (PDOException $e) {
     echo "❌ Error en base de datos: " . $e->getMessage();
+}
+
+if (isset($_POST['acompanantes']['nombre'])) {
+    $nombres     = $_POST['acompanantes']['nombre'];
+    $documentos  = $_POST['acompanantes']['documento'];
+    $edades      = $_POST['acompanantes']['edad'];
+    $usuario_id  = $_SESSION['id']; // quien registró
+
+    for ($i = 0; $i < count($nombres); $i++) {
+        $nombre = strtoupper(trim($nombres[$i]));
+        $documento = trim($documentos[$i]);
+        $edad = intval($edades[$i]);
+
+        if ($nombre && $documento && $edad > 0) {
+            $stmt = $pdo->prepare("
+                INSERT INTO aloj_acompanantes (reserva_id, nombre, documento, edad, usuario_id, created_at)
+                VALUES (?, ?, ?, ?, ?, NOW())
+            ");
+            $stmt->execute([$proximo_reserva_id, $nombre, $documento, $edad, $usuario_id]);
+        }
+    }
 }
 ?>

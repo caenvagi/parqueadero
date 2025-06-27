@@ -75,11 +75,9 @@ try {
 <?php require '../logs/nav-bar.php'; ?>
 <div id="layoutSidenav_content">
     <main class="ms-5 me-5">
-
         <body class="bg-light">
             <div class="container mt-4">
-                <h2 class="mb-4">Registro de Clientes</h2>
-
+                <!-- <h2 class="mb-4">Registro de Clientes</h2> -->
                 <?php if (!empty($mensaje)): ?>
                     <div class="alert alert-info"><?= $mensaje ?></div>
                 <?php endif; ?>
@@ -89,38 +87,63 @@ try {
                     <div class="col-md-12">
                         <div class="card p-4 shadow-sm">
                             <form action="aloj_clientes_reserva_procesar.php" method="POST" id="formClientes" class="row g-3">
-
+                                <h5 class="mt-1">Datos del cliente</h5>
                                 <!-- Datos del cliente -->
-
-
                                 <div class="col-md-6">
                                     <label>Nombre:</label>
-                                    <input type="text" name="nombre" class="form-control" required>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Nombre" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
                                 </div>
 
                                 <div class="col-md-3">
                                     <label>Documento:</label>
-                                    <input type="text" name="documento" class="form-control" maxlength="10" required>
+                                    <input type="text"
+                                        placeholder="Documento"
+                                        name="documento"
+                                        id="documento"
+                                        class="form-control"
+                                        required
+                                        minlength="5"
+                                        maxlength="10"
+                                        oninput="validarDocumento(this)">
+                                    <div id="documentoError" class="text-danger small mt-1"></div>
                                 </div>
 
                                 <div class="col-md-3">
                                     <label>Teléfono:</label>
-                                    <input type="text" name="telefono" class="form-control" required>
+                                    <input type="text"
+                                        placeholder="Telefono"
+                                        name="telefono"
+                                        id="telefono"
+                                        class="form-control"
+                                        required
+                                        maxlength="12"
+                                        oninput="formatearTelefono(this)">
+                                    <div id="telefonoError" class="text-danger small mt-1"></div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label>Procedencia:</label>
-                                    <input type="text" name="procedencia" id="procedencia" class="form-control">
+                                    <select name="procedencia" id="procedencia" class="form-select" required>
+                                        <option value="">Cargando municipios...</option>
+                                    </select>
+                                    <div id="procedenciaError" class="text-danger small mt-1"></div>
                                 </div>
 
                                 <div class="col-md-3">
                                     <label>Placa del vehículo:</label>
-                                    <input type="text" name="placa_vehiculo" id="placa_vehiculo" class="form-control" maxlength="7" oninput="formatearPlaca(this)" required>
-                                    <div id="placaError" class="text-danger small mt-1"></div> <!-- este div es clave -->
+                                    <input type="text"
+                                        placeholder="Placa vehiculo"
+                                        name="placa_vehiculo"
+                                        id="placa_vehiculo"
+                                        class="form-control"
+                                        maxlength="7"
+                                        required
+                                        oninput="formatearPlaca(this)">
+                                    <div id="placaError" class="text-danger small mt-1"></div>
                                 </div>
 
                                 <!-- Datos de la reserva -->
-                                <h5 class="mt-4">Datos de la Reserva</h5>
+                                <h5 class="mt-1">Datos de la Reserva</h5>
 
                                 <div class="col-md-6">
                                     <label>Habitación:</label>
@@ -141,149 +164,116 @@ try {
                                 </div>
 
                                 <div class="col-md-3">
-                                    <label>Personas:</label>
-                                    <input type="number" name="cantidad_personas" class="form-control" min="1" required>
-                                </div>
-
-                                <div class="col-md-3">
                                     <label>Valor total:</label>
                                     <input type="text" name="valor_total" class="form-control" required>
                                 </div>
 
+                                <div class="col-md-3">
+                                    <label>Huespedes:</label>
+                                    <input type="number" name="cantidad_personas" id="cantidad_personas" class="form-control" min="1" readonly required>
+                                </div>
+
+                                
+
+                                <div class="col-md-3">
+                                    <label for="total_noches" class="form-label">Total de Noches</label>
+                                    <input type="number" class="form-control" id="total_noches" name="total_noches" readonly>
+                                </div>
+
                                 <input type="hidden" name="estado" value="pendiente">
 
-                                <div class="col-12 mt-3">
-                                    <button type="button" class="btn btn-primary" onclick="mostrarModal()">Revisar y Confirmar</button>
-
-
-                                    <!-- <form method="POST" id="formClientes">
-                                <div class="input-group mb-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-person-circle"></i>&nbsp;</span>
-                                        </div>
-                                        <input type="text" class="form-control" name="nombre" placeholder="Nombre" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
+                                <!-- Plantilla oculta para clonar -->
+                                <div class="acompanante row d-none" id="plantilla-acompanante">
+                                    <div class="col-md-4 mt-2">
+                                        <input type="text" name="acompanantes[nombre][]" class="form-control" placeholder="Nombre del acompañante" onkeyup="javascript:this.value=this.value.toUpperCase();"required>
                                     </div>
-                                    <div class="input-group mb-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-telephone"></i>&nbsp;</span>
-                                        </div>
-                                        <input type="text"
-                                        placeholder="Documento"
-                                        name="documento"
-                                        id="documento"
-                                        class="form-control"
-                                        required
-                                        minlength="5"
-                                        maxlength="10"
-                                        oninput="validarDocumento(this)">
-                                        <div id="documentoError" class="text-danger small mt-1"></div>
+                                    <div class="col-md-3 mt-2">
+                                        <input type="text" name="acompanantes[documento][]" class="form-control" placeholder="Documento" required>
                                     </div>
-                                    <div class="input-group mb-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-telephone"></i>&nbsp;</span>
-                                        </div>
-                                        <input type="text"
-                                        placeholder="Telefono"
-                                        name="telefono"
-                                        id="telefono"
-                                        class="form-control"
-                                        required
-                                        maxlength="12"
-                                        oninput="formatearTelefono(this)">
-                                        <div id="telefonoError" class="text-danger small mt-1"></div>
+                                    <div class="col-md-3 mt-2">
+                                        <input type="number" name="acompanantes[edad][]" class="form-control" placeholder="Edad" required min="0">
                                     </div>
-                                    
-                                   
-                                <div class="input-group mb-2">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-key"></i>&nbsp;</span>
-                                        </div>
-                                        <input type="text"
-                                        placeholder="Placa vehiculo"
-                                            name="placa_vehiculo"
-                                            id="placa_vehiculo"
-                                            class="form-control"
-                                            maxlength="7"
-                                            required
-                                            oninput="formatearPlaca(this)">
-                                        <div id="placaError" class="text-danger small mt-1"></div>
+                                    <div class="col-md-2 mt-2">
+                                        <button type="button" class="btn btn-danger btn-remove-acompanante w-100">Eliminar</button>
                                     </div>
 
-                                     <div class="mb-3">
-                                    <label class="form-label">Procedencia</label>
-                                    <select name="procedencia" id="procedencia" class="form-select" required>
-                                        <option value="">Cargando municipios...</option>
-                                    </select>
-                                    <div id="procedenciaError" class="text-danger small mt-1"></div>
                                 </div>
-
-
-
-                               
-                                <button type="submit" class="btn btn-primary">Registrar Cliente</button>
-                            </form> -->
+                                <div class="col col-md-12 col-xl-12 mt-3">
+                                    <button type="button" class="btn btn-success mt-2" id="btnAgregarAcompanante">
+                                        + Agregar Acompañante
+                                    </button>
                                 </div>
+                                <div id="acompanantes-container"></div>                                
+                                
+                                <button type="button" class="btn btn-secondary" onclick="mostrarModal()">Revisar y Confirmar</button>
+                                
+                            </form>
                         </div>
                         <!-- Modal de Confirmación -->
-                        <div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content border-primary">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title" id="modalConfirmacionLabel">Confirmar Reserva</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p><strong>Nombre:</strong> <span id="confirmNombre"></span></p>
-                                        <p><strong>Cantidad de personas:</strong> <span id="confirmPersonas"></span></p>
-                                        <p><strong>Fechas:</strong> <span id="confirmFechas"></span></p>
-                                        <p><strong>Noches a pagar:</strong> <span id="confirmNoches"></span></p>
-                                        <p><strong>Valor total:</strong> $<span id="confirmValor"></span></p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success" id="btnConfirmarFinal">Confirmar y Guardar</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <div class="modal fade" id="modalConfirmacion" tabindex="-1" aria-labelledby="modalConfirmacionLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content border-primary">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title" id="modalConfirmacionLabel">Confirmar Reserva</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p><strong>Nombre:</strong> <span id="confirmNombre"></span></p>
+                                            <p><strong>Cantidad de personas:</strong> <span id="confirmPersonas"></span></p>
+                                            <p><strong>Fechas:</strong> <span id="confirmFechas"></span></p>
+                                            <p><strong>Noches a pagar:</strong> <span id="confirmNoches"></span></p>
+                                            <p><strong>Valor total:</strong> $<span id="confirmValor"></span></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success" id="btnConfirmarFinal">Confirmar y Guardar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-
-                        <!-- Listado -->
-                        <!-- <div class="col-md-6">
-                        <div class="card p-4 shadow-sm">
-                            <h5>Clientes Registrados</h5>
-                            <?php if (count($clientes) > 0): ?>
-                                <div class="table-responsive mt-3">
-                                    <table class="table table-bordered table-striped">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th>Nombre</th>
-                                                <th>Documento</th>
-                                                <th>Procedencia</th>
-                                                <th>Placa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($clientes as $cli): ?>
-                                                <tr>
-                                                    <td><?= htmlspecialchars($cli['nombre']) ?></td>
-                                                    <td><?= htmlspecialchars($cli['documento']) ?></td>
-                                                    <td><?= htmlspecialchars($cli['procedencia']) ?></td>
-                                                    <td><?= htmlspecialchars($cli['placa_vehiculo']) ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            <?php else: ?>
-                                <p class="text-muted">No hay clientes registrados aún.</p>
-                            <?php endif; ?>
-                        </div>
-                    </div> -->
+                        <!-- Modal de Confirmación -->                        
                     </div>
                 </div>
                 <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const container = document.getElementById("acompanantes-container");
+                        const plantilla = document.getElementById("plantilla-acompanante");
+                        const btnAgregar = document.getElementById("btnAgregarAcompanante");
+                        const cantidadInput = document.getElementById("cantidad_personas");
+
+                        if (!container || !plantilla || !btnAgregar || !cantidadInput) {
+                            console.error("❌ Uno de los elementos del DOM no se encontró. Revisa los IDs.");
+                            return;
+                        }
+
+                        function actualizarCantidadPersonas() {
+                            const totalAcompanantes = container.querySelectorAll(".acompanante").length;
+                            cantidadInput.value = 1 + totalAcompanantes;
+                        }
+
+                        btnAgregar.addEventListener("click", function() {
+                            const nuevaFila = plantilla.cloneNode(true);
+                            nuevaFila.classList.remove("d-none");
+                            nuevaFila.removeAttribute("id");
+                            nuevaFila.querySelectorAll("input").forEach(input => input.value = "");
+                            container.appendChild(nuevaFila);
+                            actualizarCantidadPersonas();
+                        });
+
+                        container.addEventListener("click", function(e) {
+                            if (e.target.classList.contains("btn-remove-acompanante")) {
+                                const fila = e.target.closest(".acompanante");
+                                fila.remove();
+                                actualizarCantidadPersonas();
+                            }
+                        });
+
+                        actualizarCantidadPersonas();
+                    });
+                </script>
+
                 <script>
                     function mostrarModal() {
                         const nombre = document.querySelector('[name="nombre"]').value.trim();
@@ -333,12 +323,26 @@ try {
                                 separator: ' / ',
                                 applyLabel: 'Aplicar',
                                 cancelLabel: 'Cancelar',
+                                fromLabel: 'Desde',
+                                toLabel: 'Hasta',
+                                customRangeLabel: 'Personalizado',
                                 daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-                                ],
+                                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
                                 firstDay: 1
                             }
+                        }, function(start, end, label) {
+                            const fechaInicio = new Date(start.format('YYYY-MM-DD'));
+                            const fechaFin = new Date(end.format('YYYY-MM-DD'));
+                            const diferencia = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+
+                            if (diferencia < 1) {
+                                alert("El rango de fechas debe ser al menos 1 noche.");
+                                $('#rango_fechas').val('');
+                                $('#total_noches').val('');
+                                return;
+                            }
+
+                            $('#total_noches').val(diferencia);
                         });
                     });
                 </script>

@@ -25,11 +25,14 @@ $sql = "
 $reservas_activas = $pdo->query($sql)->fetchAll();
 ?>
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="es">
+  <head>
     <?php require '../logs/head.php'; ?>
-</head>
-<body>
+  </head>
+  <?php require '../logs/nav-bar.php'; ?>
+  <div id="layoutSidenav_content">
+    <main class="m-3">
+      <body>
     
 
 <div class="card shadow">
@@ -89,4 +92,6 @@ $reservas_activas = $pdo->query($sql)->fetchAll();
   </div>
 </div>
 </body>
+    </main>
+  </div>
 </html>
