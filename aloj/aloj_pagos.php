@@ -42,7 +42,11 @@ if ($reserva_id > 0) {
 }
 // Obtener acompañantes de la reserva
 $acompanantes = [];
+<<<<<<< HEAD
 $stmt = $pdo->prepare("SELECT nombre, documento, parentesco FROM aloj_acompanantes WHERE reserva_id = ?");
+=======
+$stmt = $pdo->prepare("SELECT nombre, documento, edad FROM aloj_acompanantes WHERE reserva_id = ?");
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
 $stmt->execute([$reserva_id]);
 $acompanantes = $stmt->fetchAll();
 ?>
@@ -240,7 +244,11 @@ $acompanantes = $stmt->fetchAll();
                           <tr>
                             <th>Nombre</th>
                             <th>Documento</th>
+<<<<<<< HEAD
                             <th>Parentesco</th>
+=======
+                            <th>Edad</th>
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
                           </tr>
                         </thead>
                         <tbody>
@@ -248,7 +256,11 @@ $acompanantes = $stmt->fetchAll();
                             <tr>
                               <td><?= htmlspecialchars($a['nombre']) ?></td>
                               <td><?= htmlspecialchars($a['documento']) ?></td>
+<<<<<<< HEAD
                               <td><?= htmlspecialchars($a['parentesco']) ?></td>
+=======
+                              <td><?= htmlspecialchars($a['edad']) ?></td>
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
                             </tr>
                           <?php endforeach; ?>
                         </tbody>

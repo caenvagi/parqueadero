@@ -194,7 +194,11 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
                                         <input type="text" name="acompanantes[documento][]" class="form-control" placeholder="Documento" required>
                                     </div>
                                     <div class="col-md-3 mt-2">
+<<<<<<< HEAD
                                         <input type="text" name="acompanantes[parentesco][]" class="form-control" placeholder="Parentesco" onkeyup="javascript:this.value=this.value.toUpperCase();"required>
+=======
+                                        <input type="number" name="acompanantes[edad][]" class="form-control" placeholder="Edad" required min="0">
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
                                     </div>
                                     <div class="col-md-2 mt-2">
                                         <button type="button" class="btn btn-danger btn-remove-acompanante w-100">Eliminar</button>
@@ -319,6 +323,7 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
 
 
                 <script>
+<<<<<<< HEAD
                      // Función para obtener parámetros de la URL
   function obtenerParametroURL(nombre) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -373,6 +378,37 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
       $('#total_noches').val(diferencia);
     });
   });
+=======
+                    $(function() {
+                        $('#rango_fechas').daterangepicker({
+                            locale: {
+                                format: 'YYYY-MM-DD',
+                                separator: ' / ',
+                                applyLabel: 'Aplicar',
+                                cancelLabel: 'Cancelar',
+                                fromLabel: 'Desde',
+                                toLabel: 'Hasta',
+                                customRangeLabel: 'Personalizado',
+                                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                firstDay: 1
+                            }
+                        }, function(start, end, label) {
+                            const fechaInicio = new Date(start.format('YYYY-MM-DD'));
+                            const fechaFin = new Date(end.format('YYYY-MM-DD'));
+                            const diferencia = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+
+                            if (diferencia < 1) {
+                                alert("El rango de fechas debe ser al menos 1 noche.");
+                                $('#rango_fechas').val('');
+                                $('#total_noches').val('');
+                                return;
+                            }
+
+                            $('#total_noches').val(diferencia);
+                        });
+                    });
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
                 </script>
                 <script>
                     document.querySelectorAll('input[type="text"]').forEach(input => {

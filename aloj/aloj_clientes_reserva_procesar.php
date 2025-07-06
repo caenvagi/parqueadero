@@ -114,25 +114,4 @@ echo "<script>
 } catch (PDOException $e) {
     echo "❌ Error en base de datos: " . $e->getMessage();
 }
-
-if (isset($_POST['acompanantes']['nombre'])) {
-    $nombres     = $_POST['acompanantes']['nombre'];
-    $documentos  = $_POST['acompanantes']['documento'];
-    $parentescoes      = $_POST['acompanantes']['parentesco'];
-    $usuario_id  = $_SESSION['id']; // quien registró
-
-    for ($i = 0; $i < count($nombres); $i++) {
-        $nombre = strtoupper(trim($nombres[$i]));
-        $documento = trim($documentos[$i]);
-        $parentesco = strtoupper(trim($parentescoes[$i]));
-
-        if ($nombre && $documento && $parentesco > 0) {
-            $stmt = $pdo->prepare("
-                INSERT INTO aloj_acompanantes (reserva_id, nombre, documento, parentesco, usuario_id, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW())
-            ");
-            $stmt->execute([$proximo_reserva_id, $nombre, $documento, $parentesco, $usuario_id]);
-        }
-    }
-}
 ?>

@@ -79,12 +79,16 @@ foreach ($datos_mensuales as $fila) {
 <html lang="es">
   <head>
     <?php require '../logs/head.php'; ?>
+<<<<<<< HEAD
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+=======
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
   </head>
   <?php require '../logs/nav-bar.php'; ?>
   <div id="layoutSidenav_content">
     <main class="m-3">
       <body>
+<<<<<<< HEAD
 
       <div class="row mb-4">
   <div class="col-md-6">
@@ -113,6 +117,8 @@ foreach ($datos_mensuales as $fila) {
     <canvas id="graficoReservas" height="100"></canvas>
   </div>
 </div>
+=======
+>>>>>>> 6c41453f82896d91c2aab7ee8e1416c219b13dfc
     
 
 <div class="card shadow">
