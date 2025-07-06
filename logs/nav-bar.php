@@ -310,6 +310,10 @@ if ($tipo_usuario == 1) {
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Reservas
                                         </a>
+                                        <a class="nav-link" href="../aloj/aloj_calendario.php">
+                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Calendario
+                                        </a>
                                         <!-- <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Nomina

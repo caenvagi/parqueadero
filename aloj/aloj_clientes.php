@@ -59,6 +59,9 @@ try {
     $mensaje = "❌ Error al cargar clientes: " . $e->getMessage();
 }
 
+$fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
+
+
 ?>
 
 <!DOCTYPE html>
@@ -191,7 +194,7 @@ try {
                                         <input type="text" name="acompanantes[documento][]" class="form-control" placeholder="Documento" required>
                                     </div>
                                     <div class="col-md-3 mt-2">
-                                        <input type="number" name="acompanantes[edad][]" class="form-control" placeholder="Edad" required min="0">
+                                        <input type="text" name="acompanantes[parentesco][]" class="form-control" placeholder="Parentesco" onkeyup="javascript:this.value=this.value.toUpperCase();"required>
                                     </div>
                                     <div class="col-md-2 mt-2">
                                         <button type="button" class="btn btn-danger btn-remove-acompanante w-100">Eliminar</button>
@@ -316,35 +319,60 @@ try {
 
 
                 <script>
-                    $(function() {
-                        $('#rango_fechas').daterangepicker({
-                            locale: {
-                                format: 'YYYY-MM-DD',
-                                separator: ' / ',
-                                applyLabel: 'Aplicar',
-                                cancelLabel: 'Cancelar',
-                                fromLabel: 'Desde',
-                                toLabel: 'Hasta',
-                                customRangeLabel: 'Personalizado',
-                                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                                firstDay: 1
-                            }
-                        }, function(start, end, label) {
-                            const fechaInicio = new Date(start.format('YYYY-MM-DD'));
-                            const fechaFin = new Date(end.format('YYYY-MM-DD'));
-                            const diferencia = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+                     // Función para obtener parámetros de la URL
+  function obtenerParametroURL(nombre) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(nombre);
+  }
 
-                            if (diferencia < 1) {
-                                alert("El rango de fechas debe ser al menos 1 noche.");
-                                $('#rango_fechas').val('');
-                                $('#total_noches').val('');
-                                return;
-                            }
+  $(function () {
+    const fechaDesdeURL = obtenerParametroURL('fecha');
+    let fechaInicio = moment(); // por defecto: hoy
+    let fechaFin = moment().add(1, 'days'); // por defecto: mañana
 
-                            $('#total_noches').val(diferencia);
-                        });
-                    });
+    // Si viene la fecha desde el calendario, usarla
+    if (fechaDesdeURL) {
+      fechaInicio = moment(fechaDesdeURL);
+      fechaFin = moment(fechaDesdeURL).add(1, 'days');
+
+      // Establecer automáticamente el total de noches
+      const diferencia = fechaFin.diff(fechaInicio, 'days');
+      $('#total_noches').val(diferencia);
+    }
+
+    $('#rango_fechas').daterangepicker({
+      startDate: fechaInicio,
+      endDate: fechaFin,
+      locale: {
+        format: 'YYYY-MM-DD',
+        separator: ' / ',
+        applyLabel: 'Aplicar',
+        cancelLabel: 'Cancelar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Personalizado',
+        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+        monthNames: [
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ],
+        firstDay: 1
+      }
+    }, function (start, end, label) {
+      const fechaInicio = new Date(start.format('YYYY-MM-DD'));
+      const fechaFin = new Date(end.format('YYYY-MM-DD'));
+      const diferencia = (fechaFin - fechaInicio) / (1000 * 60 * 60 * 24);
+
+      if (diferencia < 1) {
+        alert("El rango de fechas debe ser al menos 1 noche.");
+        $('#rango_fechas').val('');
+        $('#total_noches').val('');
+        return;
+      }
+
+      $('#total_noches').val(diferencia);
+    });
+  });
                 </script>
                 <script>
                     document.querySelectorAll('input[type="text"]').forEach(input => {

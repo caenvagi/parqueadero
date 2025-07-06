@@ -118,20 +118,20 @@ echo "<script>
 if (isset($_POST['acompanantes']['nombre'])) {
     $nombres     = $_POST['acompanantes']['nombre'];
     $documentos  = $_POST['acompanantes']['documento'];
-    $edades      = $_POST['acompanantes']['edad'];
+    $parentescoes      = $_POST['acompanantes']['parentesco'];
     $usuario_id  = $_SESSION['id']; // quien registró
 
     for ($i = 0; $i < count($nombres); $i++) {
         $nombre = strtoupper(trim($nombres[$i]));
         $documento = trim($documentos[$i]);
-        $edad = intval($edades[$i]);
+        $parentesco = strtoupper(trim($parentescoes[$i]));
 
-        if ($nombre && $documento && $edad > 0) {
+        if ($nombre && $documento && $parentesco > 0) {
             $stmt = $pdo->prepare("
-                INSERT INTO aloj_acompanantes (reserva_id, nombre, documento, edad, usuario_id, created_at)
+                INSERT INTO aloj_acompanantes (reserva_id, nombre, documento, parentesco, usuario_id, created_at)
                 VALUES (?, ?, ?, ?, ?, NOW())
             ");
-            $stmt->execute([$proximo_reserva_id, $nombre, $documento, $edad, $usuario_id]);
+            $stmt->execute([$proximo_reserva_id, $nombre, $documento, $parentesco, $usuario_id]);
         }
     }
 }
