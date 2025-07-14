@@ -101,7 +101,25 @@ $stmt->execute([
     $_SESSION['id']
 ]);
 
-   $reserva_id = $pdo->lastInsertId();
+$reserva_id = $pdo->lastInsertId();
+
+if (!empty($_POST['acompanantes']['nombre'])) {
+  $nombres = $_POST['acompanantes']['nombre'];
+  $documentos = $_POST['acompanantes']['documento'];
+  $parentescos = $_POST['acompanantes']['parentesco'];
+
+  for ($i = 0; $i < count($nombres); $i++) {
+    $nombre = strtoupper(trim($nombres[$i]));
+    $documento = trim($documentos[$i]);
+    $parentesco = (int) $parentescos[$i];
+
+    $stmt = $pdo->prepare("INSERT INTO aloj_acompanantes 
+      (reserva_id, nombre, documento, parentesco, usuario_id, created_at)
+      VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$reserva_id, $nombre, $documento, $parentesco, $_SESSION['id']]);
+  }
+}
+
 
 echo "<script>
     alert('✅ Cliente y reserva guardados correctamente. Total: $dias noche(s).');

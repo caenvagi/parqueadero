@@ -19,7 +19,7 @@ $sql = "
   FROM aloj_reservas r
   INNER JOIN aloj_clientes c ON r.cliente_id = c.id
   INNER JOIN aloj_habitaciones h ON r.habitacion_id = h.id
-  WHERE r.estado IN ('pendiente','confirmada')
+  WHERE r.estado IN ('pendiente','confirmada','finalizada')
   ORDER BY r.created_at DESC
 ";
 $reservas_activas = $pdo->query($sql)->fetchAll();
@@ -28,7 +28,7 @@ $reservas_activas = $pdo->query($sql)->fetchAll();
 $sql_mes = "
   SELECT SUM(valor_total) AS total_mes
   FROM aloj_reservas
-  WHERE estado IN ('pendiente','confirmada')
+  WHERE estado IN ('pendiente','confirmada','finalizada')
     AND MONTH(created_at) = MONTH(CURDATE())
     AND YEAR(created_at) = YEAR(CURDATE())
 ";
@@ -38,7 +38,7 @@ $total_mes = $pdo->query($sql_mes)->fetchColumn();
 $sql_anio = "
   SELECT SUM(valor_total) AS total_anio
   FROM aloj_reservas
-  WHERE estado IN ('pendiente','confirmada')
+  WHERE estado IN ('pendiente','confirmada','finalizada')
     AND YEAR(created_at) = YEAR(CURDATE())
 ";
 $total_anio = $pdo->query($sql_anio)->fetchColumn();
@@ -49,7 +49,7 @@ $sql_grafico = "
     MONTH(created_at) AS mes,
     SUM(valor_total) AS total
   FROM aloj_reservas
-  WHERE estado IN ('pendiente','confirmada')
+  WHERE estado IN ('pendiente','confirmada','finalizada')
     AND YEAR(created_at) = YEAR(CURDATE())
   GROUP BY MONTH(created_at)
   ORDER BY mes
@@ -72,13 +72,13 @@ foreach ($datos_mensuales as $fila) {
   $valores[] = $fila['total'];
 }
 
-
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <?php require '../logs/head.php'; ?>
+    <!-- DataTable-->
+    <?php require '../logs/datatables.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -124,8 +124,8 @@ foreach ($datos_mensuales as $fila) {
   <div class="card-body p-0">
     <?php if (count($reservas_activas)): ?>
       <div class="table-responsive">
-        <table class="table table-striped table-bordered mb-0">
-          <thead class="table-light">
+        <table id="tablaReservas" class="table table-striped table-bordered mb-0">
+          <thead  class="table-light">
             <tr>
               <th>Reserva</th>
               <th>Cliente</th>
@@ -157,11 +157,23 @@ foreach ($datos_mensuales as $fila) {
                   </span>
                 </td>
                 <td><?= $r['creado_por_fecha'] ?></td>
-                <td>
+                <!-- <td>
                   <a href="aloj_pagos.php?reserva_id=<?= $r['id'] ?>"
-                     class="btn btn-sm btn-outline-primary">
+                    class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-cash-stack me-1"></i>Pagar
                   </a>
+                </td> -->
+                <td>
+                  <a href="aloj_pagos.php?reserva_id=<?= $r['id'] ?>" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-cash-stack me-1"></i>Pagar
+                  </a>
+                  <button class="btn btn-sm btn-outline-secondary mt-1" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalEstado" 
+                        data-id="<?= $r['id'] ?>" 
+                        data-estado="<?= $r['estado'] ?>">
+                  <i class="bi bi-pencil-square"></i> Estado
+                </button>
                 </td>
               </tr>
             <?php endforeach; ?>
@@ -173,6 +185,48 @@ foreach ($datos_mensuales as $fila) {
     <?php endif; ?>
   </div>
 </div>
+<!-- Modal para cambiar estado -->
+<div class="modal fade" id="modalEstado" tabindex="-1" aria-labelledby="modalEstadoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="aloj_reservas_estado.php" method="post">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEstadoLabel">Cambiar Estado de la Reserva</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="reserva_id" id="reservaIdInput">
+          <div class="mb-3">
+            <label for="estadoSelect" class="form-label">Nuevo Estado</label>
+            <select name="estado" id="estadoSelect" class="form-select" required>
+              <option value="confirmada">Confirmada</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="finalizada">Finalizada</option>
+              <option value="otros">Otros</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $('#tablaReservas').DataTable({
+      language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+      },
+      order: [[0, 'desc']],
+      pageLength: 10
+    });
+  });
+</script>
+
 <script>
   const ctx = document.getElementById('graficoReservas').getContext('2d');
   const grafico = new Chart(ctx, {
@@ -201,6 +255,21 @@ foreach ($datos_mensuales as $fila) {
     }
   });
 </script>
+<script>
+  const modalEstado = document.getElementById('modalEstado');
+  modalEstado.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const reservaId = button.getAttribute('data-id');
+    const estadoActual = button.getAttribute('data-estado');
+
+    const inputId = modalEstado.querySelector('#reservaIdInput');
+    const selectEstado = modalEstado.querySelector('#estadoSelect');
+
+    inputId.value = reservaId;
+    selectEstado.value = estadoActual;
+  });
+</script>
+
 </body>
     </main>
   </div>

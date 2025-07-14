@@ -2,6 +2,12 @@
 require_once "../conexion/conexion.php";
 session_start();
 if (!isset($_SESSION['id'])) die("No autorizado.");
+
+// Obtener habitaciones con su estado
+$sql = "SELECT id, nombre, estado FROM aloj_habitaciones";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$habitaciones = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -15,7 +21,7 @@ if (!isset($_SESSION['id'])) die("No autorizado.");
 
   <!-- Idioma español -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales-all.global.min.js"></script>
-
+  
   <style>
     #calendar {
       max-width: 1000px;
@@ -27,6 +33,58 @@ if (!isset($_SESSION['id'])) die("No autorizado.");
 <div id="layoutSidenav_content">
   <main class="m-3">
 <body>
+  <style>
+  .badge {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: white;
+  }
+</style>
+
+<div class="d-flex justify-content-center flex-wrap gap-3 my-3">
+  <div><span class="badge" style="background-color: #dc3545;">Ocupada</span></div>
+  <div><span class="badge" style="background-color: #fd7e14;">Pendiente</span></div>
+  <div><span class="badge" style="background-color: #6c757d;">Cancelada</span></div>
+  <div><span class="badge" style="background-color: #198754;">Finalizada</span></div>
+  <div><span class="badge" style="background-color: #0d6efd;">Otros</span></div>
+</div>
+
+<div class="container my-4">
+  <div class="row justify-content-center g-3">
+    <?php foreach ($habitaciones as $hab): ?>
+      <?php
+        // Determinar clase de color según estado
+        switch (strtolower($hab['estado'])) {
+          case 'ocupada':
+            $badgeClass = 'bg-danger';
+            break;
+          case 'lista':
+            $badgeClass = 'bg-success';
+            break;
+          case 'mantenimiento':
+            $badgeClass = 'bg-warning text-dark';
+            break;
+          default:
+            $badgeClass = 'bg-secondary';
+        }
+      ?>
+      <div class="col-auto">
+        <div class="card shadow-sm rounded-3 border-0" style="min-width: 160px;">
+          <div class="card-body text-center">
+            <h6 class="card-title mb-2"><?= htmlspecialchars($hab['nombre']) ?></h6>
+            <span class="badge <?= $badgeClass ?> text-uppercase px-3 py-2">
+              <?= ucfirst($hab['estado']) ?>
+            </span>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+
+
+
+
   <div id="calendar"></div>
   
   <!-- Modal para ver detalles -->

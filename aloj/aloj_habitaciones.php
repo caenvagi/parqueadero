@@ -10,22 +10,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $capacidad = intval($_POST['capacidad']);
     $cantidad_camas = intval($_POST['cantidad_camas']);
     $tipo_cama = trim($_POST['tipo_cama']);
-    $descripcion = trim($_POST['descripcion']);
+    $estado = trim($_POST['estado']);
+    $descripcion = trim($_POST['descripcion']);    
     $usuario_id = $_SESSION['id'] ?? null;
 
     if ($_POST['modo'] == 'editar') {
         $id = intval($_POST['id']);
-        $sql = "UPDATE aloj_habitaciones SET nombre=?, capacidad=?, cantidad_camas=?, tipo_cama=?, descripcion=? WHERE id=?";
+        $sql = "UPDATE aloj_habitaciones SET nombre=?, capacidad=?, cantidad_camas=?, tipo_cama=?, estado=?, descripcion=? WHERE id=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nombre, $capacidad, $cantidad_camas, $tipo_cama, $descripcion, $id]);
+        $stmt->execute([$nombre, $capacidad, $cantidad_camas, $tipo_cama, $estado, $descripcion, $id]);
         $mensaje = "✅ Habitación actualizada correctamente.";
         header('Location: aloj_habitaciones.php?msg=actualizado');
         exit;
     } else {
         $sql = "INSERT INTO aloj_habitaciones (nombre, capacidad, cantidad_camas, tipo_cama, estado, descripcion, created_at)
-                VALUES (?, ?, ?, ?, 'disponible', ?, NOW())";
+                VALUES (?, ?, ?, ?, ?, ?, NOW())";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$nombre, $capacidad, $cantidad_camas, $tipo_cama, $descripcion]);
+        $stmt->execute([$nombre, $capacidad, $cantidad_camas, $tipo_cama, $estado, $descripcion]);
         $mensaje = "✅ Habitación registrada correctamente.";
     }
 }
@@ -167,6 +168,22 @@ try {
                                                 value="<?= $tipo ?>"
                                                 <?= $modo_edicion && $habitacion_editar['tipo_cama'] === $tipo ? 'selected' : '' ?>>
                                                 <?= ucfirst($tipo) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">estado</label>
+                                    <select name="estado" class="form-select" required>
+                                        <option value="">Seleccionar...</option>
+                                        <?php
+                                        $tiposa = ['disponible', 'ocupada', 'mantenimiento'];
+                                        foreach ($tiposa as $tipoa): ?>
+                                            <option
+                                                value="<?= $tipoa ?>"
+                                                <?= $modo_edicion && $habitacion_editar['estado'] === $tipoa ? 'selected' : '' ?>>
+                                                <?= ucfirst($tipoa) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
