@@ -172,7 +172,7 @@ $acompanantes = $stmt->fetchAll();
                             </div>
                             <div class="mb-1">
                             <label for="exampleTextarea" class="form-label">observaciones:</label>
-                              <textarea class="form-control" name="observaciones" id="observaciones" rows="2" placeholder="Observaciones del pago..."></textarea>
+                              <textarea class="form-control" name="observaciones" id="observaciones" rows="2" placeholder="Observaciones del pago..." onkeyup="javascript:this.value=this.value.toUpperCase();"></textarea>
                             </div>
 
                            

@@ -121,6 +121,8 @@ if (!empty($_POST['acompanantes']['nombre'])) {
 }
 
 
+
+
 echo "<script>
     alert('✅ Cliente y reserva guardados correctamente. Total: $dias noche(s).');
     window.location.href = 'aloj_pagos.php?reserva_id=$reserva_id';

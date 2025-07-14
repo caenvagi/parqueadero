@@ -40,6 +40,29 @@ try {
         VALUES (?, NOW(), ?, ?, ?, ?, ?, ?)
     ");
 
+    // Registrar movimiento en caja
+$desc = "Pago de reserva #$reserva_id ($tipo_pago)";
+$stmtCaja = $pdo->prepare("INSERT INTO caja (
+    fecha_movimiento,
+    movimiento,
+    desc_movimiento,
+    valor_ingreso,
+    valor_egreso,
+    user_login,
+    liquidado,
+    caja_tipo
+  ) VALUES (
+    NOW(), 4, ?, ?, 0, ?, 'NO', 'INGRESO'
+  )");
+
+$stmtCaja->execute([
+               // movimiento
+  $desc,                   // descripción
+  $monto,                  // valor_ingreso
+  $usuario_id              // user_login
+]);
+
+
     $stmt->execute([
         $reserva_id,
         $monto,
