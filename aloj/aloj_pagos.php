@@ -184,10 +184,19 @@ $acompanantes = $stmt->fetchAll();
                                     <i class="bi bi-cash-stack me-2"></i>Guardar Pago
                                 </button>
                             </div>
+
+                            
                         </form>
                     </div>
                   <?php endif; ?>
+                  
               </div>
+              <a href="aloj_factura.php?reserva_id=<?= $reserva['id'] ?>" class="btn btn-outline-primary" target="_blank">
+                <i class="bi bi-file-earmark-pdf me-1"></i> Ver Factura de reserva
+              </a>
+              <a href="aloj_ticket_pago.php?reserva_id=<?= $reserva['id'] ?>" class="btn btn-outline-dark" target="_blank">
+                <i class="bi bi-printer-fill me-1"></i> Imprimir Ticket
+              </a>
             <!-- Historial de pagos: SIEMPRE visible -->
               <div class="card mt-4 shadow border-primary">
                 <div class="card-header bg-primary text-white">

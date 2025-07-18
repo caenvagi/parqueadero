@@ -101,9 +101,11 @@ if ($res) {
 }
 
     echo "<script>
-        alert('✅ Pago registrado correctamente.');
-        window.location.href = 'aloj_pagos.php?reserva_id=$reserva_id';
-    </script>";
+            alert('✅ Pago registrado correctamente.');
+            window.location.href = 'aloj_pagos.php?reserva_id=$reserva_id';
+            window.location.href = 'aloj_ticket_pago.php?reserva_id=$reserva_id';
+            window.location.href = '../modulos/imprimir_ticket_php/ticket.php?reserva_id=$reserva_id';
+        </script>";
 
 } catch (Exception $e) {
     echo "<script>
