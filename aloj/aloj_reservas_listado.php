@@ -107,14 +107,7 @@ foreach ($datos_mensuales as $fila) {
   </div>
 </div>
 
-<div class="card mb-4">
-  <div class="card-header bg-secondary text-white">
-    <h6 class="mb-0">Total Reservas por Mes - <?= date('Y') ?></h6>
-  </div>
-  <div class="card-body">
-    <canvas id="graficoReservas" height="100"></canvas>
-  </div>
-</div>
+
     
 
 <div class="card shadow">
@@ -219,7 +212,7 @@ foreach ($datos_mensuales as $fila) {
   $(document).ready(function () {
     $('#tablaReservas').DataTable({
       language: {
-        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-CO.json'
       },
       order: [[0, 'desc']],
       pageLength: 10
@@ -227,34 +220,7 @@ foreach ($datos_mensuales as $fila) {
   });
 </script>
 
-<script>
-  const ctx = document.getElementById('graficoReservas').getContext('2d');
-  const grafico = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: <?= json_encode($labels) ?>,
-      datasets: [{
-        label: 'Valor total ($)',
-        data: <?= json_encode($valores) ?>,
-        backgroundColor: 'rgba(13, 110, 253, 0.6)',
-        borderColor: 'rgba(13, 110, 253, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: function(value) {
-              return '$' + value.toLocaleString('es-CO');
-            }
-          }
-        }
-      }
-    }
-  });
-</script>
+
 <script>
   const modalEstado = document.getElementById('modalEstado');
   modalEstado.addEventListener('show.bs.modal', event => {
