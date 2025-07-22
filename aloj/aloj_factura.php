@@ -125,7 +125,7 @@ if (count($acompanantes)) {
     }
 } else {
     $pdf->SetFont('Arial','I',10);
-    $pdf->Cell(0, 6, 'No se registraron acompañantes para esta reserva.', 0, 1);
+    $pdf->Cell(0, 6, 'No se registraron acompanantes para esta reserva.', 0, 1);
 }
 
 

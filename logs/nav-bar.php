@@ -298,14 +298,14 @@ if ($tipo_usuario == 1) {
                                 </a>
                                 <div class="collapse" id="collapse-alojamiento" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="../aloj/aloj_habitaciones.php">
-                                            <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
-                                            &nbsp;&nbsp;&nbsp;Habitaciones
-                                        </a>
+
                                         <a class="nav-link" href="../aloj/aloj_clientes.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
-                                            &nbsp;&nbsp;&nbsp;Clientes
+                                            &nbsp;&nbsp;&nbsp;Huespedes
                                         </a>
+
+                                        
+                                        
                                         <a class="nav-link" href="../aloj/aloj_reservas_listado.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Reservas
@@ -313,6 +313,11 @@ if ($tipo_usuario == 1) {
                                         <a class="nav-link" href="../aloj/aloj_calendario.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Calendario
+                                        </a>
+
+                                        <a class="nav-link" href="../aloj/aloj_habitaciones.php">
+                                            <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
+                                            &nbsp;&nbsp;&nbsp;Habitaciones
                                         </a>
                                         <!-- <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
                                             <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>

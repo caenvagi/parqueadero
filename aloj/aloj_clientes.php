@@ -7,6 +7,7 @@ $mensaje = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre      = strtoupper(trim($_POST['nombre']));
+    $tipo_documento   = strtoupper(trim($_POST['tipo_documento']));
     $documento   = strtoupper(trim($_POST['documento']));
     $telefono    = trim($_POST['telefono']);
     $procedencia = strtoupper(trim($_POST['procedencia']));
@@ -17,12 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $placa_vehiculo = strtoupper(trim($_POST['placa_vehiculo']));
     $placa_vehiculo = str_replace('-', '', $placa_vehiculo); // Resultado: AAA111 o AAA11A
 
-    if ($usuario_id && $nombre && $documento && $telefono && $procedencia && $placa_vehiculo) {
+    if ($usuario_id && $nombre && $tipo_documento && $documento && $telefono && $procedencia && $placa_vehiculo) {
         try {
-            $sql = "INSERT INTO aloj_clientes (nombre, documento, telefono, procedencia, placa_vehiculo, usuario_id, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, NOW())";
+            $sql = "INSERT INTO aloj_clientes (nombre, tipo_doc, documento, telefono, procedencia, placa_vehiculo, usuario_id, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$nombre, $documento, $telefono, $procedencia, $placa_vehiculo, $usuario_id]);
+            $stmt->execute([$nombre, $tipo_documento, $documento, $telefono, $procedencia, $placa_vehiculo, $usuario_id]);
             $mensaje = "✅ Cliente registrado correctamente.";
         } catch (PDOException $e) {
             $mensaje = "❌ Error al guardar: " . $e->getMessage();
@@ -96,6 +97,17 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
                                     <label>Nombre:</label>
                                     <input type="text" class="form-control" name="nombre" placeholder="Nombre" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
                                 </div>
+
+                                <div class="col-md-3">
+                                    <label>Tipo de Documento:</label>
+                                    <select name="tipo_documento" id="tipo_documento" class="form-select" required>
+                                        <option value="">Seleccione</option>
+                                        <option value="R.C">R.C</option>
+                                        <option value="T.I">T.I</option>
+                                        <option value="C.C">C.C</option>
+                                        <option value="Pasaporte">Pasaporte</option>
+                                    </select>
+</div>
 
                                 <div class="col-md-3">
                                     <label>Documento:</label>
@@ -190,10 +202,19 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
                                     <div class="col-md-4 mt-2">
                                         <input type="text" name="acompanantes[nombre][]" class="form-control" placeholder="Nombre del acompañante" onkeyup="javascript:this.value=this.value.toUpperCase();"required>
                                     </div>
-                                    <div class="col-md-3 mt-2">
+                                    <div class="col-md-2 mt-2">
+                                        <select name="acompanantes[tipo_documento][]" class="form-select" required>
+                                            <option value="">Tipo de documento</option>
+                                            <option value="R.C">R.C</option>
+                                            <option value="T.I">T.I</option>
+                                            <option value="C.C">C.C</option>
+                                            <option value="Pasaporte">Pasaporte</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 mt-2">
                                         <input type="text" name="acompanantes[documento][]" class="form-control" placeholder="Documento" required>
                                     </div>
-                                    <div class="col-md-3 mt-2">
+                                    <div class="col-md-2 mt-2">
                                         <input type="text" name="acompanantes[parentesco][]" class="form-control" placeholder="parentesco" onkeyup="javascript:this.value=this.value.toUpperCase();" required min="0">
                                     </div>
                                     <div class="col-md-2 mt-2">

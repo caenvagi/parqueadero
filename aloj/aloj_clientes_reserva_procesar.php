@@ -20,6 +20,7 @@ try {
     // 1. DATOS DEL CLIENTE
     // =============================
     $nombre         = strtoupper(trim($_POST['nombre']));
+    $tipo_documento = $_POST['tipo_documento'];
     $documento      = trim($_POST['documento']);
     $telefono       = trim($_POST['telefono']);
     $procedencia    = strtoupper(trim($_POST['procedencia']));
@@ -42,9 +43,9 @@ try {
         $cliente_id = $cliente['id'];
     } else {
         $stmt = $pdo->prepare("INSERT INTO aloj_clientes 
-            (nombre, documento, telefono, procedencia, placa_vehiculo, usuario_id, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$nombre, $documento, $telefono, $procedencia, $placa_vehiculo, $usuario_id, $created_at]);
+            (nombre, tipo_doc, documento, telefono, procedencia, placa_vehiculo, usuario_id, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$nombre, $tipo_documento, $documento, $telefono, $procedencia, $placa_vehiculo, $usuario_id, $created_at]);
         $cliente_id = $pdo->lastInsertId();
     }
 
@@ -105,18 +106,20 @@ $reserva_id = $pdo->lastInsertId();
 
 if (!empty($_POST['acompanantes']['nombre'])) {
   $nombres = $_POST['acompanantes']['nombre'];
+    $tipo_documento = $_POST['acompanantes']['tipo_documento'];
   $documentos = $_POST['acompanantes']['documento'];
   $parentescos = $_POST['acompanantes']['parentesco'];
 
   for ($i = 0; $i < count($nombres); $i++) {
     $nombre = strtoupper(trim($nombres[$i]));
+    $tipo_documento = $_POST['acompanantes']['tipo_documento'][$i];
     $documento = trim($documentos[$i]);
     $parentesco = (int) $parentescos[$i];
 
     $stmt = $pdo->prepare("INSERT INTO aloj_acompanantes 
-      (reserva_id, nombre, documento, parentesco, usuario_id, created_at)
-      VALUES (?, ?, ?, ?, ?, NOW())");
-    $stmt->execute([$reserva_id, $nombre, $documento, $parentesco, $_SESSION['id']]);
+      (reserva_id, nombre, tipo_docu, documento, parentesco, usuario_id, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$reserva_id, $nombre, $tipo_documento, $documento, $parentesco, $_SESSION['id']]);
   }
 }
 
