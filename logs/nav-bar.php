@@ -242,27 +242,27 @@ if ($tipo_usuario == 1) {
                         <!-- MENU ALOJAMIENTO FIN-->
 
                         <!-- MENU CAJA Caja-->
-                            <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-caja" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div><i style="font-size:24px" class="fas fa-cash-register"></i></div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-caja" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div><i style="font-size:24px" class="bi bi-pc-display-horizontal"></i></div>
                                 &nbsp;&nbsp;&nbsp;Caja
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                             </a>
                             <div class="collapse" id="collapse-caja" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="../config/caja_movimientos.php">
+                                    <a class="nav-link" href="../caja/caja_listado.php">
                                         <div><i class="bi bi-calculator" style="font-size:24px"></i></div>
-                                        &nbsp;&nbsp;&nbsp;Movimientos
+                                        &nbsp;&nbsp;&nbsp;Listado
                                     </a>
-                                    <a class="nav-link" href="../config/arqueo.php">
+                                    <a class="nav-link" href="../caja/caja_registro.php">
                                         <div><i class="bi bi-printer-fill" style="font-size:24px"></i></div>
-                                        &nbsp;&nbsp;&nbsp;Arqueo
+                                        &nbsp;&nbsp;&nbsp;Registros
                                     </a>
-                                    <a class="nav-link" href="../config/caja_conceptos.php">
+                                    <!-- <a class="nav-link" href="../config/caja_conceptos.php">
                                         <div><i class="bi bi-card-checklist" style="font-size:24px"></i></div>
                                         &nbsp;&nbsp;&nbsp;Conceptos
-                                    </a>
+                                    </a> -->
                                 </nav>
-                            </div> -->
+                            </div> 
                         <!-- MENU CONFIGURACION Caja-->
 
                         <!-- MENU CONFIGURACION -->

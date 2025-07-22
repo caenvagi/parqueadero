@@ -3,26 +3,41 @@ session_start();
 require_once "../conexion/conexion.php";
 
 // Valores por defecto para filtros
-$fecha_inicio = $_GET['fecha_inicio'] ?? date('Y-m-01');
-$fecha_fin = $_GET['fecha_fin'] ?? date('Y-m-d');
-$caja_tipo = $_GET['caja_tipo'] ?? '';
+if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
+    $fecha_inicio = $_GET['fecha_inicio'];
+    $fecha_fin = $_GET['fecha_fin'];
+} else {
+    // Mostrar todo sin filtrar si no hay fechas
+    $fecha_inicio = '2000-01-01'; // o una fecha inicial antigua
+    $fecha_fin = date('Y-m-d');
+}
+$caja = $_GET['caja'] ?? '';
 
+// Parámetros para la consulta
 $params = [
     ':fecha_inicio' => $fecha_inicio . ' 00:00:00',
     ':fecha_fin' => $fecha_fin . ' 23:59:59',
 ];
 
-// Consulta dinámica con filtros
+// Consulta base
 $sql = "SELECT caja.*, usuarios.nombre AS nombre_usuario
         FROM caja
         LEFT JOIN usuarios ON caja.user_login = usuarios.id
         WHERE fecha_movimiento BETWEEN :fecha_inicio AND :fecha_fin";
 
-$sql .= " ORDER BY fecha_movimiento DESC";
+// Filtro por caja si se selecciona
+if (!empty($caja)) {
+    $sql .= " AND caja.caja = :caja";
+    $params[':caja'] = $caja;
+}
 
+$sql .= " ORDER BY fecha_movimiento DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $movimientos = $stmt->fetchAll();
+
+// Obtener valores únicos de caja para el select
+$cajas_unicas = $pdo->query("SELECT DISTINCT caja FROM caja ORDER BY caja")->fetchAll();
 
 // Totales
 $total_ingresos = 0;
@@ -56,13 +71,15 @@ $saldo = $total_ingresos - $total_egresos;
         </div>
         <div class="col-md-3">
             <label class="form-label">Caja</label>
-            <select name="caja_tipo" class="form-select">
+            <select name="caja" class="form-select">
                 <option value="">Todas</option>
-                <option value="principal" <?= $caja_tipo === 'principal' ? 'selected' : '' ?>>Principal</option>
-                <option value="secundaria" <?= $caja_tipo === 'secundaria' ? 'selected' : '' ?>>Secundaria</option>
+                <?php foreach ($cajas_unicas as $c): ?>
+                    <option value="<?= htmlspecialchars($c['caja']) ?>" <?= $caja === $c['caja'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars(ucfirst($c['caja'])) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
         </div>
-        
         <div class="col-md-3 d-flex align-items-end">
             <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
@@ -76,25 +93,24 @@ $saldo = $total_ingresos - $total_egresos;
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
-                <th>Caja</th>
+                <th>Tipo</th>
                 <th>Usuario</th>
                 <th>Liquidado</th>
+                <th>Origen</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($movimientos as $mov): ?>
                 <tr>
-                    <?php
-                        $fecha = new DateTime($mov['fecha_movimiento']);
-                    ?>
+                    <?php $fecha = new DateTime($mov['fecha_movimiento']); ?>
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
-
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>
-                    <td><?= $mov['caja_tipo'] ?></td>
+                    <td><?= htmlspecialchars($mov['caja_tipo']) ?></td>
                     <td><?= htmlspecialchars($mov['nombre_usuario'] ?? 'Desconocido') ?></td>
                     <td><?= $mov['liquidado'] === 'sí' ? '✔️' : '❌' ?></td>
+                    <td><?= htmlspecialchars($mov['caja']) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

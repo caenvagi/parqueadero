@@ -1,9 +1,24 @@
 <?php
 session_start();
-require_once "../conexion/conexion.php";
+    require_once "../conexion/conexion.php";
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: index.php");
+    }
+    $id = $_SESSION['id'];
+    $tipo_usuario = $_SESSION['tipo_usuario'];
+    
+    if ($tipo_usuario == 1) {
+        $where = "";
+    } else if ($tipo_usuario == 2) {
+        $where = "WHERE id=$id";
+    }
 
 // Aquí puedes capturar el usuario logueado desde la sesión
-$user_login = $_SESSION['usuario'] ?? 'admin'; // Cambia según tu sistema
+$user_login = $_SESSION['id']; // Cambia según tu sistema
+
+// Cargar los conceptos desde la base de datos
+$conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_conceptos ORDER BY nombre_concepto ASC")->fetchAll();
 
 ?>
 <!DOCTYPE html>
@@ -29,15 +44,25 @@ $user_login = $_SESSION['usuario'] ?? 'admin'; // Cambia según tu sistema
     <div class="mb-3">
       <label class="form-label">Tipo</label><br>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="tipo" value="ingreso" checked>
+        <input class="form-check-input" type="radio" name="tipo" value="INGRESO" checked>
         <label class="form-check-label">Ingreso</label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="tipo" value="egreso">
+        <input class="form-check-input" type="radio" name="tipo" value="EGRESO">
         <label class="form-check-label">Egreso</label>
       </div>
     </div>
-
+    <div class="mb-3">
+  <label for="movimiento" class="form-label">Tipo de Movimiento</label>
+  <select name="movimiento" class="form-select" required>
+    <option value="">Seleccione un concepto</option>
+    <?php foreach ($conceptos as $concepto): ?>
+      <option value="<?= $concepto['id_concepto'] ?>">
+        <?= htmlspecialchars($concepto['nombre_concepto']) ?>
+      </option>
+    <?php endforeach; ?>
+  </select>
+</div>
     <div class="mb-3">
       <label for="valor" class="form-label">Valor</label>
       <input type="number" name="valor" class="form-control" required>
@@ -46,13 +71,13 @@ $user_login = $_SESSION['usuario'] ?? 'admin'; // Cambia según tu sistema
     <div class="mb-3">
       <label for="caja_tipo" class="form-label">Caja</label>
       <select name="caja_tipo" class="form-select" required>
-        <option value="principal">Principal</option>
-        <option value="secundaria">Secundaria</option>
+        <option value="Parqueadero">Parqueadero</option>
+        <option value="Alojamiento">Alojamiento</option>
       </select>
     </div>
 
     <input type="hidden" name="user_login" value="<?= $user_login ?>">
-    <input type="hidden" name="liquidado" value="no">
+    <input type="hidden" name="liquidado" value="NO">
 
     <button type="submit" class="btn btn-primary">Guardar Movimiento</button>
   </form>
