@@ -1,6 +1,18 @@
 <?php
 session_start();
-require_once "../conexion/conexion.php";
+    require_once "../conexion/conexion.php";
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: index.php");
+    }
+    $id = $_SESSION['id'];
+    $tipo_usuario = $_SESSION['tipo_usuario'];
+    
+    if ($tipo_usuario == 1) {
+        $where = "";
+    } else if ($tipo_usuario == 2) {
+        $where = "WHERE id=$id";
+    }
 
 // Valores por defecto para filtros
 if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
@@ -51,10 +63,13 @@ $saldo = $total_ingresos - $total_egresos;
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Listado de Caja</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <?php require '../logs/head.php'; ?>
+    <!-- DataTable-->
+    <?php require '../logs/datatables.php'; ?>
 </head>
+<?php require '../logs/nav-bar.php'; ?>
+<div id="layoutSidenav_content">
+    <main class="ms-5 me-5">
 <body class="container mt-4">
 
     <h2>Listado de Movimientos de Caja</h2>
@@ -89,6 +104,7 @@ $saldo = $total_ingresos - $total_egresos;
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
             <tr>
+                <th>id</th>
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
@@ -97,32 +113,72 @@ $saldo = $total_ingresos - $total_egresos;
                 <th>Usuario</th>
                 <th>Liquidado</th>
                 <th>Origen</th>
+                <th><input type="checkbox" id="selectAll"></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($movimientos as $mov): ?>
                 <tr>
                     <?php $fecha = new DateTime($mov['fecha_movimiento']); ?>
+                    <td><?= $mov['id_movimiento'] ?></td>
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>
                     <td><?= htmlspecialchars($mov['caja_tipo']) ?></td>
                     <td><?= htmlspecialchars($mov['nombre_usuario'] ?? 'Desconocido') ?></td>
-                    <td><?= $mov['liquidado'] === 'sí' ? '✔️' : '❌' ?></td>
+                    <td><?= $mov['liquidado'] === 'SI' ? '✔️' : '❌' ?></td>
                     <td><?= htmlspecialchars($mov['caja']) ?></td>
+                    <td><input type="checkbox" name="ids[]" value="<?= $mov['id_movimiento'] ?>" class="chk-movimiento"></td>
+                    
                 </tr>
             <?php endforeach; ?>
         </tbody>
         <tfoot>
             <tr class="table-secondary">
-                <th colspan="2">Totales</th>
+                <th colspan="3">Totales</th>
                 <th class="text-success"><?= number_format($total_ingresos) ?></th>
                 <th class="text-danger"><?= number_format($total_egresos) ?></th>
-                <th colspan="4">Saldo: <strong><?= number_format($saldo) ?></strong></th>
+                <th colspan="5">Saldo: <strong><?= number_format($saldo) ?></strong></th>
             </tr>
         </tfoot>
+        
     </table>
+    <button type="button" id="btnPreliquidar" class="btn btn-primary">Preliquidar</button>
+<div id="resultadoLiquidacion"></div>
 
+</main>
+</div>
+<script>
+document.getElementById('btnPreliquidar').addEventListener('click', function () {
+    const checkboxes = document.querySelectorAll('.chk-movimiento:checked');
+    const ids = Array.from(checkboxes).map(cb => cb.value);
+
+    if (ids.length === 0) {
+        alert("Selecciona al menos un movimiento.");
+        return;
+    }
+    const params = new URLSearchParams();
+ids.forEach(id => params.append('ids[]', id));
+
+
+
+    // Enviar con Fetch a aloj_resumen_liquidacion.php
+    fetch('caja_resumen_liquidacion.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params
+})
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('resultadoLiquidacion').innerHTML = html;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+});
+</script>
 </body>
 </html>
