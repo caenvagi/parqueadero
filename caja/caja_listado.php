@@ -8,7 +8,7 @@ if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
     $fecha_fin = $_GET['fecha_fin'];
 } else {
     // Mostrar todo sin filtrar si no hay fechas
-    $fecha_inicio = '2000-01-01'; // o una fecha inicial antigua
+    $fecha_inicio = $_GET['fecha_inicio'] ?? date('Y-m-01'); // o una fecha inicial antigua
     $fecha_fin = date('Y-m-d');
 }
 $caja = $_GET['caja'] ?? '';
@@ -119,7 +119,7 @@ $saldo = $total_ingresos - $total_egresos;
                 <th colspan="2">Totales</th>
                 <th class="text-success"><?= number_format($total_ingresos) ?></th>
                 <th class="text-danger"><?= number_format($total_egresos) ?></th>
-                <th colspan="3">Saldo: <strong><?= number_format($saldo) ?></strong></th>
+                <th colspan="4">Saldo: <strong><?= number_format($saldo) ?></strong></th>
             </tr>
         </tfoot>
     </table>

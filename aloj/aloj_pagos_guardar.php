@@ -50,9 +50,10 @@ $stmtCaja = $pdo->prepare("INSERT INTO caja (
     valor_egreso,
     user_login,
     liquidado,
-    caja_tipo
+    caja_tipo,
+    caja
   ) VALUES (
-    NOW(), 4, ?, ?, 0, ?, 'NO', 'INGRESO'
+    NOW(), 3, ?, ?, 0, ?, 'NO', 'INGRESO','Alojamiento'
   )");
 
 $stmtCaja->execute([
@@ -103,8 +104,7 @@ if ($res) {
     echo "<script>
             alert('✅ Pago registrado correctamente.');
             window.location.href = 'aloj_pagos.php?reserva_id=$reserva_id';
-            window.location.href = 'aloj_ticket_pago.php?reserva_id=$reserva_id';
-            window.location.href = '../modulos/imprimir_ticket_php/ticket.php?reserva_id=$reserva_id';
+           
         </script>";
 
 } catch (Exception $e) {
@@ -118,4 +118,6 @@ if ($res) {
         window.history.back();
     </script>";
 }
+
+//  window.location.href = '../modulos/imprimir_ticket_php/ticket.php?reserva_id=$reserva_id';
 ?>
