@@ -117,7 +117,7 @@ $hora_actual = date('H:i:s');
                 <th>Liquidado</th>
                 <th>Origen</th>
                 <th><input type="checkbox" id="selectAll"></th>
-                <th>imprimir</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -140,8 +140,7 @@ $hora_actual = date('H:i:s');
         <input type="checkbox" class="check-movimiento" value="<?= $mov['id_movimiento'] ?>">
     <?php endif; ?>
 </td>
-<td><a href="caja_ticket_liquidacion.php?id=202" target="_blank" class="btn btn-secondary">Imprimir Ticket</a></td>
-                    
+
                 </tr>
             <?php endforeach; ?>
         </tbody>
