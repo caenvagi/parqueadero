@@ -15,6 +15,61 @@ if ($tipo_usuario == 1) {
   $where = "WHERE id=$id";
 };
 
+if (isset($_POST['turnos']) && is_array($_POST['turnos'])) {
+    $turnos = array_map('intval', $_POST['turnos']);
+    $placeholders = implode(',', array_fill(0, count($turnos), '?'));
+
+    // Obtener detalles para agrupar por usuario
+    $stmt = $pdo->prepare("SELECT t.id_turno, t.usuario_id, u.nombre, t.fecha_inicio, t.valor
+                           FROM usuarios_turnos t
+                           JOIN usuarios u ON t.usuario_id = u.id
+                           WHERE t.id_turno IN ($placeholders)");
+    $stmt->execute($turnos);
+    $turnos_seleccionados = $stmt->fetchAll();
+
+    // Agrupar por usuario
+    $agrupado = [];
+    foreach ($turnos_seleccionados as $t) {
+        $id = $t['usuario_id'];
+        if (!isset($agrupado[$id])) {
+            $agrupado[$id] = [
+                'nombre' => $t['nombre'],
+                'turnos' => [],
+                'total' => 0
+            ];
+        }
+        $agrupado[$id]['turnos'][] = $t;
+        $agrupado[$id]['total'] += $t['valor'];
+    }
+
+    // Insertar en tabla caja por cada empleado
+    $fechaActual = date('Y-m-d H:i:s');
+    $usuarioActual = $_SESSION['id']; // o $_SESSION['usuario'] si usas otro campo
+    foreach ($agrupado as $usuario_id => $info) {
+        $descripcion = "Pago de turnos: " . implode(', ', array_map(function ($t) {
+            return "Turno {$t['id_turno']}";
+        }, $info['turnos']));
+
+        $sql_insert = "INSERT INTO caja 
+            (fecha_movimiento, movimiento, desc_movimiento, valor_egreso, user_login, liquidado, caja_tipo, caja, fecha_liquidacion, user_liquida)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $pdo->prepare($sql_insert);
+        $stmt->execute([
+            $fechaActual,            // fecha_movimiento
+            3,                       // movimiento (ejemplo: 3 = egreso por pago)
+            $descripcion,            // desc_movimiento
+            $info['total'],          // valor_egreso
+            $usuario_id,             // user_login (a quien se le paga)
+            'NO',                    // liquidado (puede ajustarse)
+            'EGRESO',                // caja_tipo
+            'parqueadero',               // caja (puede ser otra si manejas varias)
+            $fechaActual,            // fecha_liquidacion
+            $usuarioActual           // user_liquida (quien lo genera)
+        ]);
+    }
+}
+
 function numeroALetrasCOP($numero)
 {
     $formatter = new NumberFormatter("es", NumberFormatter::SPELLOUT);
