@@ -8,6 +8,8 @@ $entregado = $_POST['entregado_por'];
 $recibido = $_POST['recibido_por'];
 $usuario = $_SESSION['id'] ?? null;
 $fecha = date('Y-m-d H:i:s');
+$recibido_por = $_POST['recibido_por'] ?? null;
+
 
 // Guardar en tabla de liquidaciones
 $sql = "INSERT INTO caja_liquidaciones (fecha, total, entregado_por, recibido_por, usuario_id)
