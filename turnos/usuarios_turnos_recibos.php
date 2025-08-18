@@ -31,6 +31,59 @@ $turnos = $stmt->fetchAll();
 <head>
   <?php require '../logs/head.php'; ?>
   <?php require '../logs/datatables.php'; ?>
+  <style>
+  @media print {
+    nav, .btn, .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate, .dataTables_buttons {
+      display: none !important;
+    }
+
+    #layoutSidenav_content {
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      border: none;
+      box-shadow: none;
+    }
+
+    body {
+      zoom: 90%; /* Opcional: ajusta escala para impresión */
+    }
+  }
+</style>
+
+<style>
+  @media print {
+    @page {
+      size: portrait;
+      margin: 20mm;
+    }
+
+    nav, .btn, .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate, .dataTables_buttons {
+      display: none !important;
+    }
+
+    #layoutSidenav_content {
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      border: none;
+      box-shadow: none;
+    }
+
+    body {
+      zoom: 90%;
+    }
+
+    table {
+      width: 100% !important;
+      font-size: 12px;
+    }
+  }
+</style>
 </head>
 
 <body>
@@ -72,10 +125,18 @@ $turnos = $stmt->fetchAll();
           </table>
           <br>
           <div class="text-center mb-2">
+  <button type="submit" class="btn btn-primary">
+    <i class="bi bi-receipt"></i> Generar Recibo
+  </button>
+  <button type="button" class="btn btn-secondary" onclick="window.print();">
+    <i class="bi bi-printer"></i> Imprimir Turnos
+  </button>
+</div>
+          <!-- <div class="text-center mb-2">
             <button type="submit" class="btn btn-primary">
               <i class="bi bi-receipt"></i> Generar Recibo
             </button>
-          </div>
+          </div> -->
       </div>
     </main>
     <!-- datatable lista usuarios -->

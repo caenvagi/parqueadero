@@ -13,6 +13,7 @@ if ($reserva_id <= 0) die("ID de reserva inválido");
 $stmt = $pdo->prepare("
   SELECT    r.*,   
             c.nombre AS cliente_nombre,
+            c.tipo_doc,
             c.documento,
             h.nombre AS habitacion_nombre, 
             c.telefono,
@@ -39,7 +40,7 @@ $pagos = $stmt->fetchAll();
 $total_pagado = array_sum(array_column($pagos, 'monto'));
 
 // Obtener acompañantes
-$stmt = $pdo->prepare("SELECT nombre, documento, parentesco FROM aloj_acompanantes WHERE reserva_id = ?");
+$stmt = $pdo->prepare("SELECT nombre, tipo_docu, documento, parentesco FROM aloj_acompanantes WHERE reserva_id = ?");
 $stmt->execute([$reserva_id]);
 $acompanantes = $stmt->fetchAll();
 
@@ -84,8 +85,9 @@ $pdf->AddPage();
 
 // Datos del cliente
 $pdf->SetFont('Arial','',11);
+$pdf->Cell(0,6,"Reserva No:  " . utf8_decode($reserva['id']), 0, 1);
 $pdf->Cell(0,6,"Cliente:          " . utf8_decode($reserva['cliente_nombre']), 0, 1);
-$pdf->Cell(0,6,"Documento:   " . $reserva['documento'], 0, 1);
+$pdf->Cell(0,6,"Documento:   ". $reserva['tipo_doc'] . ' ' . $reserva['documento'], 0, 1);
 $pdf->Cell(0,6,"Telefono:       " . $reserva['telefono'], 0, 1);
 $pdf->Cell(0,6,"Placa:            " . $reserva['placa_vehiculo'], 0, 1);
 $pdf->Cell(0,6,"Procedencia: " . $reserva['Procedencia'], 0, 1);
@@ -113,14 +115,16 @@ if (count($acompanantes)) {
     $pdf->SetFont('Arial','B',10);
     $pdf->SetFillColor(230, 230, 230);
     $pdf->Cell(80, 6, 'Nombre', 1, 0, 'C', true);
+    $pdf->Cell(20, 6, 'Tipo', 1, 0, 'C', true);
     $pdf->Cell(50, 6, 'Documento', 1, 0, 'C', true);
-    $pdf->Cell(60, 6, 'Parentesco', 1, 1, 'C', true);
+    $pdf->Cell(40, 6, 'Parentesco', 1, 1, 'C', true);
 
     $pdf->SetFont('Arial','',10);
     foreach ($acompanantes as $a) {
         $pdf->Cell(80, 6, utf8_decode($a['nombre']), 1);
-        $pdf->Cell(50, 6, $a['documento'], 1);
-        $pdf->Cell(60, 6, utf8_decode($a['parentesco']), 1);
+        $pdf->Cell(20, 6, $a['tipo_docu'], 1,0,'C');
+        $pdf->Cell(50, 6, $a['documento'], 1,0,'C');
+        $pdf->Cell(40, 6, utf8_decode($a['parentesco']), 1);
         $pdf->Ln();
     }
 } else {

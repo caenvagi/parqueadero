@@ -78,6 +78,7 @@ $conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_concepto
       <select name="caja_tipo" class="form-select" required>
         <option value="Parqueadero">Parqueadero</option>
         <option value="Alojamiento">Alojamiento</option>
+        <option value="Cisco">Cisco</option>
       </select>
     </div>
 

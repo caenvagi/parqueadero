@@ -145,7 +145,7 @@ foreach ($datos_mensuales as $fila) {
                 <td><?= $r['cantidad_personas'] ?></td>
                 <td>$<?= number_format($r['valor_total'], 0, ',', '.') ?></td>
                 <td>
-                  <span class="badge bg-<?= $r['estado']=='confirmada'?'success':'warning' ?>">
+                  <span class="badge bg-<?= $r['estado']=='pendiente'?'success':'warning' ?>">
                     <?= ucfirst($r['estado']) ?>
                   </span>
                 </td>
@@ -212,7 +212,7 @@ foreach ($datos_mensuales as $fila) {
   $(document).ready(function () {
     $('#tablaReservas').DataTable({
       language: {
-        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-CO.json'
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
       },
       order: [[0, 'desc']],
       pageLength: 10
