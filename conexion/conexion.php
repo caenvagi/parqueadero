@@ -1,7 +1,7 @@
 <?php
 // Configuración de la base de datos
 $host = 'localhost';
-$dbname = 'parqueadero';
+$dbname = 'parqueadero1';
 $username = 'root';
 $password = '';
 
