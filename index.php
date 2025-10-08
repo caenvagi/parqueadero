@@ -71,12 +71,16 @@ if ($_POST) {
 						<!-- <div id="fondo" class="row justify-content-center fondo"> -->
 							<div id="loguin1" class="col-lg-5 col-10 mt-10">
 								<div class="card shadow-lg border-0 rounded-lg mt-0 mb-2" id="card-loguin">
-									<div class="card-header">
-										<div >
-											<img  id="logo-loguin" src="assets/img/logo.png">
+									<div class="card-header text-center">
+										<div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+											<img id="logo-loguin" src="assets/img/LOGO-ALOJ.png" alt="Logo Alojamiento" height="60">
+											<img id="logo-loguin" src="assets/img/LOGO-PARQ.png" alt="Logo Parqueadero" height="60">											
 										</div>
-										<h4 class="text-center font-weight-light my-4">Parqueadero<br><b>Parque de la Familia<b></h4>
+										<h4 class="text-center font-weight-light my-4">
+											Alojamiento y Parqueadero<br><b>Parque de la Familia</b>
+										</h4>
 									</div>
+
 									<div class="card-body">
 									<!-- Mensajes -->	
 										<!-- Mensaje error password -->

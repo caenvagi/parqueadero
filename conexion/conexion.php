@@ -1,26 +1,28 @@
 <?php
 // Configuración de la base de datos
 $host = 'localhost';
-$dbname = 'parqueadero';
+$dbname = 'parqueadero1';
 $username = 'root';
 $password = '';
 
 try {
-    // Opciones para mejorar la seguridad
+    // Configuración de opciones para mayor seguridad y rendimiento
     $options = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Manejo de errores con excepciones
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Resultados como arrays asociativos
-        PDO::ATTR_EMULATE_PREPARES => false, // Desactiva la emulación de declaraciones preparadas
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,     // Lanza excepciones ante errores
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Devuelve los resultados como arrays asociativos
+        PDO::ATTR_EMULATE_PREPARES => false,              // Desactiva la emulación de sentencias preparadas
+        PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4" // Asegura codificación UTF-8 completa
     ];
 
-    // Conectar a la base de datos con PDO
+    // Crear la conexión PDO
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, $options);
 
-    //echo "Conexión exitosa";
+    // Puedes habilitar este mensaje para depuración:
+    // echo "✅ Conexión exitosa a la base de datos";
 
 } catch (PDOException $e) {
-    // Manejo seguro de errores
-    error_log("Error de conexión: " . $e->getMessage()); // Guardar en logs
-    die("Error de conexión. Intente más tarde.");
+    // Manejo seguro del error
+    error_log("Error de conexión a la base de datos: " . $e->getMessage(), 0);
+    die("Error de conexión. Intente nuevamente más tarde.");
 }
 ?>

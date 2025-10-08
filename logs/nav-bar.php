@@ -178,18 +178,18 @@ if ($tipo_usuario == 1) {
                         <div class="sb-sidenav-menu-heading">Menu</div>
 
                         <!-- MENU PARQUEO INICIO-->
-                            <!-- <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-apostilla" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div><i class="bi bi-p-circle-fill" style='font-size:24px'></i></div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-parqueo" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div><i style="font-size:24px" class="bi bi-p-circle-fill"></i></div>
                                 &nbsp;&nbsp;&nbsp;Parqueo
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                             </a>
-                            <div class="collapse" id="collapse-apostilla" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse" id="collapse-parqueo" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="../config/parqueoAjax.php">
+                                    <a class="nav-link" href="../parqueo_hora/parqueo_form.php">
                                         <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso
                                     </a>
-                                    <a class="nav-link" href="../config/mensualidades.php">
+                                    <!-- <a class="nav-link" href="../config/mensualidades.php">
                                         <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Mensualidades
                                     </a>
@@ -203,10 +203,10 @@ if ($tipo_usuario == 1) {
                                     </a>
                                     <a class="nav-link" href="../config/listado.php">
                                         <div><i class='fas fa-clipboard-list' style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Listado
+                                        &nbsp;&nbsp;&nbsp;Listado -->
                                     </a>
                                 </nav>
-                            </div> -->
+                            </div>
                         <!-- MENU PARQUEO FIN-->
 
                         <!-- MENU ALOJAMIENTO INICIO-->

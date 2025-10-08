@@ -25,14 +25,14 @@ if ($tipo_usuario == 1) {
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
 
   <link href="../modulos/sweetalert/sweetalert2.min.css" rel="stylesheet">
-  <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script></style>
+  <script src="../modulos/sweetalert/sweetalert2.all.min.js"></script>
 
   <!-- jsPDF y AutoTable -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-<!-- SheetJS (XLSX) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- SheetJS (XLSX) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 </head>
 
@@ -548,20 +548,24 @@ if ($tipo_usuario == 1) {
                 .then(res => res.text())
                 .then(res => {
                   if (res === "ok") {
-                    Swal.fire({
+                      console.log('cargando modal');
+                      Swal.fire({
                       icon: 'success',
                       title: 'Turno creado',
                       text: 'El turno se ha creado correctamente.',
                       customClass: {
-                      container: 'customClassName'
+                      container: 'customClassName'                      
                     }
                     }).then(() => {
-                      document.getElementById('crearModal').style.display = 'none';
+                      console.log('se creo el modal');
+                      document.getElementById('crearModal').style.display = 'flex';
                       calendar.refetchEvents();
+                    
+
                     });
                     setTimeout(function() {
                         location.reload();
-                    }, 3000); // 3000 milisegundos = 3 segundos
+                    }, 1000); // 3000 milisegundos = 3 segundos
 
                   } else {
                     Swal.fire({
@@ -573,6 +577,7 @@ if ($tipo_usuario == 1) {
                     }
                     });
                   }
+                  
                 })
                 .catch(err => {
                   Swal.fire({
@@ -584,6 +589,9 @@ if ($tipo_usuario == 1) {
                     }
                   });
                 });
+                // setTimeout(function() {
+                //         location.reload();
+                //     }, 1500); // 3000 milisegundos = 3 segundos
             });
             //crear turno     
             //editar turno
@@ -678,16 +686,16 @@ if ($tipo_usuario == 1) {
                     Swal.fire({
                       icon: 'success',
                       title: 'Turno actualizado',
-                      text: 'El turno fue modificado correctamente.',
+                      text: 'El turno fue modificado correctamente.'+' ' + 'Se actualizara en 2 segundos',
                       customClass: {
                       container: 'customClassName'
-                      }
+                      }                      
                     }).then(() => {
                       document.getElementById('editarModal').style.display = 'none';
                       calendar.refetchEvents();
                       setTimeout(function() {
                         location.reload();
-                    }, 3000); // 3000 milisegundos = 3 segundos
+                    }, 1000); // 3000 milisegundos = 3 segundos
                     });
                   } else {
                     Swal.fire({
@@ -700,6 +708,9 @@ if ($tipo_usuario == 1) {
                     });
                   }
                 });
+                setTimeout(function() {
+                        location.reload();
+                    }, 2000);
             });
             //editar turno
             // //eliminar turno
@@ -789,6 +800,7 @@ if ($tipo_usuario == 1) {
           
 
         </script>
+       
       </div>
     </main>
   </div>

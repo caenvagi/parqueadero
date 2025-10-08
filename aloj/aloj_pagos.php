@@ -11,8 +11,14 @@ $historial_pagos = []; // Evita error si no se llena
 if ($reserva_id > 0) {
   // 1) Obtener la reserva con cliente
   $stmt = $pdo->prepare("
-        SELECT r.*, c.nombre AS cliente_nombre, c.documento,
-              h.nombre AS habitacion_nombre
+        SELECT  r.*,
+                c.nombre AS cliente_nombre,
+                c.documento,
+                h.nombre AS habitacion_nombre,
+                c.placa_vehiculo as placa,
+                c.telefono,
+                c.tipo_doc as tipo,
+                c.procedencia
         FROM aloj_reservas r
         JOIN aloj_clientes c ON r.cliente_id = c.id
         JOIN aloj_habitaciones h ON r.habitacion_id = h.id
@@ -64,7 +70,26 @@ $acompanantes = $stmt->fetchAll();
                 <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                   <div>
                     <span class="badge bg-dark fs-6">Reserva No <?= $reserva['id'] ?></span>
-                    <h5 class="mb-0"><?= htmlspecialchars($reserva['cliente_nombre']) ?></h5>
+                    <div class="d-flex justify-content-between">
+                      <h7 class="mb-0">Huésped:&nbsp;&nbsp;</h7>
+                      <h5 class="mb-0"><?= htmlspecialchars($reserva['cliente_nombre']) ?></h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h7 class="mb-0">Documento:</h7>
+                      <h5 class="mb-0"><?= htmlspecialchars($reserva['tipo']) ?>&nbsp;<?= htmlspecialchars($reserva['documento']) ?></h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h7 class="mb-0">Placa:</h7>
+                      <h5 class="mb-0"><?= htmlspecialchars($reserva['placa']) ?></h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h7 class="mb-0">Telefono:</h7>
+                      <h5 class="mb-0"><?= htmlspecialchars($reserva['telefono']) ?></h5>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                      <h7 class="mb-0">Procedencia:</h7>
+                      <h5 class="mb-0"><?= htmlspecialchars($reserva['procedencia']) ?></h5>
+                    </div>
                   </div>
                   <a href="aloj_reservas_listado.php" class="btn btn-outline-light">
                     <i class="bi bi-arrow-left me-1"></i> Volver a Reservas
