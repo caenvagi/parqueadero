@@ -2,6 +2,8 @@
  session_start();
     require_once "../conexion/conexion.php";
 
+    date_default_timezone_set('America/Bogota');
+
     if (!isset($_SESSION['id'])) {
         header("Location: index.php");
     }
@@ -47,7 +49,7 @@
             <select name="categoria" class="form-select" required>
                 <option value="">Seleccione...</option>
                 <?php
-                $cats = $pdo->query("SELECT cat_id, cat_nombre FROM categorias");
+                $cats = $pdo->query("SELECT cat_id, cat_nombre FROM categorias ORDER BY cat_nombre");
                 foreach ($cats as $c) {
                     echo "<option value='{$c['cat_id']}'>{$c['cat_nombre']}</option>";
                 }
