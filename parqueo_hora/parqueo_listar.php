@@ -1,6 +1,20 @@
 <?php
-require '../conexion/conexion.php';
-date_default_timezone_set('America/Bogota');
+session_start();
+    require_once "../conexion/conexion.php";
+
+    date_default_timezone_set('America/Bogota');
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: index.php");
+    }
+    $id = $_SESSION['id'];
+    $tipo_usuario = $_SESSION['tipo_usuario'];
+    
+    if ($tipo_usuario == 1) {
+        $where = "";
+    } else if ($tipo_usuario == 2) {
+        $where = "WHERE id=$id";
+    }
 
 $sql = "
 SELECT 
@@ -87,30 +101,55 @@ $parqueos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <td><b>$<?= number_format($total, 0, ',', '.') ?></b></td>
             <td><?= $p['caseta'] ?></td>
             <td>
-                <button class="salida-btn" data-id="<?= $p['parqueo_id'] ?>">Registrar Salida</button>
+                <button class="btn-salida" data-id="<?= $p['parqueo_id'] ?>">Registrar Salida</button>
             </td>
         </tr>
     <?php endforeach; ?>
     </tbody>
 </table>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-document.querySelectorAll('.salida-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        if(confirm('¿Registrar salida de este vehículo?')) {
-            const id = this.dataset.id;
-            fetch('parqueo_salida.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'id=' + id
-            })
-            .then(res => res.text())
-            .then(resp => {
-                alert(resp);
-                location.reload();
-            })
-            .catch(err => console.error('Error:', err));
-        }
+$(document).ready(function() {
+
+    // Al hacer click en "Registrar salida"
+    $(document).on('click', '.btn-salida', function() {
+        const id = $(this).data('id');
+        const boton = $(this);
+
+        if (!confirm('¿Confirmar salida de este vehículo?')) return;
+
+        boton.prop('disabled', true).text('Procesando...');
+
+        $.ajax({
+            url: 'registrar_salida.php',
+            method: 'POST',
+            data: { parqueo_id: id },
+            dataType: 'json',
+            success: function(res) {
+                if (res.ok) {
+                    alert(
+                        '✅ Salida registrada correctamente.\n' +
+                        '⏱ Tiempo total: ' + res.tiempo + '\n' +
+                        '💰 Valor total: $' + res.total.toLocaleString()
+                    );
+
+                    // Eliminar la fila del listado sin recargar
+                    boton.closest('tr').fadeOut(600, function() {
+                        $(this).remove();
+                    });
+
+                } else {
+                    alert('⚠️ Error: ' + res.error);
+                    boton.prop('disabled', false).text('Registrar salida');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('❌ Error al conectar con el servidor: ' + error);
+                boton.prop('disabled', false).text('Registrar salida');
+            }
+        });
     });
+
 });
 </script>
