@@ -89,35 +89,28 @@ $(document).ready(function(){
     cargarTabla();
 
     // Envío del formulario con AJAX
-    $('#formParqueo').on('submit', function(e){
-        e.preventDefault();
+    $('#formParqueo').on('submit', function(e) {
+    e.preventDefault();
 
-        $.ajax({
-            url: 'parqueo_procesar.php',
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            beforeSend: function(){
-                $('button[type=submit]').prop('disabled', true).text('Guardando...');
-            },
-            success: function(resp){
-                if(resp.ok){
-                    alert('Registro guardado correctamente');
-                    // 🔹 Abre el ticket en una nueva ventana para impresión
-                    window.open('../modulos/imprimir_ticket_php/ticket_hora.php', '_blank', 'width=400,height=600');
-
-                    $('#formParqueo')[0].reset();
-                    cargarTabla();
-                } else {
-                    alert('Error: ' + resp.error);
-                }
-            },
-            complete: function(){
-                $('button[type=submit]').prop('disabled', false).text('Registrar Ingreso');
+    $.ajax({
+        url: 'parqueo_procesar.php',
+        type: 'POST',
+        data: $(this).serialize(),
+        dataType: 'json',
+        beforeSend: function() {
+            $('button[type=submit]').prop('disabled', true);
+        },
+        success: function(response) {
+            alert(response.message);
+            if (response.status === 'success') {
+                $('#formParqueo')[0].reset();
             }
-        });
+        },
+        complete: function() {
+            $('button[type=submit]').prop('disabled', false);
+        }
     });
-
+});
     // Recarga periódica cada 15 segundos sin congelar el navegador
     setInterval(cargarTabla, 15000);
 });

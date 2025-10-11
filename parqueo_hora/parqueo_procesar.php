@@ -15,6 +15,20 @@ try {
         throw new Exception('Datos incompletos');
     }
 
+    // 1️⃣ Validar si la placa ya está registrada en parqueo con estado activo
+        $sql_check = "SELECT * FROM parqueo WHERE placa_cli = :placa AND estado = 'SI'";
+        $stmt_check = $pdo->prepare($sql_check);
+        $stmt_check->execute(['placa' => $placa]);
+
+       if ($stmt_check->rowCount() > 0) {
+        echo json_encode([
+            'status' => 'error',
+            'message' => "🚫 El vehículo con placa $placa ya se encuentra en el parqueadero."
+        ]);
+        exit;
+    } 
+
+
     // Verificar si el cliente ya existe
     $stmt = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ?");
     $stmt->execute([$placa]);
@@ -31,7 +45,9 @@ try {
     $stmt->execute([$placa, $caseta, $usuario]);
     
 
-    echo json_encode(['ok' => true]);
+    echo json_encode(['status' => 'success',
+        'message' => "✅ Vehículo $placa ingresado correctamente."]);
 } catch (Exception $e) {
-    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['status' => 'error',
+        'message' => 'Error al registrar el parqueo.']);
 }
