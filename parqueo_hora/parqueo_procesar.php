@@ -29,6 +29,7 @@ try {
             VALUES (?, NOW(), 1, ?, ?, 'SI')";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$placa, $caseta, $usuario]);
+    
 
     echo json_encode(['ok' => true]);
 } catch (Exception $e) {
