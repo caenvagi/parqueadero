@@ -95,7 +95,8 @@ $fecha_reserva = isset($_GET['fecha']) ? $_GET['fecha'] : null;
                                 <!-- Datos del cliente -->
                                 <div class="col-md-6">
                                     <label>Nombre:</label>
-                                    <input type="text" class="form-control" name="nombre" placeholder="Nombre" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
+                                    <input type="text" class="form-control" name="nombre" placeholder="Nombre" 
+                                     aria-label="nombre" aria-describedby="basic-addon1" required autofocus>
                                 </div>
 
                                 <div class="col-md-3">

@@ -47,6 +47,10 @@ try {
 
     echo json_encode(['status' => 'success',
         'message' => "✅ Vehículo $placa ingresado correctamente."]);
+        //  "<script>            
+        //     // 🔹 Abre el ticket en una nueva ventana para impresión
+        //     window.open('../modulos/imprimir_ticket_php/ticket_hora.php', '_blank', 'width=400,height=600');
+        // </script>";
 } catch (Exception $e) {
     echo json_encode(['status' => 'error',
         'message' => 'Error al registrar el parqueo.']);

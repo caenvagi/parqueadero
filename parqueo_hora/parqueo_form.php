@@ -34,19 +34,19 @@
     <form id="formParqueo" class="row g-3">
         <div class="col-md-3">
             <label class="form-label">Placa</label>
-            <input type="text" name="placa" class="form-control" maxlength="6" required>
+            <input type="text" name="placa" id="placa" class="form-control" maxlength="6" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
         </div>
         <div class="col-md-3">
             <label class="form-label">Nombre del Cliente</label>
-            <input type="text" name="nombre" class="form-control" required>
+            <input type="text" name="nombre" id="nombre" class="form-control" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
         </div>
         <div class="col-md-3">
             <label class="form-label">Vehículo</label>
-            <input type="text" name="vehiculo" class="form-control" required>
+            <input type="text" name="vehiculo" id="vehiculo" class="form-control" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
         </div>
         <div class="col-md-3">
             <label class="form-label">Categoría</label>
-            <select name="categoria" class="form-select" required>
+            <select name="categoria" id="categoria" class="form-select" required>
                 <option value="">Seleccione...</option>
                 <?php
                 $cats = $pdo->query("SELECT cat_id, cat_nombre FROM categorias ORDER BY cat_nombre");
@@ -88,6 +88,110 @@ $(document).ready(function(){
     // Cargar tabla al inicio
     cargarTabla();
 
+
+    // Buscar cliente por placa
+$('#placa').on('blur', function() {
+    const placa = $(this).val().trim().toUpperCase();
+
+    if (placa.length === 0) return;
+
+    $.ajax({
+        url: 'buscar_cliente.php',
+        type: 'POST',
+        data: { placa: placa },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === 'found') {
+                const c = response.data;
+                $('#nombre').val(c.nombre);
+                $('#cedula').val(c.cedula);
+                $('#celular').val(c.celular);
+                $('#vehiculo').val(c.vehiculo);
+                $('#categoria').val(c.categoria);
+                $('#valor').val(c.valor);
+                $('#plan_tarifa').val(c.plan_tarifa);
+                $('#mensualidad').val(c.mensualidad);
+                $('#activo').val(c.activo);
+
+                // ⚠️ No tocar el input de caseta
+                $('#mensajeParqueo').html(`<small style="color:green;">✅ Cliente encontrado: ${c.nombre}</small>`);
+                $('input').css({
+                            'background-color': '#d4edda', // verde claro
+                            'border-color': '#28a745'
+                        });
+                $('select#categoria').css({
+                            'background-color': '#d4edda', // verde claro
+                            'border-color': '#28a745'
+                        });        
+            } else {
+                // Limpiar formulario excepto caseta
+                $('#formParqueo').find('input, select').not('#caseta, #placa').val('');
+                $('#mensajeParqueo').html(`<small style="color:red;">⚠️ Cliente no registrado, ingrese los datos manualmente.</small>`);
+                $('input').css({
+                            'background-color': '#f8d7da', // rojo claro
+                            'border-color': '#dc3545'
+                        });
+                $('select').css({
+                            'background-color': '#f8d7da', // rojo claro
+                            'border-color': '#dc3545'
+                        });        
+            }
+        }
+    });
+});
+
+ // Buscar cliente por placa
+$('#nombre').on('focus', function() {
+    const placa = $(this).val().trim().toUpperCase();
+
+    if (placa.length === 0) return;
+
+    $.ajax({
+        url: 'buscar_cliente.php',
+        type: 'POST',
+        data: { placa: placa },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === 'found') {
+                const c = response.data;
+                $('#nombre').val(c.nombre);
+                $('#cedula').val(c.cedula);
+                $('#celular').val(c.celular);
+                $('#vehiculo').val(c.vehiculo);
+                $('#categoria').val(c.categoria);
+                $('#valor').val(c.valor);
+                $('#plan_tarifa').val(c.plan_tarifa);
+                $('#mensualidad').val(c.mensualidad);
+                $('#activo').val(c.activo);
+
+                // ⚠️ No tocar el input de caseta
+                $('#mensajeParqueo').html(`<small style="color:green;">✅ Cliente encontrado: ${c.nombre}</small>`);
+                $('input').css({
+                            'background-color': '#d4edda', // verde claro
+                            'border-color': '#28a745'
+                        });
+                $('select#categoria').css({
+                            'background-color': '#d4edda', // verde claro
+                            'border-color': '#28a745'
+                        });  
+            } else {
+                // Limpiar formulario excepto caseta
+                $('#formParqueo').find('input, select').not('#caseta, #placa').val('');
+                $('#mensajeParqueo').html(`<small style="color:red;">⚠️ Cliente no registrado, ingrese los datos manualmente.</small>`);
+            $('input').css({
+                            'background-color': '#f8d7da', // rojo claro
+                            'border-color': '#dc3545'
+                        });
+                $('select').css({
+                            'background-color': '#f8d7da', // rojo claro
+                            'border-color': '#dc3545'
+                        });
+            }
+        }
+    });
+});
+
+
     // Envío del formulario con AJAX
     $('#formParqueo').on('submit', function(e) {
     e.preventDefault();
@@ -103,6 +207,7 @@ $(document).ready(function(){
         success: function(response) {
             alert(response.message);
             if (response.status === 'success') {
+                window.open('../modulos/imprimir_ticket_php/ticket_hora.php', '_blank', 'width=400,height=600');
                 $('#formParqueo')[0].reset();
             }
         },
