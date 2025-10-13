@@ -57,38 +57,38 @@ try {
     }
 
     // 2️⃣ Calcular el tiempo transcurrido
-    $fecha_ini = new DateTime($data['fecha_ini']);
-    $fecha_fin = new DateTime('now', new DateTimeZone('America/Bogota'));
-    $intervalo = $fecha_ini->diff($fecha_fin);
-    $horas = $intervalo->days * 24 + $intervalo->h;
-    $minutos = $intervalo->i;
-    $segundos = $intervalo->s;
+$fecha_ini = new DateTime($data['fecha_ini']);
+$fecha_fin = new DateTime('now', new DateTimeZone('America/Bogota'));
+$intervalo = $fecha_ini->diff($fecha_fin);
 
-    // 3️⃣ Calcular el total con 15 min de gracia y bloque de 12 horas
-    $valor_hora = (float) $data['tarifa_hora'];
-    $valor_bloque = (float) $data['tar_bloque'];
+$dias = $intervalo->days;
+$horas = $intervalo->h;
+$minutos = $intervalo->i;
+$segundos = $intervalo->s;
 
-    $tiempo_minutos = ($horas * 60) + $minutos;
+// Calcular el total de minutos para la tarifa
+$tiempo_minutos = ($dias * 24 * 60) + ($horas * 60) + $minutos;
 
-    if ($tiempo_minutos <= 15) {
-        $total = 0; // período de gracia
-    } elseif ($tiempo_minutos <= 12 * 60) {
-        // Cobro normal por hora
-        $horas_cobro = ceil(($tiempo_minutos - 15) / 60);
-        $total = $horas_cobro * $valor_hora;
-        if ($total > $valor_bloque) $total = $valor_bloque;
-    } else {
-        // Más de 12 horas: calcular por bloques
-        $bloques = floor($tiempo_minutos / (12 * 60));
-        $restante = $tiempo_minutos % (12 * 60);
-        $total = $bloques * $valor_bloque;
+// 3️⃣ Calcular el total con 15 min de gracia y bloque de 12 horas
+$valor_hora = (float) $data['tarifa_hora'];
+$valor_bloque = (float) $data['tar_bloque'];
 
-        if ($restante > 15) {
-            $horas_extra = ceil(($restante - 15) / 60);
-            $total += min($valor_bloque, $horas_extra * $valor_hora);
-        }
+if ($tiempo_minutos <= 15) {
+    $total = 0; // período de gracia
+} elseif ($tiempo_minutos <= 12 * 60) {
+    $horas_cobro = ceil(($tiempo_minutos - 15) / 60);
+    $total = $horas_cobro * $valor_hora;
+    if ($total > $valor_bloque) $total = $valor_bloque;
+} else {
+    $bloques = floor($tiempo_minutos / (12 * 60));
+    $restante = $tiempo_minutos % (12 * 60);
+    $total = $bloques * $valor_bloque;
+
+    if ($restante > 15) {
+        $horas_extra = ceil(($restante - 15) / 60);
+        $total += min($valor_bloque, $horas_extra * $valor_hora);
     }
-
+}
     // 4️⃣ Actualizar el estado del parqueo
     $stmt = $pdo->prepare("UPDATE parqueo SET estado = 'NO' WHERE parqueo_id = :id");
     $stmt->execute([':id' => $id]);
@@ -99,21 +99,28 @@ try {
 
     
 
-    // 5️⃣ Insertar en recibo
-    $stmt = $pdo->prepare("
-        INSERT INTO recibo (ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_manual, usuario, cierre)
-        VALUES (:pid, :placa, :fini, :ffin, :tiempo, '1', :valor, :usuario, 'NO')
-    ");
-    $tiempo_txt = sprintf("%02dh %02dm %02ds", $horas, $minutos, $segundos);
+   // 5️⃣ Insertar en recibo
+$stmt = $pdo->prepare("
+    INSERT INTO recibo (ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_manual, usuario, cierre)
+    VALUES (:pid, :placa, :fini, :ffin, :tiempo, '1', :valor, :usuario, 'NO')
+");
+
+   // 🕒 Nuevo formato del tiempo: Días, Horas y Minutos
+if ($dias > 0) {
+    $tiempo_txt = sprintf("%d Dias %02d Horas %02d Min", $dias, $horas, $minutos);
+} else {
+    $tiempo_txt = sprintf("%02dh %02dm", $horas, $minutos);
+}
+    
     $stmt->execute([
-        ':pid' => $id,
-        ':placa' => $data['placa_cli'],
-        ':fini' => $data['fecha_ini'],        
-        ':ffin' => $fecha_fin->format('Y-m-d H:i:s'),
-        ':tiempo' => $tiempo_txt,
-        ':valor' => $total,
-        ':usuario' => $_SESSION['id'] ?? 'sistema'
-    ]);
+    ':pid' => $id,
+    ':placa' => $data['placa_cli'],
+    ':fini' => $data['fecha_ini'],        
+    ':ffin' => $fecha_fin->format('Y-m-d H:i:s'),
+    ':tiempo' => $tiempo_txt,
+    ':valor' => $total,
+    ':usuario' => $_SESSION['id'] ?? 'sistema'
+]);
 
     $recibo_id = $pdo->lastInsertId();
 

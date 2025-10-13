@@ -101,6 +101,7 @@ veces a $printer->text()
     if (!$row) {
         throw new Exception("No hay registros recientes de parqueo.");
     }
+    
 
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 2);
