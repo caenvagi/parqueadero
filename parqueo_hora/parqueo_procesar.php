@@ -21,7 +21,7 @@ try {
     $nombre = trim($_POST['nombre']);
     $vehiculo = trim($_POST['vehiculo']);
     $categoria = (int)$_POST['categoria'];
-    $caseta = (int)$_POST['caseta'];
+    $caseta = (int)$_POST['casetas'];
     $usuario = $_SESSION['id'];;
 
     if(!$placa || !$nombre || !$vehiculo || !$categoria || !$caseta || !$usuario){

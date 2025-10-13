@@ -87,7 +87,7 @@ $parqueos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             }
         }
 
-        $tiempoTexto = sprintf("%dd %02dh %02dm", $intervalo->d, $intervalo->h, $intervalo->i);
+        $tiempoTexto = sprintf("%d-d  %02d-h  %02d-m", $intervalo->d, $intervalo->h, $intervalo->i);
     ?>
         <tr>
             <td><?= $p['parqueo_id'] ?></td>
