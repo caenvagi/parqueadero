@@ -35,6 +35,7 @@ try {
             p.parqueo_id,
             p.placa_cli,
             p.fecha_ini,
+            p.caseta,
             t.tar_valor AS tarifa_hora,
             t.tar_bloque,
             t.tar_categoria,
@@ -48,6 +49,8 @@ try {
     ");
     $stmt->execute([':id' => $id]);
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    
 
     if (!$data) {
         throw new Exception('Registro no encontrado');
@@ -90,6 +93,12 @@ try {
     $stmt = $pdo->prepare("UPDATE parqueo SET estado = 'NO' WHERE parqueo_id = :id");
     $stmt->execute([':id' => $id]);
 
+    // Liberar la caseta
+    $stmt = $pdo->prepare("UPDATE casetas SET casetas_estado = 'Disponible' WHERE caseta_id = :caseta");
+    $stmt->execute([':caseta' => $data['caseta']]); 
+
+    
+
     // 5️⃣ Insertar en recibo
     $stmt = $pdo->prepare("
         INSERT INTO recibo (ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_manual, usuario, cierre)
@@ -99,7 +108,7 @@ try {
     $stmt->execute([
         ':pid' => $id,
         ':placa' => $data['placa_cli'],
-        ':fini' => $data['fecha_ini'],
+        ':fini' => $data['fecha_ini'],        
         ':ffin' => $fecha_fin->format('Y-m-d H:i:s'),
         ':tiempo' => $tiempo_txt,
         ':valor' => $total,
