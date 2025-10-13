@@ -3,26 +3,19 @@
 sleep(1);
 session_start();
 
-require '../../conexion/conexion.php';
+// ✅ Conexión actual del proyecto
+require_once '../../conexion/conexion.PHP';
 
+// ✅ Verificación de sesión
 if (!isset($_SESSION['id'])) {
     header("Location: ../index.php");
+    exit();
 }
+
 $id = $_SESSION['id'];
-$nombre = $_SESSION['nombre'];
+$nombre_usuario = $_SESSION['nombre'];
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = $_SESSION['usuario'];
-$usuarios = $_SESSION['usuario'];
-
-if ($tipo_usuario == 1) {
-    $where = "";
-} else if ($tipo_usuario == 2) {
-    $where = "WHERE id=$id";
-}
-
-require("../../conexion/conexion4.php");
-$mysqli = retornarConexion();
-
 
 require __DIR__ . '/autoload.php'; //Nota: si renombraste la carpeta a algo diferente de "ticket" cambia el nombre en esta línea
 use Mike42\Escpos\EscposImage;
@@ -66,38 +59,48 @@ el salto de línea o llamar muchas
 veces a $printer->text()
  */
 
-    //$placa = $_POST['placa']; 
-    sleep(1);
-    $query = "      SELECT      recibo_id,
-                                RE.placa,
-                                DATE(RE.fecha_ini) as fechaini,
-                                TIME(RE.fecha_ini) as horaini,
-                                DATE(RE.fecha_fin) as fechafin,
-                                TIME(RE.fecha_fin) as horafin,
-                                RE.tiempo,
-                                valor_pagado,
-                                valor_manual,
-                                RE.usuario,
-                                US.nombre,
-                                tarifa,
-                                tar_valor,
-                                tar_bloque,
-                                tar_tiempo,
-                                cat_nombre                              
-                    FROM        recibo AS RE 
-                    INNER JOIN  usuarios AS US ON US.id = RE.usuario 
-                    INNER JOIN  parqueo AS PA ON PA.parqueo_id = RE.ticket 
-                    INNER JOIN  tarifas AS TA  ON TA.tar_id = PA.tarifa
-                    INNER JOIN  tar_tiempo AS TT ON TT.tar_id_nombre = TA.tar_nombre
-                    INNER JOIN  cliente AS CL ON CL.placa = RE.placa
-                    INNER JOIN  categorias AS CA ON CA.cat_id = CL.categoria  
-                    ORDER BY    recibo_id
-                    DESC LIMIT 1;
-                    
-                        ";
-    $parqueo = $mysqli->query($query);
+   try {
+    $connector = new WindowsPrintConnector($nombre_impresora);
+    $printer = new Printer($connector);
 
-    $row = $parqueo->fetch_assoc();
+     // ✅ Consulta del último ingreso
+    $stmt = $pdo->query("
+        SELECT r.recibo_id,
+               r.recibo_man,
+               r.fecha_recibo,
+               DATE(r.fecha_ini) as fechaini,
+               TIME(r.fecha_ini) as horaini,
+               DATE(r.fecha_fin) as fechafin,
+               TIME(r.fecha_fin) as horafin,
+               r.ticket,
+               r.placa,
+               r.fecha_ini,
+               r.fecha_fin,
+               r.tiempo,
+               r.valor_manual,
+               r.usuario,
+               cat.cat_nombre,
+               u.nombre,
+               tar_valor,
+               tar_bloque,
+               tar_tiempo        
+        FROM recibo r
+        INNER JOIN cliente c ON c.placa = r.placa
+        INNER JOIN categorias cat ON cat.cat_id = c.categoria
+        INNER JOIN usuarios u ON u.id = r.usuario
+        INNER JOIN  tarifas AS TA  ON TA.tar_id = r.tarifa_recibo
+        INNER JOIN  tar_tiempo AS TT ON TT.tar_id_nombre = TA.tar_nombre
+        
+        
+        ORDER BY r.recibo_id DESC
+        LIMIT 1
+    ");
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        throw new Exception("No hay registros recientes de parqueo.");
+    }
 
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 2);
@@ -106,8 +109,8 @@ $printer->setTextSize(2, 2);
 $printer->text("Parque de la familia");
 $printer->setTextSize(2, 1);
 $printer->feed();
-$printer->text("Wathsapp\n");
-$printer->text("314-8139800\n");
+$printer->text("Nit\n");
+$printer->text("801.001.111-1\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->text("------------------------\n");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -195,3 +198,7 @@ $printer->close();
 echo "<script>window.close();</script>";
 
 exit;
+
+} catch (Exception $e) {
+    echo "⚠️ Error: " . $e->getMessage();
+}

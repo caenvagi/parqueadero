@@ -134,6 +134,9 @@ $(document).ready(function() {
                         '💰 Valor total: $' + res.total.toLocaleString()
                     );
 
+                     window.open('../modulos/imprimir_ticket_php/recibo.php', '_blank', 'width=400,height=600');
+                    $('#formParqueo')[0].reset();
+
                     // Eliminar la fila del listado sin recargar
                     boton.closest('tr').fadeOut(600, function() {
                         $(this).remove();
