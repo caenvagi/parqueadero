@@ -2,6 +2,19 @@
 session_start();
     require_once "../conexion/conexion.php";
 
+    date_default_timezone_set('America/Bogota');
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: index.php");
+    }
+    $id = $_SESSION['id'];
+    $tipo_usuario = $_SESSION['tipo_usuario'];
+    
+    if ($tipo_usuario == 1) {
+        $where = "";
+    } else if ($tipo_usuario == 2) {
+        $where = "WHERE id=$id";
+    }
 
 try {
     $placa = strtoupper(trim($_POST['placa']));
@@ -9,7 +22,7 @@ try {
     $vehiculo = trim($_POST['vehiculo']);
     $categoria = (int)$_POST['categoria'];
     $caseta = (int)$_POST['caseta'];
-    $usuario = (int)$_POST['usuario'];
+    $usuario = $_SESSION['id'];;
 
     if(!$placa || !$nombre || !$vehiculo || !$categoria || !$caseta || !$usuario){
         throw new Exception('Datos incompletos');
@@ -28,7 +41,6 @@ try {
         exit;
     } 
 
-
     // Verificar si el cliente ya existe
     $stmt = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ?");
     $stmt->execute([$placa]);
@@ -43,6 +55,10 @@ try {
             VALUES (?, NOW(), 1, ?, ?, 'SI')";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$placa, $caseta, $usuario]);
+
+    // Cambiar estado de la caseta a Ocupado
+        $update = $pdo->prepare("UPDATE casetas SET casetas_estado = 'Ocupado' WHERE caseta_id = ?");
+        $update->execute([$caseta]);
     
 
     echo json_encode(['status' => 'success',
@@ -52,6 +68,8 @@ try {
         //     window.open('../modulos/imprimir_ticket_php/ticket_hora.php', '_blank', 'width=400,height=600');
         // </script>";
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error',
-        'message' => 'Error al registrar el parqueo.']);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Error al registrar el parqueo: ' . $e->getMessage()
+    ]);
 }

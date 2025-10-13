@@ -205,10 +205,13 @@ $('#nombre').on('focus', function() {
             $('button[type=submit]').prop('disabled', true);
         },
         success: function(response) {
+            console.log(response);
             alert(response.message);
             if (response.status === 'success') {
                 window.open('../modulos/imprimir_ticket_php/ticket_hora.php', '_blank', 'width=400,height=600');
                 $('#formParqueo')[0].reset();
+                cargarTabla();
+                location.reload();
             }
         },
         complete: function() {
