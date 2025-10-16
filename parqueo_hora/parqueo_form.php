@@ -35,7 +35,7 @@ if ($tipo_usuario == 1) {
             <div class="container">
                 <h3 class="mt-3 mb-4 text-center">Registro de Parqueo por Horas</h3>
 
-
+            <div class="card p-2">
                 <div class="row">
                     <div class="col col-12 col-sm-12 col-md-3 col-lg-4 col-xl-4 m-3">
                         <form id="formParqueo" class="row g-3">
@@ -114,8 +114,6 @@ if ($tipo_usuario == 1) {
                             </div>
                         </form>
                     </div>
-
-
                     <!-- cards vehiculos-->
                     <div class="col col-lg-7">
                         <div id="cards" class="row">
@@ -123,19 +121,8 @@ if ($tipo_usuario == 1) {
                     </div>
                     <!-- fin cards vehiculos-->
                 </div>
-
-
-
-
-
-
-
-
-
-                <!-- Formulario -->
-                
-
-                <hr class="my-4">
+                </div>
+                <div class="my-4">
 
                 <!-- Tabla -->
                 <h4>Vehículos en Parqueo</h4>
@@ -147,8 +134,7 @@ if ($tipo_usuario == 1) {
                 $(document).ready(function() {
                     // Cargar tabla al inicio
                     cargarTabla();
-                    obtenerCards();
-                    setInterval(obtenerCards, 15000);
+                   
 
                 // Buscar cliente por placa
                     $('#placa').on('blur', function() {
@@ -285,15 +271,8 @@ if ($tipo_usuario == 1) {
                         });
                     });
                     // Recarga periódica cada 15 segundos sin congelar el navegador
-                    setInterval(cargarTabla, 15000);
-                // Envío del formulario con AJAX    
-                });
-
-                function cargarTabla() {
-                    $.get('parqueo_listar.php', function(html) {
-                        $('#tablaParqueo').html(html);
-                    });
-                }
+                    //setInterval(cargarTabla, 15000);
+                // Envío del formulario con AJAX  
 
                 //ajax list parqueo cards 
                     function formatCurrency(value, currency) {
@@ -303,10 +282,13 @@ if ($tipo_usuario == 1) {
                             maximumFractionDigits: 0
                         }).format(value);
                     }
-
+                    let cargando = false;
                     function obtenerCards() {
+                        if (cargando) return; // evita duplicar peticiones
+                        cargando = true;
                         $.ajax({
                             url: 'park-list.php',
+                            cache: false,
                             type: 'POST',
                             success: function(response) {
                                 let parks = JSON.parse(response);
@@ -341,7 +323,7 @@ if ($tipo_usuario == 1) {
                                             <h6 class="tiempo_parqueo" id="tiempo_parqueo">${park.tiempo}</h6>             
 
                                             <h7 class="avisos_parqueo">Valor a pagar:</h7>
-                                            <h6 class="pago_parqueo" id="pago_parqueo">$ ${formatCurrency(park.valor, 'COP')}</h6>
+                                            <h6 class="pago_parqueo" id="pago_parqueo">$${formatCurrency(park.valor, 'COP')}</h6>
                                             
                                             <h6 class="pago_parqueo" id="pago_parqueo">${park.cat_nombre}</h6>
 
@@ -361,22 +343,33 @@ if ($tipo_usuario == 1) {
                                     </div> `
                                 });
                                 $('#cards').html(template);
-                                // console.log(response);
+                            }, complete: function() {
+                                    cargando = false; // libera cuando termina
+                                }, error: function() {
+                                cargando = false;
                             }
-                        })
-
-
-                        //cargar div automaticamente 
-                        //setInterval(function() {obtenerCards()}, 30000);
+                        });
                     }
-                //ajax list parqueo cards
-            </script>
+                //ajax list parqueo cards    
+               
+                obtenerCards(); // primera carga
+                 setTimeout(() => {
+                    obtenerCards(); // primera carga
+                    setInterval(obtenerCards, 300000);
+                }, 5000);                
+                });
 
+                setInterval(() => {
+                location.reload();
+                }, 900000); // 30 min
 
-
-
-
-    </main>
+                function cargarTabla() {
+                    $.get('parqueo_listar.php', function(html) {
+                        $('#tablaParqueo').html(html);
+                    });
+                }
+                </script>
+        </main>
 </div>
 </body>
 

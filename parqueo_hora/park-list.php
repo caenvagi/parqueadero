@@ -143,6 +143,30 @@ function calcularCamiones($minutos)
     }
 }
 
+function calcularBusetas($minutos)
+{
+    $tarifaHora = 2500;
+    $tarifa12Horas = 15000;
+    $tarifaDia = 25000;
+
+    if ($minutos <= 10) return 0;
+    $horasI = floor($minutos / 60);
+    $minutosRestantes = $minutos % 60;
+    $horas = max(1, $horasI);
+
+    if ($minutosRestantes > 15 && $horasI >= 1) $horas++;
+    if ($horas <= 12) return min($horas * $tarifaHora, $tarifa12Horas);
+    elseif ($horas <= 24) {
+        $horasExtra = $horas - 12;
+        $costo = $tarifa12Horas + ($horasExtra * $tarifaHora);
+        return min($costo, $tarifaDia);
+    } else {
+        $diasCompletos = floor($horas / 24);
+        $horasRestantes = $horas % 24;
+        return ($diasCompletos * $tarifaDia) + calcularBusetas($horasRestantes * 60);
+    }
+}
+
 // =============================
 // CONSULTA PRINCIPAL CON PDO
 // =============================
@@ -193,6 +217,7 @@ try {
             case 2: $valor = calcularAutomoviles($minutos); break;
             case 3: $valor = calcularTurbos($minutos); break;
             case 4: $valor = calcularCamiones($minutos); break;
+            case 7: $valor = calcularBusetas($minutos); break;
             default: $valor = 0;
         }
 
