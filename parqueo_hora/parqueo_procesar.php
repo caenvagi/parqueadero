@@ -19,12 +19,13 @@ session_start();
 try {
     $placa = strtoupper(trim($_POST['placa']));
     $nombre = trim($_POST['nombre']);
+    $celular = trim($_POST['celular']);
     $vehiculo = trim($_POST['vehiculo']);
     $categoria = (int)$_POST['categoria'];
     $caseta = (int)$_POST['casetas'];
     $usuario = $_SESSION['id'];;
 
-    if(!$placa || !$nombre || !$vehiculo || !$categoria || !$caseta || !$usuario){
+    if(!$placa || !$nombre || !$celular || !$vehiculo || !$categoria || !$caseta || !$usuario){
         throw new Exception('Datos incompletos');
     }
 
@@ -46,8 +47,8 @@ try {
     $stmt->execute([$placa]);
     if($stmt->rowCount() == 0) {
         $sql = "INSERT INTO cliente (fecha_creacion, placa, nombre, cedula, celular, vehiculo, categoria, valor, cli_tar_tiempo, caseta, mensualidad, activo, user)
-                VALUES (NOW(), ?, ?, 0, 0, ?, ?, 0, 1, ?, 'NO', 'SI', ?)";
-        $pdo->prepare($sql)->execute([$placa, $nombre, $vehiculo, $categoria, $caseta, $usuario]);
+                VALUES (NOW(), ?, ?, 0, ?, ?, ?, 0, 1, ?, 'NO', 'SI', ?)";
+        $pdo->prepare($sql)->execute([$placa, $nombre, $celular, $vehiculo, $categoria, $caseta, $usuario]);
     }
 
     // Insertar registro en parqueo

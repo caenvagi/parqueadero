@@ -43,7 +43,7 @@ if (!empty($caja)) {
     $params[':caja'] = $caja;
 }
 
-$sql .= " ORDER BY fecha_movimiento DESC";
+$sql .= " ORDER BY id_movimiento DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $movimientos = $stmt->fetchAll();
