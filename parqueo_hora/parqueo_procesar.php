@@ -45,7 +45,7 @@ try {
     $stmt = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ?");
     $stmt->execute([$placa]);
     if($stmt->rowCount() == 0) {
-        $sql = "INSERT INTO cliente (fecha_creacion, placa, nombre, cedula, celular, vehiculo, categoria, valor, plan_tarifa, caseta, mensualidad, activo, user)
+        $sql = "INSERT INTO cliente (fecha_creacion, placa, nombre, cedula, celular, vehiculo, categoria, valor, cli_tar_tiempo, caseta, mensualidad, activo, user)
                 VALUES (NOW(), ?, ?, 0, 0, ?, ?, 0, 1, ?, 'NO', 'SI', ?)";
         $pdo->prepare($sql)->execute([$placa, $nombre, $vehiculo, $categoria, $caseta, $usuario]);
     }
