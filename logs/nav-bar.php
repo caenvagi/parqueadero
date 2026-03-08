@@ -190,7 +190,7 @@ if ($tipo_usuario == 1) {
                                         &nbsp;&nbsp;&nbsp;Ingreso
                                     </a>
                                     <a class="nav-link" href="../parqueo_casetas/parqueo_casetas.php">
-                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
                                     </a>
                                     <!-- <a class="nav-link" href="../config/mensualidades.php">

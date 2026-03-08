@@ -355,13 +355,13 @@ if ($tipo_usuario == 1) {
                 obtenerCards(); // primera carga
                  setTimeout(() => {
                     obtenerCards(); // primera carga
-                    setInterval(obtenerCards, 300000);
+                    setInterval(obtenerCards, 30000);
                 }, 5000);                
                 });
 
                 setInterval(() => {
                 location.reload();
-                }, 900000); // 30 min
+                }, 150000); // 30 min
 
                 function cargarTabla() {
                     $.get('parqueo_listar.php', function(html) {

@@ -57,7 +57,7 @@ if (isset($_POST['turnos']) && is_array($_POST['turnos'])) {
         $stmt = $pdo->prepare($sql_insert);
         $stmt->execute([
             $fechaActual,            // fecha_movimiento
-            3,                       // movimiento (ejemplo: 3 = egreso por pago)
+            2,                       // movimiento (ejemplo: 3 = egreso por pago)
             $descripcion,            // desc_movimiento
             $info['total'],          // valor_egreso
             $usuario_id,             // user_login (a quien se le paga)
