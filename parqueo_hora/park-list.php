@@ -44,14 +44,121 @@ function conversorSegundosHoras($tiempo_en_segundos)
     return $hora_texto;
 }
 
+    
+// CONSULTA TARIFAS PARA MOTO
+   $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 1";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora1 = $fila['tar_valor'];
+            $tarifa12Horas1 = $fila['tar_bloque'];
+            $tarifaDia1 = $fila['tar_bloque'] * 2;
+        }
+
+// CONSULTA TARIFAS PARA AUTOMOVIL
+    $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 2";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora2 = $fila['tar_valor'];
+            $tarifa12Horas2 = $fila['tar_bloque'];
+            $tarifaDia2 = $fila['tar_bloque'] * 2;
+        }
+
+// CONSULTA TARIFAS PARA TURBOS
+    $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 3";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora3 = $fila['tar_valor'];
+            $tarifa12Horas3 = $fila['tar_bloque'];
+            $tarifaDia3 = $fila['tar_bloque'] * 2;
+        }
+// CONSULTA TARIFAS PARA CAMIONES
+    $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 4";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora4 = $fila['tar_valor'];
+            $tarifa12Horas4 = $fila['tar_bloque'];
+            $tarifaDia4 = $fila['tar_bloque'] * 2;
+        }
+// CONSULTA TARIFAS PARA BUSETAS
+    $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 7";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora7 = $fila['tar_valor'];
+            $tarifa12Horas7 = $fila['tar_bloque'];
+            $tarifaDia7 = $fila['tar_bloque'] * 2;
+        }
 // -------------------------------
 // FUNCIONES DE CÁLCULO POR CATEGORÍA
 // -------------------------------
-function calcularMotos($minutos)
+
+
+
+function calcularMotos($minutos, $tarifaHora1, $tarifa12Horas1, $tarifaDia1)
 {
-    $tarifaHora = 1000;
-    $tarifa12Horas = 6000;
-    $tarifaDia = 12000;
+    $tarifaHora = $tarifaHora1;
+    $tarifa12Horas =  $tarifa12Horas1;
+    $tarifaDia = $tarifaDia1;
+
+    if ($minutos <= 10) return 0;
+
+    $horasI = floor($minutos / 60);
+    $minutosRestantes = $minutos % 60;
+    $horas = max(1, $horasI);
+
+    if ($minutosRestantes > 15 && $horasI >= 1) $horas++;
+
+    if ($horas <= 12) return min($horas * $tarifaHora, $tarifa12Horas);
+
+    elseif ($horas <= 24) {
+        $horasExtra = $horas - 12;
+        $costo = $tarifa12Horas + ($horasExtra * $tarifaHora);
+        return min($costo, $tarifaDia);
+    } else {
+        $diasCompletos = floor($horas / 24);
+        $horasRestantes = $horas % 24;
+        return ($diasCompletos * $tarifaDia) + calcularMotos($horasRestantes * 60,$tarifaHora1,  $tarifa12Horas1, $tarifaDia1);
+    }
+}
+function calcularAutomoviles($minutos,$tarifaHora2, $tarifa12Horas2, $tarifaDia2)
+{
+    $tarifaHora = $tarifaHora2;
+    $tarifa12Horas = $tarifa12Horas2;
+    $tarifaDia = $tarifaDia2;
 
     if ($minutos <= 10) return 0;
     $horasI = floor($minutos / 60);
@@ -67,15 +174,15 @@ function calcularMotos($minutos)
     } else {
         $diasCompletos = floor($horas / 24);
         $horasRestantes = $horas % 24;
-        return ($diasCompletos * $tarifaDia) + calcularMotos($horasRestantes * 60);
+        return ($diasCompletos * $tarifaDia) + calcularAutomoviles($horasRestantes * 60,$tarifaHora2,  $tarifa12Horas2, $tarifaDia2);
     }
 }
 
-function calcularAutomoviles($minutos)
+function calcularTurbos($minutos,$tarifaHora3, $tarifa12Horas3, $tarifaDia3)
 {
-    $tarifaHora = 2000;
-    $tarifa12Horas = 12000;
-    $tarifaDia = 24000;
+    $tarifaHora = $tarifaHora3;
+    $tarifa12Horas = $tarifa12Horas3;
+    $tarifaDia = $tarifaDia3;
 
     if ($minutos <= 10) return 0;
     $horasI = floor($minutos / 60);
@@ -91,15 +198,15 @@ function calcularAutomoviles($minutos)
     } else {
         $diasCompletos = floor($horas / 24);
         $horasRestantes = $horas % 24;
-        return ($diasCompletos * $tarifaDia) + calcularAutomoviles($horasRestantes * 60);
+        return ($diasCompletos * $tarifaDia) + calcularTurbos($horasRestantes * 60,$tarifaHora3, $tarifa12Horas3, $tarifaDia3);
     }
 }
 
-function calcularTurbos($minutos)
+function calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4)
 {
-    $tarifaHora = 2500;
-    $tarifa12Horas = 15000;
-    $tarifaDia = 25000;
+    $tarifaHora = $tarifaHora4;
+    $tarifa12Horas = $tarifa12Horas4;
+    $tarifaDia = $tarifaDia4;
 
     if ($minutos <= 10) return 0;
     $horasI = floor($minutos / 60);
@@ -115,15 +222,15 @@ function calcularTurbos($minutos)
     } else {
         $diasCompletos = floor($horas / 24);
         $horasRestantes = $horas % 24;
-        return ($diasCompletos * $tarifaDia) + calcularTurbos($horasRestantes * 60);
+        return ($diasCompletos * $tarifaDia) + calcularCamiones($horasRestantes * 60,$tarifaHora4, $tarifa12Horas4, $tarifaDia4);
     }
 }
 
-function calcularCamiones($minutos)
+function calcularBusetas($minutos, $tarifaHora7, $tarifa12Horas7, $tarifaDia7)
 {
-    $tarifaHora = 2500;
-    $tarifa12Horas = 15000;
-    $tarifaDia = 25000;
+    $tarifaHora = $tarifaHora7;
+    $tarifa12Horas = $tarifa12Horas7;
+    $tarifaDia = $tarifaDia7;
 
     if ($minutos <= 10) return 0;
     $horasI = floor($minutos / 60);
@@ -139,31 +246,7 @@ function calcularCamiones($minutos)
     } else {
         $diasCompletos = floor($horas / 24);
         $horasRestantes = $horas % 24;
-        return ($diasCompletos * $tarifaDia) + calcularCamiones($horasRestantes * 60);
-    }
-}
-
-function calcularBusetas($minutos)
-{
-    $tarifaHora = 2500;
-    $tarifa12Horas = 15000;
-    $tarifaDia = 25000;
-
-    if ($minutos <= 10) return 0;
-    $horasI = floor($minutos / 60);
-    $minutosRestantes = $minutos % 60;
-    $horas = max(1, $horasI);
-
-    if ($minutosRestantes > 15 && $horasI >= 1) $horas++;
-    if ($horas <= 12) return min($horas * $tarifaHora, $tarifa12Horas);
-    elseif ($horas <= 24) {
-        $horasExtra = $horas - 12;
-        $costo = $tarifa12Horas + ($horasExtra * $tarifaHora);
-        return min($costo, $tarifaDia);
-    } else {
-        $diasCompletos = floor($horas / 24);
-        $horasRestantes = $horas % 24;
-        return ($diasCompletos * $tarifaDia) + calcularBusetas($horasRestantes * 60);
+        return ($diasCompletos * $tarifaDia) + calcularBusetas($horasRestantes * 60, $tarifaHora7, $tarifa12Horas7, $tarifaDia7);
     }
 }
 
@@ -213,11 +296,11 @@ try {
         $minutos = floor($tiempo_transcurrido / 60);
 
         switch ($row['categoria']) {
-            case 1: $valor = calcularMotos($minutos); break;
-            case 2: $valor = calcularAutomoviles($minutos); break;
-            case 3: $valor = calcularTurbos($minutos); break;
-            case 4: $valor = calcularCamiones($minutos); break;
-            case 7: $valor = calcularBusetas($minutos); break;
+            case 1: $valor = calcularMotos($minutos,$tarifaHora1,   $tarifa12Horas1, $tarifaDia1); break;
+            case 2: $valor = calcularAutomoviles($minutos,$tarifaHora2,  $tarifa12Horas2, $tarifaDia2); break;
+            case 3: $valor = calcularTurbos($minutos,$tarifaHora3, $tarifa12Horas3, $tarifaDia3); break;
+            case 4: $valor = calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4); break;
+            case 7: $valor = calcularBusetas($minutos, $tarifaHora7, $tarifa12Horas7, $tarifaDia7); break;
             default: $valor = 0;
         }
 
