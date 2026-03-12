@@ -109,6 +109,8 @@ $hora_actual = date('H:i:s');
             <tr>
                 <th>id</th>
                 <th>Fecha</th>
+                <th>Recibo</th>
+                <th>F-PAR</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -124,8 +126,10 @@ $hora_actual = date('H:i:s');
             <?php foreach ($movimientos as $mov): ?>
                 <tr class="<?= ($mov['liquidado'] === 'SI') ? 'table-secondary' : '' ?>">
                     <?php $fecha = new DateTime($mov['fecha_movimiento']); ?>
-                    <td><?= $mov['id_movimiento'] ?></td>
+                    <td><?= $mov['id_movimiento'] ?></td>                    
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
+                    <td><?= $mov['recibo_id'] ?></td>
+                    <td><?= $mov['rec_manual'] ?></td>
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>
@@ -146,7 +150,7 @@ $hora_actual = date('H:i:s');
         </tbody>
         <tfoot>
             <tr class="table-secondary">
-                <th colspan="3">Totales</th>
+                <th colspan="5">Totales</th>
                 <th class="text-success"><?= number_format($total_ingresos) ?></th>
                 <th class="text-danger"><?= number_format($total_egresos) ?></th>
                 <th colspan="5">Saldo: <strong><?= number_format($saldo) ?></strong></th>
@@ -193,6 +197,8 @@ $hora_actual = date('H:i:s');
           <table class="table table-bordered table-striped">
             <thead class="table-dark">
               <tr>
+                <th>Recibo</th>
+                <th>F-PAR</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -203,12 +209,12 @@ $hora_actual = date('H:i:s');
             </tbody>
             <tfoot>
   <tr class="table-secondary">
-    <th class="text-end">Totales:</th>
+    <th colspan="3" class="text-end">Totales:</th>
     <th id="totalIngreso" class="text-success text-end">$0</th>
     <th id="totalEgreso" class="text-danger text-end">$0</th>
   </tr>
   <tr class="table-info">
-    <th colspan="2" class="text-end">💰 Total a Liquidar:</th>
+    <th colspan="4" class="text-end">💰 Total a Liquidar:</th>
     <th id="totalLiquidar" class="text-end fw-bold">$0</th>
   </tr>
 </tfoot>
@@ -264,6 +270,8 @@ document.getElementById('btnPreliquidar').addEventListener('click', function () 
         data.movimientos.forEach(m => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
+                <td>${m.recibo_id}</td>
+                <td>${m.rec_manual}</td>
                 <td>${m.descripcion}</td>
                 <td class="text-end text-success">${m.valor_ingreso ? m.valor_ingreso.toLocaleString() : ''}</td>
                 <td class="text-end text-danger">${m.valor_egreso ? m.valor_egreso.toLocaleString() : ''}</td>

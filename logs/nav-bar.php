@@ -180,7 +180,7 @@ if ($tipo_usuario == 1) {
                         <!-- MENU PARQUEO INICIO-->
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-parqueo" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div><i style="font-size:24px" class="bi bi-p-circle-fill"></i></div>
-                                &nbsp;&nbsp;&nbsp;Parqueo
+                                &nbsp;&nbsp;&nbsp;Parqueo/Horas
                                 <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                             </a>
                             <div class="collapse" id="collapse-parqueo" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
@@ -189,7 +189,7 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso
                                     </a>
-                                    <a class="nav-link" href="../parqueo_casetas/parqueo_casetas.php">
+                                    <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_hora.php">
                                         <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
                                     </a>
@@ -197,6 +197,46 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Tarifas
                                     </a>
+                                    <!-- <a class="nav-link" href="../config/mensualidades.php">
+                                        <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Mensualidades
+                                    </a>
+                                    <a class="nav-link" href="../config/parqueomanual.php">
+                                        <div><i class='fas fa-edit' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Ingreso Manual
+                                    </a>
+                                    <a class="nav-link" href="../config/ingresos.php">
+                                        <div><i class='fas fa-list-ol' style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;en parqueo
+                                    </a>
+                                    <a class="nav-link" href="../config/listado.php">
+                                        <div><i class='fas fa-clipboard-list' style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Listado -->
+                                    </a>
+                                </nav>
+                            </div>
+                        <!-- MENU PARQUEO FIN-->
+
+                        <!-- MENU PARQUEO INICIO-->
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-mensualidad" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div><i style="font-size:24px" class="bi bi-car-front-fill"></i></div>
+                                &nbsp;&nbsp;&nbsp;Mensualidades
+                                <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
+                            </a>
+                            <div class="collapse" id="collapse-mensualidad" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <!-- <a class="nav-link" href="../parqueo_hora/parqueo_form.php">
+                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Ingreso
+                                    </a> -->
+                                    <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_mens.php">
+                                        <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Casetas
+                                    </a>
+                                    <!-- <a class="nav-link" href="../parqueo_hora/parqueo_tarifas.php">
+                                        <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Tarifas
+                                    </a> -->
                                     <!-- <a class="nav-link" href="../config/mensualidades.php">
                                         <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Mensualidades

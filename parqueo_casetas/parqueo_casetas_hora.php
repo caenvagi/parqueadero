@@ -21,21 +21,35 @@ $sql = "SELECT
             c.casetas_nom,
             c.casetas_loc,
             c.casetas_estado,
-            IF(p.parqueo_id IS NULL,'Disponible','Ocupada') estado,
-            p.placa_cli
-            
-           
+            IF(p.parqueo_id IS NOT NULL OR cl.placa IS NOT NULL,'Ocupada','Disponible') AS estado,
+            p.placa_cli,
+            cl.placa,
+            cl.vehiculo,
+            cl.nombre,
+            cl.mensualidad           
         FROM casetas c
 
         LEFT JOIN parqueo p 
             ON p.caseta = c.caseta_id 
             AND p.estado = 'SI'
+
+            LEFT JOIN cliente cl 
+            ON cl.caseta = c.caseta_id 
+            AND cl.activo = 'SI'
         
         ORDER BY c.caseta_id";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $casetas = $stmt->fetchAll();
+
+$casetas_por_loc = [];
+
+foreach ($casetas as $c) {
+    $casetas_por_loc[$c['casetas_loc']][] = $c;
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -79,12 +93,20 @@ $casetas = $stmt->fetchAll();
 
 <div class="row g-3">
 
-<?php foreach($casetas as $c): ?>
+<?php foreach($casetas_por_loc as $loc => $listaCasetas): ?>
+
+<h4 class="mt-4 mb-3 text-primary">
+Ubicación: <?php echo $loc; ?>
+</h4>
+
+<div class="row g-3">
+
+<?php foreach($listaCasetas as $c): ?>
 
 <div class="col-md-3 col-sm-6">
 
 <div class="card caseta-card 
-<?php echo ($c['casetas_estado']=='Disponible') ? 'Disponible':'Ocupado'; ?>">
+<?php echo ($c['estado']=='Disponible') ? 'Disponible':'Ocupado'; ?>">
 
 <div class="card-body text-center">
 
@@ -96,7 +118,7 @@ $casetas = $stmt->fetchAll();
 <?php echo $c['casetas_loc']; ?>
 </p>
 
-<?php if($c['casetas_estado']=='Disponible'): ?>
+<?php if($c['estado']=='Disponible'): ?>
 
 <span class="badge bg-success fs-6">
 Disponible
@@ -109,13 +131,21 @@ Ocupado
 </span>
 
 <div class="mt-2">
-Placa: <strong><?php echo $c['placa_cli']; ?></strong>
+Placa: <strong><?php echo $c['placa']; ?></strong>
+</div>
+
+<div class="mt-2">
+Mensualidad: <strong><?php echo $c['mensualidad']; ?></strong>
 </div>
 
 <?php endif; ?>
 
 </div>
 </div>
+
+</div>
+
+<?php endforeach; ?>
 
 </div>
 
