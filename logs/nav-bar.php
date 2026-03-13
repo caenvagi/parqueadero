@@ -225,10 +225,10 @@ if ($tipo_usuario == 1) {
                             </a>
                             <div class="collapse" id="collapse-mensualidad" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <!-- <a class="nav-link" href="../parqueo_hora/parqueo_form.php">
+                                    <a class="nav-link" href="../parqueo_mens/mens_cliente_nuevo.php">
                                         <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Ingreso
-                                    </a> -->
+                                        &nbsp;&nbsp;&nbsp;Crear cliente
+                                    </a>
                                     <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_mens.php">
                                         <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas

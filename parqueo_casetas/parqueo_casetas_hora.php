@@ -89,7 +89,7 @@ foreach ($casetas as $c) {
 
 <div class="container mt-4">
 
-<h3 class="mb-4">Estado de Casetas</h3>
+<h3 class="mb-4">Estado de Casetas por horas</h3>
 
 <div class="row g-3">
 

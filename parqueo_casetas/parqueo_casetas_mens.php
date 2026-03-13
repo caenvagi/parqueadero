@@ -26,7 +26,8 @@ $sql = "SELECT
             cl.placa,
             cl.vehiculo,
             cl.nombre,
-            cl.mensualidad
+            cl.mensualidad,
+            cl.vehiculo
            
         FROM casetas c
 
@@ -59,8 +60,8 @@ foreach ($casetas as $c) {
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->
 
     <style>
         .caseta-card {
@@ -88,7 +89,7 @@ foreach ($casetas as $c) {
 
 <div class="container mt-4">
 
-<h3 class="mb-4">Estado de Casetas</h3>
+<h3 class="mb-4">Estado de Casetas Mensualidades</h3>
 
 <div class="row g-3">
 
@@ -131,6 +132,14 @@ Ocupado
 
 <div class="mt-2">
 Placa: <strong><?php echo $c['placa']; ?></strong>
+</div>
+
+<div class="mt-2">
+Propietario: <strong><?php echo $c['nombre']; ?></strong>
+</div>
+
+<div class="mt-2">
+Vehiculo: <strong><?php echo $c['vehiculo']; ?></strong>
 </div>
 
 <div class="mt-2">
