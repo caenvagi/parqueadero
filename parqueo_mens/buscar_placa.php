@@ -18,7 +18,6 @@ if ($tipo_usuario == 1) {
 }
 
 $placa = $_POST['placa'];
-// $placa = 'AAA999';
 
 $sql = "SELECT 
             v.valor,
@@ -28,10 +27,12 @@ $sql = "SELECT
             v.cedula,
             v.caseta,
             v.categoria,
+            c.tar_tiempo as plan,
             p.fecha_inicio,
             p.fecha_fin
         FROM cliente v
         inner join pagos p on v.placa = p.placa
+        inner join tar_tiempo c on v.cli_tar_tiempo = c.tar_id_nombre
         WHERE v.placa = ?
         ORDER BY p.fecha_fin DESC
         limit 1";
@@ -52,7 +53,8 @@ echo json_encode([
     'valor'=>$data['valor'],
     'vehiculo'=>$data['vehiculo'],
     'fecha_inicio'=>$data['fecha_inicio'],
-    'fecha_fin'=>$data['fecha_fin']
+    'fecha_fin'=>$data['fecha_fin'],
+    'plan'=>$data['plan']
 ]);
 
 }else{

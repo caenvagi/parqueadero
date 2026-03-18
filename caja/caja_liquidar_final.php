@@ -1,6 +1,20 @@
 <?php
-require_once "../conexion/conexion.php";
 session_start();
+require_once "../conexion/conexion.php";
+
+date_default_timezone_set('America/Bogota');
+
+if (!isset($_SESSION['id'])) {
+    header("Location: index.php");
+}
+$id = $_SESSION['id'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
+}
 
 
 
@@ -41,6 +55,8 @@ $stmt->execute([
     ':observaciones' => $observaciones
 ]);
 
+
+
     // ⚠️ Asegurarse de capturar el ID justo después del execute
     $id_liquidacion = $pdo->lastInsertId();
     if (!$id_liquidacion) {
@@ -69,7 +85,12 @@ $stmt->execute([
     }
 
     // 4. Actualizar movimientos como liquidados
-    $stmt_update = $pdo->prepare("UPDATE caja SET liquidado = 'SI' WHERE id_movimiento IN ($in)");
+    $stmt_update = $pdo->prepare("UPDATE caja 
+    SET liquidado = 'SI',
+    fecha_liquidacion = NOW(),
+    user_liquida = $id,
+    id_liquidacion = $id_liquidacion
+    WHERE id_movimiento IN ($in)");
     $stmt_update->execute($ids);
 
     $pdo->commit();

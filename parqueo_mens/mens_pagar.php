@@ -65,6 +65,7 @@ if ($tipo_usuario == 1) {
                                         <input type="text"
                                             class="form-control"
                                             id="nombre"
+                                             name="nombre"
                                             placeholder="Cliente"
                                             readonly>
                                     </div>
@@ -119,7 +120,14 @@ if ($tipo_usuario == 1) {
                                             id="categoria"
                                             name="categoria"
                                             placeholder="Categoria"
-                                            readonly>       
+                                            readonly>
+                                            
+                                            <input type="hidden"
+                                            class="form-control"
+                                            id="plan"
+                                            name="plan"
+                                            placeholder="plan"
+                                            readonly>
 
                                     <!-- PAGO -->
                                     <div class="col-md-12 mt-2">
@@ -227,6 +235,7 @@ if ($tipo_usuario == 1) {
                                         $('#caseta').val(resp.caseta);
                                         $('#valor_real').val(resp.valor);
                                         $('#categoria').val(resp.categoria);
+                                        $('#plan').val(resp.plan);
                                         let valorFormateado = new Intl.NumberFormat('es-CO', {
                                             style: 'currency',
                                             currency: 'COP',

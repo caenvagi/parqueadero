@@ -21,8 +21,10 @@ if ($tipo_usuario == 1) {
 
 $fecha = date("Y-m-d");
 $placa = $_POST['placa'];
+$nombre = $_POST['nombre'];
 $fecha_inicio = $_POST['fecha_inicio'];
 $fecha_fin = $_POST['fecha_fin'] ;
+$plan = $_POST['plan'];
 $valor = $_POST['valor_real'];
 $caseta = $_POST['caseta'];
 $categoria = $_POST['categoria'];
@@ -84,25 +86,48 @@ try {
         'NO'
     ]);
 
-    // 3️⃣ GUARDAR EN CAJA
-    // $caja = $pdo->prepare("
-    //     INSERT INTO caja
-    //     (
-    //         fecha,
-    //         concepto,
-    //         placa,
-    //         valor,
-    //         usuario
-    //     )
-    //     VALUES
-    //     (NOW(),'Mensualidad',?,?,?)
-    // ");
+    // 🔥 Obtener el ID del recibo recién creado
+    $recibo_id = $pdo->lastInsertId();
 
-    // $caja->execute([
-    //     $placa,
-    //     $valor,
-    //     $usuario
-    // ]);
+    // 3️⃣ GUARDAR EN CAJA
+    $caja = $pdo->prepare("
+        INSERT INTO caja
+        (
+            fecha_movimiento,
+            movimiento,
+            desc_movimiento,
+            recibo_id,
+            rec_manual,
+            valor_ingreso,
+            valor_egreso,
+            user_login,
+            caja_tipo,
+            caja
+        )
+        VALUES        
+        (
+        NOW(),
+        '3',
+        '$plan - $placa - $nombre',
+        ?,
+        '-',
+        ?,
+        '0',
+        ?,
+        'INGRESO',
+        'PARQUEADERO'
+
+        
+        
+        )
+    ");
+
+    $caja->execute([
+        $recibo_id,
+         //$placa,
+        $valor,
+        $usuario
+    ]);
 
     // 4️⃣ CREAR NUEVO PERIODO (SIGUIENTE MES)
 
@@ -145,8 +170,11 @@ try {
     echo "ok";
 
 } catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
 
-    $pdo->rollBack();
-    echo "error 2";
-
+    echo "Error: " . $e->getMessage();
+    echo "<br>Línea: " . $e->getLine();
+    echo "<br>Archivo: " . $e->getFile();
 }

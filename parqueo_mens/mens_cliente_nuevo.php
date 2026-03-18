@@ -228,6 +228,7 @@ if ($tipo_usuario == 1) {
                     success: function(resp) {
                         $("#respuesta").html(resp);
                         $("#formMensualidad")[0].reset();
+                        window.location.href = "mens_pagar.php";
                     } 
                                         
 

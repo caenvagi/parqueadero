@@ -46,10 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function calcularFechaFin($fechaInicio, $plan)
     {
-        if ($plan == 1)
+        if ($plan == 7)
             return date('Y-m-d', strtotime($fechaInicio . ' +7 days'));
 
-        if ($plan == 2)
+        if ($plan == 6)
             return date('Y-m-d', strtotime($fechaInicio . ' +15 days'));
 
         if ($plan == 3)
@@ -100,8 +100,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // ===== CREAR PAGO =====
 
         $sql = "INSERT INTO pagos
-        (fecha,estado,placa,valor,plan,fecha_inicio,fecha_fin,usuario,caseta,observacion)
-        VALUES (NOW(), 'pendiente', ?, ?, ?, NOW(), ?, ?, ?, 'Cobro mensualidad')";
+        (fecha,
+        estado,
+        placa,
+        valor,
+        plan,
+        fecha_inicio,
+        fecha_fin,
+        usuario,
+        caseta,
+        observacion)
+        VALUES (NOW(), 
+        'PENDIENTE', 
+        ?, 
+        ?, 
+        ?, 
+        NOW(), 
+        ?, 
+        ?, 
+        ?, 
+        'Cobro mensualidad')";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
