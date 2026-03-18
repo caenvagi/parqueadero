@@ -229,6 +229,10 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Crear cliente
                                     </a>
+                                    <a class="nav-link" href="../parqueo_mens/mens_pagar.php">
+                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Pagar Mensualidad
+                                    </a>
                                     <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_mens.php">
                                         <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
