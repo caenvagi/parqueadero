@@ -17,9 +17,8 @@ if ($tipo_usuario == 1) {
     $where = "WHERE id=$id";
 }
 
+$placa = $_POST['placa'] ?? '';
 
-// $placa = $_POST['placa'] ?? '';
-$placa = 'AAA999';
 
 $sql = "SELECT 
             id,
@@ -49,7 +48,7 @@ foreach($pagos as $p){
     }elseif($p['estado']=='PENDIENTE'){
         $estado = "<span class='badge bg-warning text-dark'>Pendiente</span>";
     }else{
-        $estado = "<span class='badge bg-danger'>Vencido</span>";
+        $estado = "<span class='badge bg-danger'>Pendiente</span>";
     }
 
     echo "<tr>

@@ -28,8 +28,8 @@ if ($tipo_usuario == 1) {
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->
 </head>
 <?php require '../logs/nav-bar.php'; ?>
 <div id="layoutSidenav_content">
@@ -50,123 +50,111 @@ if ($tipo_usuario == 1) {
                         <div class="card-body">
 
                             <div class="row g-3">
+                                <form id="formPagos" name="formPagos" action="">
+                                    <!-- BUSCAR PLACA -->
+                                    <div class="col-md-4">
 
-                                <!-- BUSCAR PLACA -->
-                                <div class="col-md-4">
+                                        <label class="form-label">Placa</label>
 
-                                    <label class="form-label">Placa</label>
+                                        <input type="text"
+                                            class="form-control form-control-lg"
+                                            id="placa"
+                                            placeholder="Digite placa">
 
-                                    <input type="text"
-                                        class="form-control form-control-lg"
-                                        id="placa"
-                                        placeholder="Digite placa">
+                                        <div id="mensaje"></div>
 
-                                    <div id="mensaje"></div>
+                                    </div>
 
-                                </div>
+                                    <!-- NOMBRE -->
+                                    <div class="col-md-4">
 
-                                <!-- NOMBRE -->
-                                <div class="col-md-4">
+                                        <label class="form-label">Cliente</label>
 
-                                    <label class="form-label">Cliente</label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="nombre"
+                                            readonly>
 
-                                    <input type="text"
-                                        class="form-control"
-                                        id="nombre"
-                                        readonly>
+                                    </div>
 
-                                </div>
+                                    <!-- CEDULA -->
+                                    <div class="col-md-4">
 
-                                <!-- CEDULA -->
-                                <div class="col-md-4">
+                                        <label class="form-label">Cedula</label>
 
-                                    <label class="form-label">Cedula</label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="cedula"
+                                            readonly>
 
-                                    <input type="text"
-                                        class="form-control"
-                                        id="cedula"
-                                        readonly>
+                                    </div>
 
-                                </div>
+                                    <!-- VEHICULO -->
+                                    <div class="col-md-4">
 
-                                <!-- VEHICULO -->
-                                <div class="col-md-4">
+                                        <label class="form-label">Vehiculo</label>
 
-                                    <label class="form-label">Vehiculo</label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="vehiculo"
+                                            readonly>
 
-                                    <input type="text"
-                                        class="form-control"
-                                        id="vehiculo"
-                                        readonly>
+                                    </div>
 
-                                </div>
+                                    <!-- VALOR -->
+                                    <div class="col-md-4">
 
-                                <!-- PAGO -->
-                                <div class="col-md-4">
+                                        <label class="form-label">Valor formateado</label>
 
-                                    <label class="form-label">Pago</label>
+                                        <input type="text"
+                                            class="form-control"
+                                            id="valor"
+                                            readonly>
+                                    </div>
 
-                                    <select name="valor" id="valor">
-                                        <?php
-                                        $sql = "SELECT *
-                                                FROM pagos
-                                                WHERE placa = 'aaa999'";
+                                    <!-- PAGO -->
+                                    <div class="col-md-4">
+                                        <label for="valor" class="form-label">Pago</label>
 
-                                            $stmt = $pdo->query($sql);
+                                        <select name="pagos" id="pagos" class="form-select">
+                                            <option value="">Seleccione un pago</option>
 
-                                            foreach ($stmt as $row) {
-                                                echo "<option value='{$row['id']}'>{$row['fecha_inicio']} - {$row['fecha_fin']}</option>";
-                                            }
 
-                                            ?>
-                                        
-                                    </select>
+                                        </select>
+                                    </div>
 
-                                </div>
+                                    <!-- FECHA INICIO -->
+                                    <!-- <div class="col-md-4">
 
-                                <!-- FECHA INICIO -->
-                                <!-- <div class="col-md-4">
+                                            <label class="form-label">Inicio Periodo</label>
 
-                                    <label class="form-label">Inicio Periodo</label>
+                                            <input type="date"
+                                                class="form-control"
+                                                id="fecha_inicio">
 
-                                    <input type="date"
-                                        class="form-control"
-                                        id="fecha_inicio">
+                                        </div> -->
 
-                                </div> -->
+                                    <!-- FECHA FIN -->
+                                    <!-- <div class="col-md-4">
 
-                                <!-- FECHA FIN -->
-                                <!-- <div class="col-md-4">
+                                            <label class="form-label">Fin Periodo</label>
 
-                                    <label class="form-label">Fin Periodo</label>
+                                            <input type="date"
+                                                class="form-control"
+                                                id="fecha_fin">
 
-                                    <input type="date"
-                                        class="form-control"
-                                        id="fecha_fin">
+                                        </div> -->
 
-                                </div> -->
 
-                                <!-- VALOR -->
-                                <div class="col-md-4">
 
-                                    <label class="form-label">Valor Mensualidad</label>
+                                    <div class="col-md-8 d-flex align-items-end">
+                                        <button class="btn btn-success btn-lg w-100" id="btnPagar">
+                                            Pagar Mensualidad
+                                        </button>
 
-                                    <input type="number"
-                                        class="form-control"
-                                        id="valor">
-
-                                </div>
-
-                                <div class="col-md-8 d-flex align-items-end">
-
-                                    <button class="btn btn-success btn-lg w-100" id="btnPagar">
-
-                                        Pagar Mensualidad
-
-                                    </button>
-
-                                </div>
-
+                                    </div>
+                                     <div id="respuesta"></div>
+                                </form>
                             </div>
 
                         </div>
@@ -233,9 +221,14 @@ if ($tipo_usuario == 1) {
                                         $('#nombre').val(resp.nombre);
                                         $('#cedula').val(resp.cedula);
                                         $('#vehiculo').val(resp.vehiculo);
-                                        $('#valor').val(resp.valor);
-                                        console.log(resp);
+                                        let valorFormateado = new Intl.NumberFormat('es-CO', {
+                                            style: 'currency',
+                                            currency: 'COP',
+                                            minimumFractionDigits: 0
+                                        }).format(resp.valor);
+                                        $('#valor').val(valorFormateado);
                                         cargarPagos(placa);
+
 
                                     } else {
 
@@ -249,13 +242,32 @@ if ($tipo_usuario == 1) {
                                         `);
 
                                     }
-                                    
+
                                 }
-                                
+
                             });
-                            
+
                         }
 
+                    });
+
+                    $('#placa').on('keyup', function() {
+                        let placa = $(this).val();
+
+                        if (placa.length == 6) { // evita consultas innecesarias
+                            $.ajax({
+                                url: 'buscar_pagos.php',
+                                type: 'POST',
+                                data: {
+                                    placa: placa
+                                },
+                                success: function(respuesta) {
+                                    $('#pagos').html(respuesta);
+                                }
+                            });
+                        } else {
+                            $('#valor').html('<option value="">Ingrese una placa válida</option>');
+                        }
                     });
 
                     function cargarPagos(placa) {
@@ -269,7 +281,6 @@ if ($tipo_usuario == 1) {
                             },
 
                             success: function(data) {
-                                console.log(data);
                                 $('#tablaPagos').html(data);
 
                             }
@@ -277,6 +288,22 @@ if ($tipo_usuario == 1) {
                         });
 
                     }
+
+                    $("#formPagos").submit(function(e) {
+                        e.preventDefault();
+                        $.ajax({
+                            url: "pagar_mensualidad.php",
+                            type: "POST",
+                            data: $(this).serialize(),
+
+                            success: function(resp) {
+                                $("#respuesta").html(resp);
+                                console.log(resp);
+                                console.log("Pago registrado");
+                                $("#formPagos")[0].reset();
+                            }
+                        });
+                    });
                 </script>
         </body>
     </main>

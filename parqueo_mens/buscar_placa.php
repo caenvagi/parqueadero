@@ -25,8 +25,11 @@ $sql = "SELECT
             v.placa,
             v.vehiculo,
             v.nombre,
-            v.cedula
+            v.cedula,
+            p.fecha_inicio,
+            p.fecha_fin
         FROM cliente v
+        inner join pagos p on v.placa = p.placa
         WHERE v.placa = ?";
 
 $stmt = $pdo->prepare($sql);
@@ -41,7 +44,9 @@ echo json_encode([
     'nombre'=>$data['nombre'],
     'cedula'=>$data['cedula'],
     'valor'=>$data['valor'],
-    'vehiculo'=>$data['vehiculo']
+    'vehiculo'=>$data['vehiculo'],
+    'fecha_inicio'=>$data['fecha_inicio'],
+    'fecha_fin'=>$data['fecha_fin']
 ]);
 
 }else{
