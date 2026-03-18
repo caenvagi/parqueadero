@@ -36,37 +36,29 @@ if ($tipo_usuario == 1) {
     <main class="ms-5 me-5">
 
         <body class="bg-light">
-            <div class="container mt-4">
-                <h3 class="mb-4">Pago de Mensualidades</h3>
-
-                <div class="container py-4">
-
-                    <div class="card shadow-lg border-0">
-
+            <div class="container  mt-0">
+                <div class="container py-2">
+                    <div class="card col-md-4 shadow-lg border-0">
                         <div class="card-header bg-dark text-white">
                             <h4 class="mb-0">Pago de Mensualidades</h4>
                         </div>
-
-                        <div class="card-body">
-
-                            <div class="row g-3">
+                        <div class="card-body  ">
+                            <div class="row g-1">
                                 <form id="formPagos" name="formPagos" action="">
                                     <!-- BUSCAR PLACA -->
-                                    <div class="col-md-4">
-
+                                    <div class="col-md-12">
                                         <label class="form-label">Placa</label>
-
                                         <input type="text"
                                             class="form-control form-control-lg"
                                             id="placa"
+                                            name="placa"
                                             placeholder="Digite placa">
-
-                                        <div id="mensaje"></div>
-
                                     </div>
 
+                                    <div class="col-md-12" id="mensaje"></div>
+
                                     <!-- NOMBRE -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
 
                                         <label class="form-label">Cliente</label>
 
@@ -78,7 +70,7 @@ if ($tipo_usuario == 1) {
                                     </div>
 
                                     <!-- CEDULA -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
 
                                         <label class="form-label">Cedula</label>
 
@@ -90,7 +82,7 @@ if ($tipo_usuario == 1) {
                                     </div>
 
                                     <!-- VEHICULO -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
 
                                         <label class="form-label">Vehiculo</label>
 
@@ -102,18 +94,19 @@ if ($tipo_usuario == 1) {
                                     </div>
 
                                     <!-- VALOR -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
 
                                         <label class="form-label">Valor formateado</label>
 
                                         <input type="text"
                                             class="form-control"
                                             id="valor"
+                                            name="valor"
                                             readonly>
                                     </div>
 
                                     <!-- PAGO -->
-                                    <div class="col-md-4">
+                                    <div class="col-md-12">
                                         <label for="valor" class="form-label">Pago</label>
 
                                         <select name="pagos" id="pagos" class="form-select">
@@ -124,7 +117,7 @@ if ($tipo_usuario == 1) {
                                     </div>
 
                                     <!-- FECHA INICIO -->
-                                    <!-- <div class="col-md-4">
+                                    <!-- <div class="col-md-12">
 
                                             <label class="form-label">Inicio Periodo</label>
 
@@ -135,25 +128,28 @@ if ($tipo_usuario == 1) {
                                         </div> -->
 
                                     <!-- FECHA FIN -->
-                                    <!-- <div class="col-md-4">
+                                    <div class="col-md-12">
 
                                             <label class="form-label">Fin Periodo</label>
 
                                             <input type="date"
                                                 class="form-control"
-                                                id="fecha_fin">
+                                                id="fecha_fin"
+                                                name="fecha_fin">
 
-                                        </div> -->
+                                        </div>
 
 
 
-                                    <div class="col-md-8 d-flex align-items-end">
+                                    <div class="col-md-12 mt-4 d-flex align-items-end">
                                         <button class="btn btn-success btn-lg w-100" id="btnPagar">
                                             Pagar Mensualidad
                                         </button>
 
                                     </div>
+
                                      <div id="respuesta"></div>
+                                     
                                 </form>
                             </div>
 
@@ -175,9 +171,9 @@ if ($tipo_usuario == 1) {
 
                                     <tr>
                                         <th>Id</th>
-                                        <th>Fecha</th>
-                                        <th>Inicio</th>
-                                        <th>Fin</th>
+                                        <th>Fecha Pago</th>
+                                        <th>fecha Inicio</th>
+                                        <th>fecha Fin</th>
                                         <th>Valor</th>
                                         <th>Estado</th>
                                     </tr>
@@ -227,6 +223,7 @@ if ($tipo_usuario == 1) {
                                             minimumFractionDigits: 0
                                         }).format(resp.valor);
                                         $('#valor').val(valorFormateado);
+                                        $('#fecha_fin').val(resp.fecha_fin);
                                         cargarPagos(placa);
 
 
@@ -235,7 +232,7 @@ if ($tipo_usuario == 1) {
                                         $('#mensaje').html(`
                                         <div class="alert alert-warning mt-2">
                                         Cliente no existe
-                                        <a href="mens_cliente_nuevo.php?placa=${placa}" class="btn btn-sm btn-primary">
+                                        <a href="mens_cliente_nuevo.php?placa=${placa}" class="btn btn-sm btn-secondary ms-2">
                                         Crear cliente
                                         </a>
                                         </div>
@@ -270,6 +267,22 @@ if ($tipo_usuario == 1) {
                         }
                     });
 
+                     $("#formPagos").submit(function(e) {
+                        e.preventDefault();
+                        $.ajax({
+                            url: "pagar_mensualidad.php",
+                            type: "POST",
+                            data: $(this).serialize(),
+
+                            success: function(resp) {
+                                $("#respuesta").html(resp);
+                                console.log(resp);
+                                $("#formPagos")[0].reset();
+                                $('#tablaPagos').html('');
+                            }
+                        });
+                    });
+
                     function cargarPagos(placa) {
 
                         $.ajax({
@@ -289,21 +302,7 @@ if ($tipo_usuario == 1) {
 
                     }
 
-                    $("#formPagos").submit(function(e) {
-                        e.preventDefault();
-                        $.ajax({
-                            url: "pagar_mensualidad.php",
-                            type: "POST",
-                            data: $(this).serialize(),
-
-                            success: function(resp) {
-                                $("#respuesta").html(resp);
-                                console.log(resp);
-                                console.log("Pago registrado");
-                                $("#formPagos")[0].reset();
-                            }
-                        });
-                    });
+                   
                 </script>
         </body>
     </main>

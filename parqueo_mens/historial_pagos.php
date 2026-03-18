@@ -17,7 +17,7 @@ if ($tipo_usuario == 1) {
     $where = "WHERE id=$id";
 }
 
-$placa = $_POST['placa'] ?? '';
+$placa = $_POST['placa'];
 
 
 $sql = "SELECT 

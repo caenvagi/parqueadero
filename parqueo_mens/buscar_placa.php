@@ -30,7 +30,9 @@ $sql = "SELECT
             p.fecha_fin
         FROM cliente v
         inner join pagos p on v.placa = p.placa
-        WHERE v.placa = ?";
+        WHERE v.placa = ?
+        ORDER BY p.fecha_fin DESC
+        limit 1";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$placa]);

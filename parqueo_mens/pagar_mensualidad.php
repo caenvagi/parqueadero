@@ -18,14 +18,16 @@ if ($tipo_usuario == 1) {
     $where = "WHERE id=$id";
 }
 
+
+
 $placa = $_POST['placa'];
 // $fecha_inicio = $_POST['inicio'] ?? '';
-// $fecha_fin = $_POST['fin'] ?? '';
+$fecha_fin = $_POST['fecha_fin'] ;
 $valor = $_POST['valor'];
 $usuario = $_SESSION['id']; // puedes reemplazar por sesión
 
 if(!$placa ) {
-    echo "error";
+    echo "error 1";
     exit;
 }
 
@@ -37,11 +39,18 @@ try {
     $update = $pdo->prepare("
         UPDATE pagos
         SET estado = 'PAGADO',
-            fecha_pago = NOW()
-        WHERE placa = ? 
-        AND estado = 'pendiente'
-        LIMIT 1
-    ");
+            fecha = CURDATE()
+        WHERE id = (
+            SELECT id FROM (
+                SELECT id 
+                FROM pagos
+                WHERE placa = ?
+                AND estado = 'PENDIENTE'
+                ORDER BY fecha_fin DESC
+                LIMIT 1
+            ) AS t
+        );
+            ");
     $update->execute([$placa]);
 
     // 2️⃣ GUARDAR EN RECIBO
@@ -87,30 +96,30 @@ try {
 
     // 4️⃣ CREAR NUEVO PERIODO (SIGUIENTE MES)
 
-    // $nueva_inicio = date("Y-m-d", strtotime($fecha_fin . " +1 day"));
-    // $nueva_fin = date("Y-m-d", strtotime($nueva_inicio . " +1 month"));
+    $nueva_inicio = date("Y-m-d", strtotime($fecha_fin . " +0 day"));
+    $nueva_fin = date("Y-m-d", strtotime($nueva_inicio . " +1 MONTH"));
 
-    // $nuevo = $pdo->prepare("
-    //     INSERT INTO pagos_mensuales
-    //     (
-    //         placa,
-    //         fecha_inicio,
-    //         fecha_fin,
-    //         valor,
-    //         estado,
-    //         usuario
-    //     )
-    //     VALUES (?,?,?,?,?,?)
-    // ");
+    $nuevo = $pdo->prepare("
+        INSERT INTO pagos
+        (
+            placa,
+            fecha_inicio,
+            fecha_fin,
+            valor,
+            estado,
+            usuario
+        )
+        VALUES (?,?,?,?,?,?)
+    ");
 
-    // $nuevo->execute([
-    //     $placa,
-    //     $nueva_inicio,
-    //     $nueva_fin,
-    //     $valor,
-    //     'PENDIENTE',
-    //     $usuario
-    // ]);
+    $nuevo->execute([
+        $placa,
+        $nueva_inicio,
+        $nueva_fin,
+        $valor,
+        'PENDIENTE',
+        $usuario
+    ]);
 
     $pdo->commit();
 
@@ -119,6 +128,6 @@ try {
 } catch (Exception $e) {
 
     $pdo->rollBack();
-    echo "error";
+    echo "error 2";
 
 }
