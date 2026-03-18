@@ -19,11 +19,13 @@ if ($tipo_usuario == 1) {
 }
 
 
-
+$fecha = date("Y-m-d");
 $placa = $_POST['placa'];
-// $fecha_inicio = $_POST['inicio'] ?? '';
+$fecha_inicio = $_POST['fecha_inicio'];
 $fecha_fin = $_POST['fecha_fin'] ;
-$valor = $_POST['valor'];
+$valor = $_POST['valor_real'];
+$caseta = $_POST['caseta'];
+$categoria = $_POST['categoria'];
 $usuario = $_SESSION['id']; // puedes reemplazar por sesión
 
 if(!$placa ) {
@@ -54,25 +56,33 @@ try {
     $update->execute([$placa]);
 
     // 2️⃣ GUARDAR EN RECIBO
-    // $recibo = $pdo->prepare("
-    //     INSERT INTO recibo
-    //     (
-    //         placa,
-    //         fecha_ini,
-    //         fecha_fin,
-    //         valor_pagado,
-    //         usuario
-    //     )
-    //     VALUES (?,?,?,?,?)
-    // ");
+    $recibo = $pdo->prepare("
+        INSERT INTO recibo
+        (
+            placa,
+            recibo_man,
+            fecha_ini,
+            fecha_fin,
+            tarifa_recibo,
+            plan,
+            valor_pagado,
+            usuario,
+            cierre
+        )
+        VALUES (?,?,?,?,?,?,?,?,?)
+    ");
 
-    // $recibo->execute([
-    //     $placa,
-    //     $fecha_inicio,
-    //     $fecha_fin,
-    //     $valor,
-    //     $usuario
-    // ]);
+    $recibo->execute([
+        $placa,
+        '0',
+        $fecha_inicio,
+        $fecha_fin,
+        $categoria,
+        '3',
+        $valor,
+        $usuario,
+        'NO'
+    ]);
 
     // 3️⃣ GUARDAR EN CAJA
     // $caja = $pdo->prepare("
@@ -102,23 +112,32 @@ try {
     $nuevo = $pdo->prepare("
         INSERT INTO pagos
         (
+            fecha,
             placa,
+            caseta,
+            plan,
             fecha_inicio,
             fecha_fin,
             valor,
             estado,
-            usuario
+            usuario,
+            observacion
         )
-        VALUES (?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?)
     ");
 
     $nuevo->execute([
+        $fecha,
         $placa,
+        $caseta,
+        '3',
         $nueva_inicio,
         $nueva_fin,
         $valor,
         'PENDIENTE',
-        $usuario
+        $usuario,
+        'Pago Mensualidad'
+
     ]);
 
     $pdo->commit();

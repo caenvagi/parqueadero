@@ -47,7 +47,7 @@ if ($tipo_usuario == 1) {
                                 <form id="formPagos" name="formPagos" action="">
                                     <!-- BUSCAR PLACA -->
                                     <div class="col-md-12">
-                                        <label class="form-label">Placa</label>
+                                        <!-- <label class="form-label">Placa</label> -->
                                         <input type="text"
                                             class="form-control form-control-lg"
                                             id="placa"
@@ -58,88 +58,95 @@ if ($tipo_usuario == 1) {
                                     <div class="col-md-12" id="mensaje"></div>
 
                                     <!-- NOMBRE -->
-                                    <div class="col-md-12">
-
-                                        <label class="form-label">Cliente</label>
-
+                                    <div class="input-group mt-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-user-alt"></i>&nbsp;NOMBRE</span>
+                                    </div>
                                         <input type="text"
                                             class="form-control"
                                             id="nombre"
+                                            placeholder="Cliente"
                                             readonly>
-
                                     </div>
 
                                     <!-- CEDULA -->
-                                    <div class="col-md-12">
-
-                                        <label class="form-label">Cedula</label>
-
+                                    <div class="input-group mt-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-address-card"></i>&nbsp;CASETA</span>
+                                    </div>
                                         <input type="text"
                                             class="form-control"
-                                            id="cedula"
+                                            id="caseta"
+                                            name="caseta"
+                                            placeholder="Caseta"
                                             readonly>
-
                                     </div>
 
                                     <!-- VEHICULO -->
-                                    <div class="col-md-12">
-
-                                        <label class="form-label">Vehiculo</label>
-
+                                    <div class="input-group mt-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-car-alt"></i>&nbsp;VEHICULO</span>
+                                    </div>
                                         <input type="text"
                                             class="form-control"
                                             id="vehiculo"
+                                            placeholder="Vehiculo"
                                             readonly>
-
                                     </div>
 
                                     <!-- VALOR -->
-                                    <div class="col-md-12">
-
-                                        <label class="form-label">Valor formateado</label>
-
+                                    <div class="input-group mt-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-car-alt"></i>&nbsp;VALOR $</span>
+                                    </div>
                                         <input type="text"
                                             class="form-control"
                                             id="valor"
                                             name="valor"
+                                            placeholder="Valor mensualidad"
                                             readonly>
                                     </div>
 
+                                    <input type="hidden"
+                                            class="form-control"
+                                            id="valor_real"
+                                            name="valor_real"
+                                            placeholder="Valor_real"
+                                            readonly>
+                                    
+                                     <input type="hidden"
+                                            class="form-control"
+                                            id="categoria"
+                                            name="categoria"
+                                            placeholder="Categoria"
+                                            readonly>       
+
                                     <!-- PAGO -->
-                                    <div class="col-md-12">
-                                        <label for="valor" class="form-label">Pago</label>
-
+                                    <div class="col-md-12 mt-2">
+                                        <!-- <label for="valor" class="form-label">Pago</label> -->
                                         <select name="pagos" id="pagos" class="form-select">
-                                            <option value="">Seleccione un pago</option>
-
-
+                                            <option value="">Seleccione un Periodo</option>
                                         </select>
                                     </div>
 
                                     <!-- FECHA INICIO -->
                                     <!-- <div class="col-md-12">
-
-                                            <label class="form-label">Inicio Periodo</label>
-
-                                            <input type="date"
+                                            <label class="form-label">Inicio Periodo</label>-->
+                                            <input type="hidden"
                                                 class="form-control"
-                                                id="fecha_inicio">
-
-                                        </div> -->
+                                                id="fecha_inicio"
+                                                name="fecha_inicio"
+                                                placeholder="fecha_inicio">
+                                    <!-- </div> -->
 
                                     <!-- FECHA FIN -->
-                                    <div class="col-md-12">
-
-                                            <label class="form-label">Fin Periodo</label>
-
-                                            <input type="date"
-                                                class="form-control"
-                                                id="fecha_fin"
-                                                name="fecha_fin">
-
-                                        </div>
-
-
+                                        <!-- <div class="col-md-12">
+                                                <label class="form-label">Fin Periodo</label> -->
+                                                <input type="hidden"
+                                                    class="form-control"
+                                                    id="fecha_fin"
+                                                    name="fecha_fin">
+                                        <!-- </div> -->
 
                                     <div class="col-md-12 mt-4 d-flex align-items-end">
                                         <button class="btn btn-success btn-lg w-100" id="btnPagar">
@@ -217,12 +224,16 @@ if ($tipo_usuario == 1) {
                                         $('#nombre').val(resp.nombre);
                                         $('#cedula').val(resp.cedula);
                                         $('#vehiculo').val(resp.vehiculo);
+                                        $('#caseta').val(resp.caseta);
+                                        $('#valor_real').val(resp.valor);
+                                        $('#categoria').val(resp.categoria);
                                         let valorFormateado = new Intl.NumberFormat('es-CO', {
                                             style: 'currency',
                                             currency: 'COP',
                                             minimumFractionDigits: 0
                                         }).format(resp.valor);
                                         $('#valor').val(valorFormateado);
+                                        $('#fecha_inicio').val(resp.fecha_inicio);
                                         $('#fecha_fin').val(resp.fecha_fin);
                                         cargarPagos(placa);
 

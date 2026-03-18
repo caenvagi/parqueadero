@@ -26,6 +26,8 @@ $sql = "SELECT
             v.vehiculo,
             v.nombre,
             v.cedula,
+            v.caseta,
+            v.categoria,
             p.fecha_inicio,
             p.fecha_fin
         FROM cliente v
@@ -45,6 +47,8 @@ echo json_encode([
     'existe'=>true,
     'nombre'=>$data['nombre'],
     'cedula'=>$data['cedula'],
+    'caseta'=>$data['caseta'],
+    'categoria'=>$data['categoria'],
     'valor'=>$data['valor'],
     'vehiculo'=>$data['vehiculo'],
     'fecha_inicio'=>$data['fecha_inicio'],

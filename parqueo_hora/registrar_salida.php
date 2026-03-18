@@ -101,8 +101,32 @@ if ($tiempo_minutos <= 15) {
 
    // 5️⃣ Insertar en recibo
 $stmt = $pdo->prepare("
-    INSERT INTO recibo (ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_manual, usuario, cierre)
-    VALUES (:pid, :placa, :fini, :ffin, :tiempo, '1', :valor, :usuario, 'NO')
+    INSERT INTO recibo (
+
+    ticket,
+    recibo_man, 
+    placa, 
+    fecha_ini, 
+    fecha_fin, tiempo, 
+    tarifa_recibo,
+    plan, 
+    valor_pagado, 
+    usuario, 
+    cierre)
+
+    VALUES (
+
+    :pid, 
+    '0', 
+    :placa, 
+    :fini, 
+    :ffin, 
+    :tiempo, 
+    '1',
+    '1', 
+    :valor, 
+    :usuario, 
+    'NO')
 ");
 
    // 🕒 Nuevo formato del tiempo: Días, Horas y Minutos
