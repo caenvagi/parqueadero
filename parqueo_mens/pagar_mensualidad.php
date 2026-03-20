@@ -30,6 +30,56 @@ $caseta = $_POST['caseta'];
 $categoria = $_POST['categoria'];
 $usuario = $_SESSION['id']; // puedes reemplazar por sesión
 
+$inicio = new DateTime($fecha_inicio);
+$fin    = new DateTime($fecha_fin);
+
+if ($fin < $inicio) {
+    die("Error: la fecha final no puede ser menor a la inicial");
+}
+
+$diferencia = $inicio->diff($fin);
+
+// Meses totales
+$meses = $diferencia->m + ($diferencia->y * 12);
+$dias  = $diferencia->d;
+$horas = $diferencia->h;
+$minutos = $diferencia->i;
+
+// 🧠 Construcción del texto
+$partes = [];
+
+// Meses
+if ($meses > 0) {
+    $partes[] = $meses . ' ' . ($meses == 1 ? 'mes' : 'meses');
+}
+
+// 🔥 Lógica especial para días/semanas
+if ($dias > 0) {
+    if ($dias % 7 == 0) {
+        // Es múltiplo exacto de 7 → semanas
+        $semanas = $dias / 7;
+        $partes[] = $semanas . ' ' . ($semanas == 1 ? 'semana' : 'semanas');
+    } else {
+        // No es múltiplo → días normales
+        $partes[] = $dias . ' ' . ($dias == 1 ? 'día' : 'días');
+    }
+}
+
+// Horas
+if ($horas > 0) {
+    $partes[] = $horas . ' ' . ($horas == 1 ? 'hora' : 'horas');
+}
+
+// Minutos
+if ($minutos > 0) {
+    $partes[] = $minutos . ' ' . ($minutos == 1 ? 'minuto' : 'minutos');
+}
+
+// Resultado final
+$tiempo_txt = empty($partes) ? "0 minutos" : implode(', ', $partes);
+
+
+
 if(!$placa ) {
     echo "error 1";
     exit;
@@ -65,13 +115,14 @@ try {
             recibo_man,
             fecha_ini,
             fecha_fin,
+            tiempo,
             tarifa_recibo,
             plan,
             valor_pagado,
             usuario,
             cierre
         )
-        VALUES (?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?)
     ");
 
     $recibo->execute([
@@ -79,11 +130,14 @@ try {
         '0',
         $fecha_inicio,
         $fecha_fin,
+        $tiempo_txt,
         $categoria,
         '3',
         $valor,
         $usuario,
         'NO'
+        
+
     ]);
 
     // 🔥 Obtener el ID del recibo recién creado

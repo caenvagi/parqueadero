@@ -57,38 +57,38 @@ try {
     }
 
     // 2️⃣ Calcular el tiempo transcurrido
-$fecha_ini = new DateTime($data['fecha_ini']);
-$fecha_fin = new DateTime('now', new DateTimeZone('America/Bogota'));
-$intervalo = $fecha_ini->diff($fecha_fin);
+        $fecha_ini = new DateTime($data['fecha_ini']);
+        $fecha_fin = new DateTime('now', new DateTimeZone('America/Bogota'));
+        $intervalo = $fecha_ini->diff($fecha_fin);
 
-$dias = $intervalo->days;
-$horas = $intervalo->h;
-$minutos = $intervalo->i;
-$segundos = $intervalo->s;
+        $dias = $intervalo->days;
+        $horas = $intervalo->h;
+        $minutos = $intervalo->i;
+        $segundos = $intervalo->s;
 
-// Calcular el total de minutos para la tarifa
-$tiempo_minutos = ($dias * 24 * 60) + ($horas * 60) + $minutos;
+        // Calcular el total de minutos para la tarifa
+        $tiempo_minutos = ($dias * 24 * 60) + ($horas * 60) + $minutos;
 
-// 3️⃣ Calcular el total con 15 min de gracia y bloque de 12 horas
-$valor_hora = (float) $data['tarifa_hora'];
-$valor_bloque = (float) $data['tar_bloque'];
+        // 3️⃣ Calcular el total con 15 min de gracia y bloque de 12 horas
+        $valor_hora = (float) $data['tarifa_hora'];
+        $valor_bloque = (float) $data['tar_bloque'];
 
-if ($tiempo_minutos <= 15) {
-    $total = 0; // período de gracia
-} elseif ($tiempo_minutos <= 12 * 60) {
-    $horas_cobro = ceil(($tiempo_minutos - 15) / 60);
-    $total = $horas_cobro * $valor_hora;
-    if ($total > $valor_bloque) $total = $valor_bloque;
-} else {
-    $bloques = floor($tiempo_minutos / (12 * 60));
-    $restante = $tiempo_minutos % (12 * 60);
-    $total = $bloques * $valor_bloque;
+        if ($tiempo_minutos <= 15) {
+            $total = 0; // período de gracia
+        } elseif ($tiempo_minutos <= 12 * 60) {
+            $horas_cobro = ceil(($tiempo_minutos - 15) / 60);
+            $total = $horas_cobro * $valor_hora;
+            if ($total > $valor_bloque) $total = $valor_bloque;
+        } else {
+            $bloques = floor($tiempo_minutos / (12 * 60));
+            $restante = $tiempo_minutos % (12 * 60);
+            $total = $bloques * $valor_bloque;
 
-    if ($restante > 15) {
-        $horas_extra = ceil(($restante - 15) / 60);
-        $total += min($valor_bloque, $horas_extra * $valor_hora);
-    }
-}
+            if ($restante > 15) {
+                $horas_extra = ceil(($restante - 15) / 60);
+                $total += min($valor_bloque, $horas_extra * $valor_hora);
+            }
+        }
     // 4️⃣ Actualizar el estado del parqueo
     $stmt = $pdo->prepare("UPDATE parqueo SET estado = 'NO' WHERE parqueo_id = :id");
     $stmt->execute([':id' => $id]);
@@ -107,7 +107,8 @@ $stmt = $pdo->prepare("
     recibo_man, 
     placa, 
     fecha_ini, 
-    fecha_fin, tiempo, 
+    fecha_fin, 
+    tiempo, 
     tarifa_recibo,
     plan, 
     valor_pagado, 

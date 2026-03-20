@@ -16,6 +16,7 @@ if ($tipo_usuario == 1) {
     $where = "WHERE id=$id";
 }
 
+$placa = htmlspecialchars($_GET['placa'] ?? '');
 
 ?>
 
@@ -27,7 +28,7 @@ if ($tipo_usuario == 1) {
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
     <!-- Select2 CSS -->
-    
+
 </head>
 <?php require '../logs/nav-bar.php'; ?>
 
@@ -46,12 +47,22 @@ if ($tipo_usuario == 1) {
                                     <input type="hidden" value="" class="form-control" id="recibo_id" name="recibo_id" placeholder="parqueo_id" aria-label="parqueo_id" aria-describedby="basic-addon1">
                                 </div>
                                 <!-- INPUT NUMERO RECIBO -->
+                                <div id="respuesta"></div>
                                 <!-- INPUT PLACA -->
                                 <div class="input-group mb-2">
                                     <div class="input-group-prepend">
                                         <!-- <span class="input-group-text" id="basic-addon1"><i class="fas fa-tachometer-alt"></i>&nbsp;PLACA</span> -->
                                     </div>
-                                    <input type="text" value="" onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control" name="placa" id="placa" placeholder="Placa" aria-label="placa" aria-describedby="basic-addon1" required='true' autofocus>
+                                    <input type="text"
+                                        value="<?= htmlspecialchars($placa) ?>"
+                                        onkeyup="javascript:this.value=this.value.toUpperCase();"
+                                        class="form-control"
+                                        name="placa"
+                                        id="placa"
+                                        placeholder="Placa"
+                                        aria-label="placa"
+                                        aria-describedby="basic-addon1"
+                                        required='true' <?= empty($placa) ? 'autofocus' : '' ?>>
                                 </div>
                                 <!-- INPUT PLACA -->
                                 <!-- INPUT NOMBRE -->
@@ -59,7 +70,7 @@ if ($tipo_usuario == 1) {
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-user-alt"></i>&nbsp;NOMBRE</span>
                                     </div>
-                                    <input type="text" value="" onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control" name="nombre" id="nombre" placeholder="Nombre" aria-label="nombre" aria-describedby="basic-addon1" required='true' autofocus>
+                                    <input type="text" value="" onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control" name="nombre" id="nombre" placeholder="Nombre" aria-label="nombre" aria-describedby="basic-addon1" required='true' <?= $placa ? 'autofocus' : '' ?>>
                                 </div>
                                 <!-- INPUT NOMBRE -->
                                 <!-- INPUT CEDULA -->
@@ -67,7 +78,7 @@ if ($tipo_usuario == 1) {
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-address-card"></i>&nbsp;CEDULA</span>
                                     </div>
-                                    <input type="number" pattern="[0-9]{10}" class="form-control" name="cedula" id="cedula" placeholder="N° Cedula" aria-label="cedula" aria-describedby="basic-addon1" required='true' autofocus>
+                                    <input type="number" pattern="[0-9]{10}" class="form-control" name="cedula" id="cedula" placeholder="N° Cedula" aria-label="cedula" aria-describedby="basic-addon1" required='true'>
                                 </div>
                                 <!-- INPUT CEDULA -->
                                 <!-- INPUT CELULAR -->
@@ -75,7 +86,7 @@ if ($tipo_usuario == 1) {
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-mobile-alt"></i>&nbsp;CELULAR</span>
                                     </div>
-                                    <input type="number" pattern="[0-9]{10}" class="form-control" name="celular" id="celular" placeholder="N° Celular" aria-label="celular" aria-describedby="basic-addon1" required='true' autofocus>
+                                    <input type="number" pattern="[0-9]{10}" class="form-control" name="celular" id="celular" placeholder="N° Celular" aria-label="celular" aria-describedby="basic-addon1" required='true'>
                                 </div>
                                 <!-- INPUT CELULAR -->
                                 <!-- INPUT TIPO DE VEHICULO -->
@@ -83,7 +94,7 @@ if ($tipo_usuario == 1) {
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-car-alt"></i>&nbsp;VEHICULO</span>
                                     </div>
-                                    <input type="text" class="form-control" name="vehiculo" id="vehiculo" placeholder="Vehiculo marca" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="vehiculo" aria-describedby="basic-addon1" required='true' autofocus>
+                                    <input type="text" class="form-control" name="vehiculo" id="vehiculo" placeholder="Vehiculo marca" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="vehiculo" aria-describedby="basic-addon1" required='true'>
                                 </div>
                                 <!-- INPUT TIPO DE VEHICULO -->
                                 <!-- SELECT TARIFA -->
@@ -91,7 +102,7 @@ if ($tipo_usuario == 1) {
                                     <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1"><i class="fas fa-calendar-alt"></i>&nbsp;PLAN</span>
                                     </div>
-                                    <select name="plan" id="plan" required='true' class="form-control" autofocus>
+                                    <select name="plan" id="plan" required='true' class="form-control">
                                         <option hidden selected value="">Seleccione el plan a pagar</option>
                                         <?php
 
@@ -113,7 +124,7 @@ if ($tipo_usuario == 1) {
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fas fa-sitemap"></i>&nbsp;CATEGORIA</span>
                                         </div>
-                                        <select name="categoria" id="categoria" required='true' class="form-control" autofocus>
+                                        <select name="categoria" id="categoria" required='true' class="form-control">
                                             <option hidden selected value="">Seleccione categoria de vehiculo</option>
                                             <?php
 
@@ -135,7 +146,7 @@ if ($tipo_usuario == 1) {
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fas fa-warehouse"></i>&nbsp;Ubicacion:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                         </div>
-                                        <select name="caseta" id="caseta" required='true' class="form-control" autofocus>
+                                        <select name="caseta" id="caseta" required='true' class="form-control">
                                             <option hidden selected value="">Seleccione el N° de la ubicacion:</option>
                                             <?php
 
@@ -164,7 +175,7 @@ if ($tipo_usuario == 1) {
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fas fa-hand-holding-usd"></i>&nbsp;VALOR&nbsp;</span>
                                         </div>
-                                        <input type="text" class="form-control" name="valor" id="valor" placeholder="valor" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="vehiculo" aria-describedby="basic-addon1" required='true' autofocus>
+                                        <input type="text" class="form-control" name="valor" id="valor" placeholder="valor" onkeyup="javascript:this.value=this.value.toUpperCase();" aria-label="vehiculo" aria-describedby="basic-addon1" required='true'>
                                     </div>
                                 </div>
                                 <!-- INPUT VALOR -->
@@ -208,36 +219,122 @@ if ($tipo_usuario == 1) {
                                 <!-- BOTON GUARDAR -->
                             </div>
                         </form>
-                        
+
                     </div>
                 </div>
             </div>
         </main>
     </div>
-        <script>
-            $("#formMensualidad").submit(function(e) {
+    <script>
+        let intervaloGlobal = null;
+let redireccionActiva = false;
 
-                e.preventDefault();
+$("#placa").on("input", function() {
 
-                $.ajax({
+    // 🔴 Cancelar contador si el usuario escribe
+    if (intervaloGlobal) {
+        clearInterval(intervaloGlobal);
+        intervaloGlobal = null;
+    }
 
-                    url: "mens_cliente_guardar.php",
-                    type: "POST",
-                    data: $(this).serialize(),
+    redireccionActiva = false;
+    $("#respuesta").html("");
+});
 
-                    success: function(resp) {
-                        $("#respuesta").html(resp);
-                        $("#formMensualidad")[0].reset();
-                        window.location.href = "mens_pagar.php";
-                    } 
-                                        
+$("#placa").on("keyup", function() {
 
-                });
-                
+    let placa = $(this).val().toUpperCase().trim();
 
+    if (placa !== "") {
+
+        $.post("validar_placa.php", {placa: placa}, function(resp) {
+
+            if (resp === "existe") {
+
+                let tiempoTotal = 5.0;
+                let tiempo = tiempoTotal;
+                redireccionActiva = true;
+
+                $("#respuesta").html(`
+                    <div class="alert alert-warning text-center">
+                        ⚠️ La placa <strong>${placa}</strong> ya está registrada.<br>
+                        Redirigiendo en <strong id="contador">${tiempo.toFixed(1)}</strong> segundos...
+                        
+                        <div class="progress mt-3" style="height: 20px;">
+                            <div id="barra" class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                role="progressbar" style="width: 100%">
+                            </div>
+                        </div>
+                    </div>
+                `);
+
+                intervaloGlobal = setInterval(function() {
+
+                    if (!redireccionActiva) {
+                        clearInterval(intervaloGlobal);
+                        return;
+                    }
+
+                    tiempo -= 0.1;
+
+                    // ⏱ contador
+                    $("#contador").text(tiempo.toFixed(1));
+
+                    // 📊 progreso (porcentaje)
+                    let porcentaje = (tiempo / tiempoTotal) * 100;
+                    $("#barra").css("width", porcentaje + "%");
+
+                    if (tiempo <= 0) {
+                        clearInterval(intervaloGlobal);
+                        window.location.href = "mens_pagar.php?placa=" + placa;
+                    }
+                    if (tiempo <= 1) {
+                        $("#barra").removeClass("bg-warning").addClass("bg-danger");
+                    }
+
+                }, 100);
+
+            }
+
+        });
+
+    }
+});
+
+        // $("#placa").on("blur", function() {
+        //     let placa = $(this).val().toUpperCase().trim();
+
+        //     if (placa !== "") {
+        //         $.post("validar_placa.php", {
+        //             placa: placa
+        //         }, function(resp) {
+
+        //             if (resp === "existe") {
+
+        //                 alert("⚠️ La placa ya existe.\nSerás redirigido a pagar la mensualidad.");
+
+        //                 window.location.href = "mens_pagar.php?placa=" + placa;
+        //             }
+
+        //         });
+        //     }
+        // });
+
+
+        $("#formMensualidad").submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "mens_cliente_guardar.php",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(resp) {
+                    $("#respuesta").html(resp);
+                    $("#formMensualidad")[0].reset();
+                    window.location.href = "mens_pagar.php";
+                }
             });
-            
-        </script>
+        });
+    </script>
 </body>
 
 </html>
