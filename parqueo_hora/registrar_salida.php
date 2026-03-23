@@ -152,7 +152,7 @@ if ($dias > 0) {
     // 6️⃣ Registrar movimiento en caja
     $stmt = $pdo->prepare("
         INSERT INTO caja (recibo_id, fecha_movimiento, movimiento, desc_movimiento, valor_ingreso, user_login, caja_tipo, caja, liquidado )
-        VALUES (:recibo, NOW(), '3', :tiempo, :valor, :usuario,'INGRESO', 'Parqueadero', 'NO')
+        VALUES (:recibo, NOW(), '3', :tiempo, :valor, :usuario,'INGRESO', 'PARQUEADERO', 'NO')
     ");
     $stmt->execute([
         ':recibo' => $recibo_id,

@@ -38,7 +38,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->execute([$placa]);
 
     if ($stmt->rowCount() > 0) {
-        echo "<div class='alert alert-danger'>La placa ya está registrada</div>";
+        echo "<div class='alert alert-danger'>
+        La placa ya está registrada cliente por horas.
+        dirígete a la sección de clientes por horas para editar o eliminar el cliente. 
+        <a href='editar_cliente.php?placa=$placa' class='alert-link'>
+            Editar cliente
+        </a>
+      </div>";
         exit;
     }
 

@@ -41,13 +41,30 @@ try {
         ]);
         exit;
     } 
+    // 2️⃣ Validar si la placa tiene mensualidad activa
+$sql_mensual = "SELECT placa 
+                FROM cliente 
+                WHERE placa = :placa 
+                AND activo = 'SI' 
+                AND mensualidad = 'SI'";
+
+$stmt_mensual = $pdo->prepare($sql_mensual);
+$stmt_mensual->execute(['placa' => $placa]);
+
+if ($stmt_mensual->rowCount() > 0) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => "🚫 El vehículo con placa $placa tiene mensualidad activa y no puede ingresar por horas."
+    ]);
+    exit;
+}
 
     // Verificar si el cliente ya existe
     $stmt = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ?");
     $stmt->execute([$placa]);
     if($stmt->rowCount() == 0) {
         $sql = "INSERT INTO cliente (fecha_creacion, placa, nombre, cedula, celular, vehiculo, categoria, valor, cli_tar_tiempo, caseta, mensualidad, activo, user)
-                VALUES (NOW(), ?, ?, 0, ?, ?, ?, 0, 1, ?, 'NO', 'SI', ?)";
+                VALUES (NOW(), ?, ?, 0, ?, ?, ?, 0, 1, ?, 'NO', 'NO', ?)";
         $pdo->prepare($sql)->execute([$placa, $nombre, $celular, $vehiculo, $categoria, $caseta, $usuario]);
     }
 

@@ -237,10 +237,10 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
                                     </a>
-                                    <!-- <a class="nav-link" href="../parqueo_hora/parqueo_tarifas.php">
+                                    <a class="nav-link" href="../parqueo_mens/clientes_mensualidad.php">
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Tarifas
-                                    </a> -->
+                                        &nbsp;&nbsp;&nbsp;Listado clientes
+                                    </a>
                                     <!-- <a class="nav-link" href="../config/mensualidades.php">
                                         <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Mensualidades

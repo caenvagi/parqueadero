@@ -38,7 +38,7 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
             <div class="container" id="cont-parqueo1">
                 <div class="row">
                     <div class="col col-12 col-sm-12 col-md-5 col-lg-5 col-xl-5 m-3">
-                        <div id="respuesta"></div>
+                        <!-- <div id="respuesta"></div> -->
                         <form id="formMensualidad" name="formMensualidad" action="">
                             <div class="card" id="cardForm_parqueo">
                                 <div class="header">Ingresar datos de la mensualidad:</div>
@@ -47,7 +47,7 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
                                     <input type="hidden" value="" class="form-control" id="recibo_id" name="recibo_id" placeholder="parqueo_id" aria-label="parqueo_id" aria-describedby="basic-addon1">
                                 </div>
                                 <!-- INPUT NUMERO RECIBO -->
-                                <div id="respuesta"></div>
+
                                 <!-- INPUT PLACA -->
                                 <div class="input-group mb-2">
                                     <div class="input-group-prepend">
@@ -144,7 +144,7 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
                                 <div class="mb-1">
                                     <div class="input-group mb-1">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-warehouse"></i>&nbsp;Ubicacion:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-warehouse"></i>&nbsp;UBICACION:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                         </div>
                                         <select name="caseta" id="caseta" required='true' class="form-control">
                                             <option hidden selected value="">Seleccione el N° de la ubicacion:</option>
@@ -219,87 +219,133 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
                                 <!-- BOTON GUARDAR -->
                             </div>
                         </form>
-
                     </div>
+                    <!-- 🔵 PANEL RESPUESTA -->
+                    <div class="col-12 col-md-6 col-lg-5 m-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body" id="respuesta">
+                                <div class="text-center text-muted">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 🔵 PANEL RESPUESTA -->
                 </div>
             </div>
         </main>
     </div>
     <script>
         let intervaloGlobal = null;
-let redireccionActiva = false;
+        let redireccionActiva = false;
+        let textoIntervalo = null;
 
-$("#placa").on("input", function() {
+        $("#placa").on("input", function() {
 
-    // 🔴 Cancelar contador si el usuario escribe
-    if (intervaloGlobal) {
-        clearInterval(intervaloGlobal);
-        intervaloGlobal = null;
-    }
+            if (intervaloGlobal) clearInterval(intervaloGlobal);
+            if (textoIntervalo) clearInterval(textoIntervalo);
 
-    redireccionActiva = false;
-    $("#respuesta").html("");
-});
+            intervaloGlobal = null;
+            textoIntervalo = null;
+            redireccionActiva = false;
 
-$("#placa").on("keyup", function() {
+            $("#respuesta").html("");
+        });
 
-    let placa = $(this).val().toUpperCase().trim();
+        $("#placa").on("keyup", function() {
 
-    if (placa !== "") {
+            let placa = $(this).val().toUpperCase().trim();
 
-        $.post("validar_placa.php", {placa: placa}, function(resp) {
+            if (placa !== "") {
 
-            if (resp === "existe") {
+                $.post("validar_placa.php", {
+                    placa: placa
+                }, function(resp) {
 
-                let tiempoTotal = 5.0;
-                let tiempo = tiempoTotal;
-                redireccionActiva = true;
+                    if (resp === "existe") {
 
-                $("#respuesta").html(`
+                        let tiempoTotal = 5.0;
+                        let tiempo = tiempoTotal;
+                        redireccionActiva = true;
+
+                        let mensajes = [
+                            // "Validando información...",
+                            // "Consultando base de datos...",
+                            "Preparando módulo de pago...",
+                            "Cargando interfaz..."
+                        ];
+
+                        let i = 0;
+
+                        $("#respuesta").html(`
                     <div class="alert alert-warning text-center">
-                        ⚠️ La placa <strong>${placa}</strong> ya está registrada.<br>
-                        Redirigiendo en <strong id="contador">${tiempo.toFixed(1)}</strong> segundos...
+
                         
+
+                        ⚠️ La placa <strong>${placa}</strong> ya está registrada.<br>
+
+                        <div id="textoCarga" class="fw-bold mt-2">
+                            ${mensajes[0]}
+                        </div>
+
+                        <div class="mt-2">
+                            Redirigiendo en <strong id="contador">${tiempo.toFixed(1)}</strong> segundos...
+                        </div>
+
                         <div class="progress mt-3" style="height: 20px;">
                             <div id="barra" class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
                                 role="progressbar" style="width: 100%">
                             </div>
                         </div>
+
                     </div>
                 `);
 
-                intervaloGlobal = setInterval(function() {
+                        // 🔄 Cambiar textos dinámicamente
+                        textoIntervalo = setInterval(() => {
+                            i = (i + 1) % mensajes.length;
+                            $("#textoCarga").fadeOut(200, function() {
+                                $(this).text(mensajes[i]).fadeIn(200);
+                            });
+                        }, 700);
 
-                    if (!redireccionActiva) {
-                        clearInterval(intervaloGlobal);
-                        return;
+                        // ⏱ contador + barra
+                        intervaloGlobal = setInterval(function() {
+
+                            if (!redireccionActiva) {
+                                clearInterval(intervaloGlobal);
+                                clearInterval(textoIntervalo);
+                                return;
+                            }
+
+                            tiempo -= 0.1;
+
+                            $("#contador").text(tiempo.toFixed(1));
+
+                            let porcentaje = (tiempo / tiempoTotal) * 100;
+                            $("#barra").css("width", porcentaje + "%");
+
+                            // 🔴 cambiar color al final
+                            if (tiempo <= 1) {
+                                $("#barra")
+                                    .removeClass("bg-warning")
+                                    .addClass("bg-danger");
+                            }
+
+                            if (tiempo <= 0) {
+                                clearInterval(intervaloGlobal);
+                                clearInterval(textoIntervalo);
+                                window.location.href = "mens_pagar.php?placa=" + placa;
+                            }
+
+                        }, 100);
+
                     }
 
-                    tiempo -= 0.1;
-
-                    // ⏱ contador
-                    $("#contador").text(tiempo.toFixed(1));
-
-                    // 📊 progreso (porcentaje)
-                    let porcentaje = (tiempo / tiempoTotal) * 100;
-                    $("#barra").css("width", porcentaje + "%");
-
-                    if (tiempo <= 0) {
-                        clearInterval(intervaloGlobal);
-                        window.location.href = "mens_pagar.php?placa=" + placa;
-                    }
-                    if (tiempo <= 1) {
-                        $("#barra").removeClass("bg-warning").addClass("bg-danger");
-                    }
-
-                }, 100);
+                });
 
             }
-
         });
-
-    }
-});
 
         // $("#placa").on("blur", function() {
         //     let placa = $(this).val().toUpperCase().trim();
@@ -321,16 +367,77 @@ $("#placa").on("keyup", function() {
         // });
 
 
+        let intervaloGuardar = null;
+
         $("#formMensualidad").submit(function(e) {
             e.preventDefault();
+
+            let placa = $("#placa").val().toUpperCase().trim();
+
             $.ajax({
                 url: "mens_cliente_guardar.php",
                 type: "POST",
                 data: $(this).serialize(),
+
                 success: function(resp) {
+
                     $("#respuesta").html(resp);
-                    $("#formMensualidad")[0].reset();
-                    window.location.href = "mens_pagar.php";
+
+                    if (resp.includes("alert-success")) {
+
+                        let duracion = 3000; // milisegundos (3s)
+                        let inicio = Date.now();
+                        let fin = inicio + duracion;
+
+                        $("#respuesta").html(`
+                    <div class="alert alert-success text-center">
+
+                        <div class="mb-2">
+                            <div class="spinner-border text-success"></div>
+                        </div>
+
+                        ✅ Cliente registrado correctamente<br>
+                        Placa: <strong>${placa}</strong><br>
+
+                        Redirigiendo en <strong id="contador">3</strong> segundos...
+
+                        <div class="progress mt-3">
+                            <div id="barra" class="progress-bar bg-success progress-bar-animated" style="width:100%"></div>
+                        </div>
+
+                    </div>
+                `);
+
+                        if (intervaloGuardar) {
+                            cancelAnimationFrame(intervaloGuardar);
+                        }
+
+                        function actualizar() {
+
+                            let ahora = Date.now();
+                            let restante = (fin - ahora) / 1000; // en segundos
+
+                            if (restante <= 0) {
+                                $("#contador").text("0.0");
+                                $("#barra").css("width", "0%");
+                                window.location.href = "mens_pagar.php?placa=" + placa;
+                                return;
+                            }
+
+                            // ⏱ contador REAL
+                            $("#contador").text(restante.toFixed(1));
+
+                            // 📊 barra REAL
+                            let porcentaje = ((fin - ahora) / duracion) * 100;
+                            $("#barra").css("width", porcentaje + "%");
+
+                            intervaloGuardar = requestAnimationFrame(actualizar);
+                        }
+
+                        actualizar();
+
+                        $("#formMensualidad")[0].reset();
+                    }
                 }
             });
         });

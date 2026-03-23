@@ -29,7 +29,7 @@ $sql = "SELECT
             fecha
         FROM pagos
         WHERE placa = ?
-        ORDER BY fecha_inicio DESC";
+        ORDER BY id DESC";
 
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$placa]);
