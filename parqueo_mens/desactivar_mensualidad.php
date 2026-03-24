@@ -26,7 +26,7 @@ try {
 
     // 🔹 2. Actualizar fecha_retiro en el último historial
     $sqlHist = "UPDATE mensualidad_historial 
-                SET fecha_retiro = CURDATE()
+                SET fecha_retiro = CURDATE(), observacion = 'Mensualidad desactivada'
                 WHERE placa = ?
                 ORDER BY id DESC
                 LIMIT 1";

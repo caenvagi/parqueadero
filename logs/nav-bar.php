@@ -241,11 +241,11 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Listado clientes
                                     </a>
-                                    <!-- <a class="nav-link" href="../config/mensualidades.php">
-                                        <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Mensualidades
+                                     <a class="nav-link" href="../parqueo_mens/historial_timeline.php">
+                                        <div><i class='bi bi-house-door-fill' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Historial veh.
                                     </a>
-                                    <a class="nav-link" href="../config/parqueomanual.php">
+                                    <!--<a class="nav-link" href="../config/parqueomanual.php">
                                         <div><i class='fas fa-edit' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso Manual
                                     </a>
