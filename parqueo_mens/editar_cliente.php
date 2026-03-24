@@ -75,7 +75,7 @@ $planes = $stmtPlan->fetchAll();
 
                             <div class="col-md-4">
                                 <label>Placa</label>
-                                <input type="text" name="placa" class="form-control" value="<?= $cliente['placa'] ?>">
+                                <input type="text" id="placa" name="placa" class="form-control" value="<?= $cliente['placa'] ?>">
                             </div>
 
                             <div class="col-md-4">
@@ -181,16 +181,16 @@ $planes = $stmtPlan->fetchAll();
                 <script>
                     $("#formEditarCliente").submit(function(e) {
                         e.preventDefault();
-
+                         let placa = $("#placa").val(); // ✅ obtener placa                     
                         $.ajax({
                             url: "actualizar_cliente.php",
                             type: "POST",
                             data: $(this).serialize(),
                             success: function(resp) {
                                 $("#respuesta").html(resp);
-                                setTimeout(function() {
-                                    window.location.href = "clientes_mensualidad.php";
-                                }, 1000); // espera 1 segundo para mostrar el mensaje
+                                console.log(placa); // ✅ depuración                                
+                                    window.location.href = "mens_pagar.php?placa=" + placa;
+                                 
                             }
                         });
                     });

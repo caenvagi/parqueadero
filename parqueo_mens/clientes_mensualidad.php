@@ -167,6 +167,13 @@ $clientes = $stmt->fetchAll();
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
 
+                                                <!-- 🔥 NUEVO: Historial -->
+                                                <a href="historial_timeline.php?placa=<?= $row['placa'] ?>"
+                                                    class="btn btn-sm btn-info"
+                                                    title="Ver historial">
+                                                    <i class="bi bi-clock-history"></i>
+                                                </a>
+
                                                 <!-- <button class="btn btn-sm btn-danger btnEliminar"
                                                     data-placa="<?= $row['placa'] ?>"
                                                     data-bs-toggle="tooltip"

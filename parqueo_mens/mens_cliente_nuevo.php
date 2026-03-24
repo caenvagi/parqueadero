@@ -27,8 +27,6 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
     <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
-    <!-- Select2 CSS -->
-
 </head>
 <?php require '../logs/nav-bar.php'; ?>
 
@@ -59,6 +57,7 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
                                         class="form-control"
                                         name="placa"
                                         id="placa"
+                                        maxlength="6"
                                         placeholder="Placa"
                                         aria-label="placa"
                                         aria-describedby="basic-addon1"
@@ -261,6 +260,52 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
                 $.post("validar_placa.php", {
                     placa: placa
                 }, function(resp) {
+
+                    // 🔴 NUEVO: VEHICULO EN PARQUEO
+                    if (resp === "parqueo_activo") {
+
+                        $("#respuesta").html(`
+            <div class="alert alert-danger text-center">
+
+                🚫 El vehículo con placa <strong>${placa}</strong><br>
+                está registrado en <strong>PARQUEO ACTIVO</strong>.<br><br>
+
+                ⚠️ Primero debe retirar el vehículo del parqueo.
+
+                <div class="mt-3">
+                    <a href="../parqueo_hora/parqueo_form.php" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Ir a retirar vehículo
+                    </a>
+                </div>
+
+            </div>
+        `);
+
+                        return; // ⛔ IMPORTANTE: detener ejecución
+                    }
+
+                    // 🔵 CLIENTE EXISTE PERO INACTIVO
+if (resp === "cliente_inactivo") {
+
+    $("#respuesta").html(`
+        <div class="alert alert-info text-center">
+
+            ℹ️ El vehículo con placa <strong>${placa}</strong><br>
+            existe en el sistema pero <strong>NO está activo como mensualidad</strong>.<br><br>
+
+            ⚠️ Debe actualizar y activar el vehículo como mensualidad.
+
+            <div class="mt-3">
+                <a href="editar_cliente.php?placa=${placa}" class="btn btn-success">
+                    <i class="fas fa-edit"></i> Ir a editar cliente
+                </a>
+            </div>
+
+        </div>
+    `);
+
+    return; // ⛔ detener flujo
+}
 
                     if (resp === "existe") {
 

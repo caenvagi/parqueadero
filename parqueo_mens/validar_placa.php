@@ -16,25 +16,45 @@ if ($tipo_usuario == 1) {
     $where = "WHERE id=$id";
 }
 
-if (isset($_POST['placa'])) {
+$placa = $_POST['placa'] ?? '';
 
-    // Limpiar y formatear la placa
-    $placa = strtoupper(trim($_POST['placa']));
+if ($placa != '') {
 
-    if ($placa == "") {
-        echo "vacio";
+    // 🔴 VALIDAR SI ESTÁ EN PARQUEO ACTIVO
+    $sqlParqueo = "SELECT parqueo_id FROM parqueo 
+                   WHERE placa_cli = ? AND estado = 'SI' 
+                   LIMIT 1";
+
+    $stmtParqueo = $pdo->prepare($sqlParqueo);
+    $stmtParqueo->execute([$placa]);
+
+    if ($stmtParqueo->fetch()) {
+        echo "parqueo_activo";
+        exit;
+    }
+    // 🔵 2. VALIDAR CLIENTE INACTIVO (NO mensualidad y NO activo)
+    $sqlInactivo = "SELECT placa FROM cliente 
+                    WHERE placa = ? 
+                    AND mensualidad = 'NO' 
+                    AND activo = 'NO'
+                    LIMIT 1";
+
+    $stmtInactivo = $pdo->prepare($sqlInactivo);
+    $stmtInactivo->execute([$placa]);
+
+    if ($stmtInactivo->fetch()) {
+        echo "cliente_inactivo";
         exit;
     }
 
-    // Consultar si existe la placa
-    $stmt = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ?");
-    $stmt->execute([$placa]);
+    // 🟡 VALIDAR SI EXISTE EN MENSUALIDAD
+    $sqlCliente = "SELECT placa FROM cliente WHERE placa = ? LIMIT 1";
+    $stmtCliente = $pdo->prepare($sqlCliente);
+    $stmtCliente->execute([$placa]);
 
-    if ($stmt->rowCount() > 0) {
-        // 🔴 La placa YA existe
+    if ($stmtCliente->fetch()) {
         echo "existe";
     } else {
-        // 🟢 La placa NO existe
         echo "no_existe";
     }
 }

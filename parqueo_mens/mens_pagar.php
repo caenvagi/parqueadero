@@ -377,7 +377,7 @@ $placa = $_GET['placa'] ?? '';
                                     $("#formPagos")[0].reset();
                                     $("#placa").val("");
                                     $('#tablaPagos').html('');
-                                    location.reload(); // 🔥 recarga la página
+                                    //location.reload(); // 🔥 recarga la página
                                 }
                             });
                         });
