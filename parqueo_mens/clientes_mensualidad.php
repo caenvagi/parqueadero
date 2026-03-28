@@ -105,8 +105,8 @@ $clientes = $stmt->fetchAll();
                                         <th>Categoría</th>
                                         <th>Caseta</th>
                                         <th>Valor</th>
+                                        <th>Tipo</th>
                                         <th>Mens.</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -123,9 +123,9 @@ $clientes = $stmt->fetchAll();
 
                                             <td>
                                                 <?php if ($row['mensualidad'] == 'SI'): ?>
-                                                    <span class="badge bg-primary">SI</span>
+                                                    <span class="badge bg-primary">Mens</span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-secondary">NO</span>
+                                                    <span class="badge bg-secondary">Hora</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>

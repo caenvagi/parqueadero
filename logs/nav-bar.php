@@ -197,22 +197,12 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Tarifas
                                     </a>
-                                    <!-- <a class="nav-link" href="../config/mensualidades.php">
-                                        <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Mensualidades
+                                    <a class="nav-link" href="../parqueo_hora/dashboard.php">
+                                        <div><i class="bi bi-speedometer" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Dashboard
                                     </a>
-                                    <a class="nav-link" href="../config/parqueomanual.php">
-                                        <div><i class='fas fa-edit' style='font-size:20px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Ingreso Manual
-                                    </a>
-                                    <a class="nav-link" href="../config/ingresos.php">
-                                        <div><i class='fas fa-list-ol' style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;en parqueo
-                                    </a>
-                                    <a class="nav-link" href="../config/listado.php">
-                                        <div><i class='fas fa-clipboard-list' style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Listado -->
-                                    </a>
+                                     
+                                    
                                 </nav>
                             </div>
                         <!-- MENU PARQUEO FIN-->
