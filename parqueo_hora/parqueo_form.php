@@ -23,10 +23,7 @@ if ($tipo_usuario == 1) {
     <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
     <?php require '../logs/datatables.php'; ?>
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-</head>
+   
 <?php require '../logs/nav-bar.php'; ?>
 <div id="layoutSidenav_content">
     <main class="ms-5 me-5">

@@ -110,26 +110,28 @@ let chartLine, chartPie;
 
 function cargarDashboard() {
 
-    let anio = document.getElementById("anio").value;
+    //let anio = document.getElementById("anio").value;
 
-    fetch("dashboard_data.php?anio=" + anio)
+    fetch("dashboard_data.php")
     .then(res => res.json())
     .then(data => {
+        console.log(data);
 
         // KPIs
         document.getElementById("totalDinero").innerText = 
-    "$ " + Number(data.total_dinero).toLocaleString('es-CO');
+        "$ " + Number(data.total_dinero).toLocaleString('es-CO');
         document.getElementById("totalVehiculos").innerText = data.total_vehiculos;
 
         // DATOS GRAFICO
         let meses = [];
         let dinero = [];
-        let vehiculos = [];
+        // let vehiculos = [];
 
         data.ingresos.forEach(item => {
             meses.push(item.mes);
             dinero.push(item.dinero);
-            vehiculos.push(item.vehiculos);
+            console.log(item.dinero);
+            /* vehiculos.push(item.vehiculos); */
         });
 
         if(chartLine) chartLine.destroy();
@@ -143,21 +145,22 @@ function cargarDashboard() {
                         label: 'Dinero',
                         data: dinero
                     },
-                    {
-                        label: 'Vehículos',
-                        data: vehiculos
-                    }
+                    // {
+                    //     label: 'Vehículos',
+                    //     data: vehiculos
+                    // }
                 ]
             }
         });
 
-        // TORTA
+//         // TORTA
         let labels = [];
         let valores = [];
 
         data.categorias.forEach(item => {
             labels.push(item.cat_nombre);
             valores.push(item.total);
+            console.log(item.total);
         });
 
         if(chartPie) chartPie.destroy();
@@ -172,89 +175,89 @@ function cargarDashboard() {
             }
         });
 
-        // ✅ AQUÍ VA 👇
-    cargarComparacion(data);
+//         // ✅ AQUÍ VA 👇
+//     cargarComparacion(data);
 
-    });
-}
+//     });
+// }
 
-document.getElementById("anio").addEventListener("change", cargarDashboard);
+//document.getElementById("anio").addEventListener("change", cargarDashboard);
 
-let chartComparacion;
+// let chartComparacion;
 
-function cargarComparacion(data){
+// function cargarComparacion(data){
 
-    let meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+//     let meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-    if(chartComparacion) chartComparacion.destroy();
+//     if(chartComparacion) chartComparacion.destroy();
 
-    chartComparacion = new Chart(document.getElementById("comparacionChart"), {
-    type: 'line',
-    data: {
-        labels: meses,
-        datasets: [
-            {
-                label: data.comparacion.anio1,
-                data: data.comparacion.data1,
-                borderColor: '#28a745',
-                backgroundColor: 'rgba(40,167,69,0.1)',
-                tension: 0.4,
-                fill: true,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            },
-            {
-                label: data.comparacion.anio2,
-                data: data.comparacion.data2,
-                borderColor: '#6c757d',
-                backgroundColor: 'rgba(108,117,125,0.1)',
-                tension: 0.4,
-                fill: true,
-                borderDash: [5,5],
-                pointRadius: 3
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                labels: {
-                    color: '#333',
-                    font: {
-                        size: 12
-                    }
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(ctx){
-                        return '$' + ctx.raw.toLocaleString('es-CO');
-                    }
-                }
-            }
-        },
-        scales: {
-            x: {
-                grid: {
-                    display: false
-                }
-            },
-            y: {
-                grid: {
-                    color: 'rgba(0,0,0,0.05)'
-                },
-                ticks: {
-                    callback: function(value){
-                        return '$' + value.toLocaleString('es-CO');
-                    }
-                }
-            }
-        }
-    }
-});
+//     chartComparacion = new Chart(document.getElementById("comparacionChart"), {
+//     type: 'line',
+//     data: {
+//         labels: meses,
+//         datasets: [
+//             {
+//                 label: data.comparacion.anio1,
+//                 data: data.comparacion.data1,
+//                 borderColor: '#28a745',
+//                 backgroundColor: 'rgba(40,167,69,0.1)',
+//                 tension: 0.4,
+//                 fill: true,
+//                 pointRadius: 4,
+//                 pointHoverRadius: 6
+//             },
+//             {
+//                 label: data.comparacion.anio2,
+//                 data: data.comparacion.data2,
+//                 borderColor: '#6c757d',
+//                 backgroundColor: 'rgba(108,117,125,0.1)',
+//                 tension: 0.4,
+//                 fill: true,
+//                 borderDash: [5,5],
+//                 pointRadius: 3
+//             }
+//         ]
+//     },
+//     options: {
+//         responsive: true,
+//         plugins: {
+//             legend: {
+//                 labels: {
+//                     color: '#333',
+//                     font: {
+//                         size: 12
+//                     }
+//                 }
+//             },
+//             tooltip: {
+//                 callbacks: {
+//                     label: function(ctx){
+//                         return '$' + ctx.raw.toLocaleString('es-CO');
+//                     }
+//                 }
+//             }
+//         },
+//         scales: {
+//             x: {
+//                 grid: {
+//                     display: false
+//                 }
+//             },
+//             y: {
+//                 grid: {
+//                     color: 'rgba(0,0,0,0.05)'
+//                 },
+//                 ticks: {
+//                     callback: function(value){
+//                         return '$' + value.toLocaleString('es-CO');
+//                     }
+//                 }
+//             }
+//         }
+//     }
+ });
 
-}
+ }
 
 
 cargarDashboard();
