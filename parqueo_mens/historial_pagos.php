@@ -22,6 +22,7 @@ $placa = $_POST['placa'];
 
 $sql = "SELECT 
             id,
+            placa,
             fecha_inicio,
             fecha_fin,
             valor,

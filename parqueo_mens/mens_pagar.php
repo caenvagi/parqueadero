@@ -24,31 +24,29 @@ $placa = $_GET['placa'] ?? '';
 <html lang="es">
 
 <head>
-        <?php require '../logs/head.php'; ?>
+    <?php require '../logs/head.php'; ?>
     <!-- DataTable-->
-        <?php require '../logs/datatables.php'; ?>
-    <!-- DataTables Buttons -->
+    <?php require '../logs/datatables.php'; ?>
+    <!-- DataTables Buttons
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
-        <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.print.min.js"></script>
 
-        <!-- Para Excel -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">-->
 
-        <!-- Para PDF -->
+      <!-- Para Excel
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>-->
+
+     <!-- Para PDF
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-        
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
-    
-        <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-    
-    
-        <!-- Select2 CSS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>-->
+
+
+
+
+    <!-- Select2 CSS -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->
 </head>
@@ -184,21 +182,21 @@ $placa = $_GET['placa'] ?? '';
                         <div class="col-md-8">
                             <div class="card shadow h-100">
                                 <div class="card-header bg-dark text-white">
-                                    Historial de Pagos
+                                    Listado de clientes con mensualidad activa
                                 </div>
                                 <div class="card-body">
-                                    <table id="tablaHistorial" class="table table-striped table-bordered">
+                                    <table id="tablaClientes" class="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Id</th>
-                                                <th>Fecha Pago</th>
-                                                <th>Fecha Inicio</th>
-                                                <th>Fecha Fin</th>
+                                                <th>Placa</th>
+                                                <th>Nombre</th>
+                                                <th>Vehiculo</th>
+                                                <!-- <th>Fecha Inicio</th>
+                                                <th>Fecha Fin</th> -->
                                                 <th>Valor</th>
-                                                <th>Estado</th>
                                             </tr>
                                         </thead>
-                                        <tbody id="tablaPagos"></tbody>
+                                        <tbody id="tablaMens"></tbody>
                                     </table>
                                 </div>
                             </div>
@@ -206,7 +204,36 @@ $placa = $_GET['placa'] ?? '';
 
                     </div>
 
+                    <!-- TABLA -->
+                    <div class="col-md-12 mt-5">
+                        <div class="card shadow h-100">
+                            <div class="card-header bg-dark text-white">
+                                Historial de Pagos
+                            </div>
+                            <div class="card-body">
+                                <table id="tablaHistorial" name="tablaHistorial" class="table table-striped table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Fecha Pago</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Valor</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaPagos"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <script>
+                       
+                        $(document).ready(function() {
+                            cargarClientes();
+                        });
+
                         $('#placa').on('focus', function() {
 
                             this.value = this.value.toUpperCase();
@@ -228,6 +255,8 @@ $placa = $_GET['placa'] ?? '';
 
                                         if (resp.existe) {
 
+                                            $('#mensaje').html(''); // 👈 LIMPIAR MENSAJE
+                                            cargarPagos(placa);
                                             $('#nombre').val(resp.nombre);
                                             $('#cedula').val(resp.cedula);
                                             $('#vehiculo').val(resp.vehiculo);
@@ -243,11 +272,22 @@ $placa = $_GET['placa'] ?? '';
                                             $('#valor').val(valorFormateado);
                                             $('#fecha_inicio').val(resp.fecha_inicio);
                                             $('#fecha_fin').val(resp.fecha_fin);
-                                            cargarPagos(placa);
+
+                                            
 
 
                                         } else {
-
+                                            
+                                            $('#nombre').val('');
+                                            $('#cedula').val('');
+                                            $('#vehiculo').val('');
+                                            $('#caseta').val('');
+                                            $('#valor_real').val('');
+                                            $('#categoria').val('');
+                                            $('#plan').val('');
+                                            $('#valor').val('');
+                                            $('#fecha_inicio').val('');
+                                            $('#fecha_fin').val('');
                                             $('#mensaje').html(`
                                         <div class="alert alert-warning mt-2">
                                         Cliente no existe
@@ -287,7 +327,7 @@ $placa = $_GET['placa'] ?? '';
                                     success: function(resp) {
 
                                         if (resp.existe) {
-
+                                            $('#mensaje').html(''); // 👈 LIMPIAR MENSAJE
                                             $('#nombre').val(resp.nombre);
                                             $('#cedula').val(resp.cedula);
                                             $('#vehiculo').val(resp.vehiculo);
@@ -307,7 +347,16 @@ $placa = $_GET['placa'] ?? '';
 
 
                                         } else {
-
+                                       $('#nombre').val('');
+                                        $('#cedula').val('');
+                                        $('#vehiculo').val('');
+                                        $('#caseta').val('');
+                                        $('#valor_real').val('');
+                                        $('#categoria').val('');
+                                        $('#plan').val('');
+                                        $('#valor').val('');
+                                        $('#fecha_inicio').val('');
+                                        $('#fecha_fin').val('');
                                             $('#mensaje').html(`
                                         <div class="alert alert-warning mt-2">
                                         Cliente no existe
@@ -342,7 +391,7 @@ $placa = $_GET['placa'] ?? '';
                                     }
                                 });
                             } else {
-                                $('#valor').html('<option value="">Ingrese una placa válida</option>');
+                                $('#pagos').html('<option value="">Ingrese una placa válida</option>');
                             }
                         });
 
@@ -382,25 +431,35 @@ $placa = $_GET['placa'] ?? '';
                             });
                         });
 
-                        function cargarPagos(placa) {
+                        let tabla;
 
+                         $(document).ready(function() {
+                            tabla = $('#tablaHistorial').DataTable({
+                                "language": {
+                                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                                },
+                                "pageLength": 10,
+                                "ordering": true,
+                                "order": [
+                                    [0, "desc"]
+                                ],
+                            });
+                        });
+
+                        function cargarPagos(placa) {
                             $.ajax({
                                 url: 'historial_pagos.php',
                                 type: 'POST',
                                 data: {
                                     placa: placa
                                 },
-
                                 success: function(data) {
-
                                     // destruir DataTable antes de recargar
                                     if ($.fn.DataTable.isDataTable('#tablaHistorial')) {
                                         $('#tablaHistorial').DataTable().destroy();
                                     }
-
                                     // cargar datos nuevos
                                     $('#tablaPagos').html(data);
-
                                     // volver a inicializar
                                     tabla = $('#tablaHistorial').DataTable({
                                         "language": {
@@ -409,49 +468,12 @@ $placa = $_GET['placa'] ?? '';
                                         "lengthMenu": [5, 10, 25, 50, 100],
                                         "pageLength": 10,
                                         "ordering": true,
-                                        "order": [[0, "desc"]],
-
-                                        dom: 'lBfrtip', // 🔥 activa botones
-
-                                        buttons: [
-                                        {
-                                            extend: 'excelHtml5',
-                                            text: 'Excel',
-                                            text: '<i class="bi bi-file-earmark-excel"></i> Excel',
-                                            className: 'btn btn-success btn-sm',
-                                            title: function () {
-                                                let placa = $('#placa').val() || 'sin_placa';
-                                                return 'Historial_Pagos_' + placa;
-                                            }
-                                            
-                                        },
-                                        {
-                                            extend: 'pdfHtml5',
-                                            text: 'PDF',
-                                             text: '<i class="bi bi-file-earmark-pdf"></i> PDF',
-                                            className: 'btn btn-danger btn-sm',
-                                            title: function () {
-                                                let placa = $('#placa').val() || 'sin_placa';
-                                                return 'Historial_Pagos_' + placa;
-                                            }
-                                        },
-                                        {
-                                            extend: 'print',
-                                            text: 'Imprimir',
-                                            text: '<i class="bi bi-printer"></i> Imprimir',
-                                            className: 'btn btn-secondary btn-sm',
-                                            title: function () {
-                                                let placa = $('#placa').val() || 'sin_placa';
-                                                return 'Historial de Pagos - ' + placa;
-                                            }
-                                        }
-                                    ]
-
+                                        "order": [
+                                            [0, "desc"]
+                                        ],
                                     });
-
                                 }
                             });
-
                         }
 
                         $(document).ready(function() {
@@ -466,23 +488,63 @@ $placa = $_GET['placa'] ?? '';
                                 window.history.replaceState({}, document.title, window.location.pathname);
                             }
 
-                        });
+                        });        
 
-                        let tabla;
+                        function cargarClientes() {
+                            $.ajax({
+                                url: "listar_clientes.php",
+                                type: "GET",
+                                dataType: "json",
+                                success: function(data) {
 
-                        $(document).ready(function() {
+                                    let html = "";
 
-                            tabla = $('#tablaHistorial').DataTable({
-                                "language": {
-                                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                                    data.forEach(function(cliente) {
+
+                                        html += `
+                                            <tr>
+                                                <td>
+                                                    <a href="#" class="seleccionarPlaca" data-placa="${cliente.placa}">
+                                                        ${cliente.placa}
+                                                    </a>
+                                                </td>
+                                                <td>${cliente.nombre}</td>
+                                                <td>${cliente.vehiculo}</td>
+                                                
+                                                <td>$${parseInt(cliente.valor).toLocaleString()}</td>
+                                            </tr>
+                                        `;
+                                    });
+
+                                    $("#tablaMens").html(html);
+
+                                    // Si usas DataTable
+                                    if ($.fn.DataTable.isDataTable('#tablaClientes')) {
+                                        $('#tablaClientes').DataTable().destroy();
+                                    }
+
+                                    $('#tablaClientes').DataTable();
+
                                 },
-                                "pageLength": 10,
-                                "ordering": true,
-                                "order": [[0, "desc"]],
-                                
-                                
+                                error: function(err) {
+                                    console.log(err);
+                                }
                             });
+                        }
 
+                        $(document).on("click", ".seleccionarPlaca", function(e) {
+                            e.preventDefault();
+
+                            let placa = $(this).data("placa");
+
+                            // Llenar input
+                            $("#placa").val(placa);
+
+                            // Opcional: poner foco
+                            $("#placa").focus();
+
+                            // Opcional: disparar evento change o keyup si tienes lógica
+                            //$("#placa").trigger("keyup");
                         });
                     </script>
         </body>
