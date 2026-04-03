@@ -111,6 +111,7 @@ try {
     $recibo = $pdo->prepare("
         INSERT INTO recibo
         (
+            fecha_recibo,
             placa,
             recibo_man,
             fecha_ini,
@@ -122,10 +123,11 @@ try {
             usuario,
             cierre
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
     ");
 
     $recibo->execute([
+        date("Y-m-d-H:i:s"),
         $placa,
         '0',
         $fecha_inicio,
