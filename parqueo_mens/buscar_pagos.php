@@ -21,7 +21,7 @@ if (isset($_POST['placa'])) {
 
     $placa = $_POST['placa'];
 
-    $sql = "SELECT * FROM pagos WHERE placa = :placa and estado = 'pendiente'";
+    $sql = "SELECT * FROM pagos WHERE placa = :placa and estado = 'PENDIENTE'";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['placa' => $placa]);
 

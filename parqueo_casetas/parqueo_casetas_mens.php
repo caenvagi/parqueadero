@@ -37,7 +37,7 @@ $sql = "SELECT
 
             LEFT JOIN cliente cl 
             ON cl.caseta = c.caseta_id 
-            AND cl.activo = 'SI'
+            AND cl.activo = 'SI' 
         
         ORDER BY c.caseta_id";
 

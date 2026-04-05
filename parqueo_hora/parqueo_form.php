@@ -320,7 +320,7 @@ if ($tipo_usuario == 1) {
 
                     setInterval(() => {
                         location.reload();
-                    }, 150000); // 30 min
+                    }, 600000); // 30 min
 
                     function cargarTabla() {
                         $.get('parqueo_listar.php', function(html) {

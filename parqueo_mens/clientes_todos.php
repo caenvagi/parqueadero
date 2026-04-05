@@ -30,8 +30,7 @@ $sql = "SELECT
         FROM cliente cl
         LEFT JOIN casetas c ON cl.caseta = c.caseta_id
         LEFT JOIN categorias cat ON cl.categoria = cat.cat_id
-        WHERE cl.activo = 'SI'
-        ORDER BY cl.caseta ASC";
+        ORDER BY cl.placa ASC";
 
 // ✅ EJECUCIÓN
 $stmt = $pdo->prepare($sql);
@@ -88,7 +87,7 @@ $clientes = $stmt->fetchAll();
                 <div class="card shadow">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
-                            <i class="bi bi-people"></i> Clientes mensualidades activas
+                            <i class="bi bi-people"></i> Todos los Clientes
                         </h5>
 
 
@@ -204,7 +203,6 @@ $clientes = $stmt->fetchAll();
                 $(document).ready(function() {
                     $('#tablaClientes').DataTable({
                         responsive: true,
-                        "order": [[4, "asc"]],
                         pageLength: 25,
 
                         dom: 'Bfrtip',

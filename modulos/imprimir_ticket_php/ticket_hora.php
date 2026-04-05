@@ -3,7 +3,7 @@ sleep(1);
 session_start();
 
 // ✅ Conexión actual del proyecto
-require_once '../../conexion/conexion.PHP';
+require_once '../../conexion/conexion.php';
 
 // ✅ Verificación de sesión
 if (!isset($_SESSION['id'])) {

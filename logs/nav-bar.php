@@ -229,6 +229,10 @@ if ($tipo_usuario == 1) {
                                     </a>
                                     <a class="nav-link" href="../parqueo_mens/clientes_mensualidad.php">
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Listado Mens.
+                                    </a>
+                                    <a class="nav-link" href="../parqueo_mens/clientes_todos.php">
+                                        <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Listado clientes
                                     </a>
                                      <a class="nav-link" href="../parqueo_mens/historial_timeline.php">

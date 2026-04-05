@@ -43,16 +43,18 @@ if ($tipo_usuario == 1) {
 
 <div class="container-fluid mt-4">
 
-    <h3 class="mb-4">📊 Dashboard Parqueadero</h3>
+    <h3 class="mb-4">📊 Dashboard Parqueadero por horas</h3>
 
     <!-- FILTROS -->
     <div class="row mb-4">
-        <div class="col-md-2">
+        
+        <div class="col-md-2">            
             <select id="anio" class="form-select">
                 <?php for($i=date('Y'); $i>=2020; $i--): ?>
                     <option value="<?= $i ?>"><?= $i ?></option>
                 <?php endfor; ?>
             </select>
+            
         </div>
     </div>
 
@@ -105,33 +107,35 @@ if ($tipo_usuario == 1) {
 
 </div>
 
+
 <script>
-let chartLine, chartPie;
+let chartLine, chartPie, chartComparacion;
 
 function cargarDashboard() {
-
-    //let anio = document.getElementById("anio").value;
 
     fetch("dashboard_data.php")
     .then(res => res.json())
     .then(data => {
+
         console.log(data);
 
-        // KPIs
+        // ======================
+        // 💰 KPIs
+        // ======================
         document.getElementById("totalDinero").innerText = 
         "$ " + Number(data.total_dinero).toLocaleString('es-CO');
+
         document.getElementById("totalVehiculos").innerText = data.total_vehiculos;
 
-        // DATOS GRAFICO
+        // ======================
+        // 📊 GRAFICO BARRAS
+        // ======================
         let meses = [];
         let dinero = [];
-        // let vehiculos = [];
 
         data.ingresos.forEach(item => {
             meses.push(item.mes);
             dinero.push(item.dinero);
-            console.log(item.dinero);
-            /* vehiculos.push(item.vehiculos); */
         });
 
         if(chartLine) chartLine.destroy();
@@ -140,27 +144,22 @@ function cargarDashboard() {
             type: 'bar',
             data: {
                 labels: meses,
-                datasets: [
-                    {
-                        label: 'Dinero',
-                        data: dinero
-                    },
-                    // {
-                    //     label: 'Vehículos',
-                    //     data: vehiculos
-                    // }
-                ]
+                datasets: [{
+                    label: 'Ingresos',
+                    data: dinero
+                }]
             }
         });
 
-//         // TORTA
+        // ======================
+        // 🥧 TORTA
+        // ======================
         let labels = [];
         let valores = [];
 
         data.categorias.forEach(item => {
             labels.push(item.cat_nombre);
             valores.push(item.total);
-            console.log(item.total);
         });
 
         if(chartPie) chartPie.destroy();
@@ -175,91 +174,69 @@ function cargarDashboard() {
             }
         });
 
-//         // ✅ AQUÍ VA 👇
-//     cargarComparacion(data);
+        // ======================
+        // 📈 COMPARACIÓN
+        // ======================
+        cargarComparacion(data);
 
-//     });
-// }
-
-//document.getElementById("anio").addEventListener("change", cargarDashboard);
-
-// let chartComparacion;
-
-// function cargarComparacion(data){
-
-//     let meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-
-//     if(chartComparacion) chartComparacion.destroy();
-
-//     chartComparacion = new Chart(document.getElementById("comparacionChart"), {
-//     type: 'line',
-//     data: {
-//         labels: meses,
-//         datasets: [
-//             {
-//                 label: data.comparacion.anio1,
-//                 data: data.comparacion.data1,
-//                 borderColor: '#28a745',
-//                 backgroundColor: 'rgba(40,167,69,0.1)',
-//                 tension: 0.4,
-//                 fill: true,
-//                 pointRadius: 4,
-//                 pointHoverRadius: 6
-//             },
-//             {
-//                 label: data.comparacion.anio2,
-//                 data: data.comparacion.data2,
-//                 borderColor: '#6c757d',
-//                 backgroundColor: 'rgba(108,117,125,0.1)',
-//                 tension: 0.4,
-//                 fill: true,
-//                 borderDash: [5,5],
-//                 pointRadius: 3
-//             }
-//         ]
-//     },
-//     options: {
-//         responsive: true,
-//         plugins: {
-//             legend: {
-//                 labels: {
-//                     color: '#333',
-//                     font: {
-//                         size: 12
-//                     }
-//                 }
-//             },
-//             tooltip: {
-//                 callbacks: {
-//                     label: function(ctx){
-//                         return '$' + ctx.raw.toLocaleString('es-CO');
-//                     }
-//                 }
-//             }
-//         },
-//         scales: {
-//             x: {
-//                 grid: {
-//                     display: false
-//                 }
-//             },
-//             y: {
-//                 grid: {
-//                     color: 'rgba(0,0,0,0.05)'
-//                 },
-//                 ticks: {
-//                     callback: function(value){
-//                         return '$' + value.toLocaleString('es-CO');
-//                     }
-//                 }
-//             }
-//         }
-//     }
- });
-
- }
+    });
+}
 
 
+// ======================
+// 📊 GRAFICO COMPARACIÓN
+// ======================
+function cargarComparacion(data){
+
+    let meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+    if(chartComparacion) chartComparacion.destroy();
+
+    chartComparacion = new Chart(document.getElementById("comparacionChart"), {
+        type: 'line',
+        data: {
+            labels: meses,
+            datasets: [
+                {
+                    label: data.comparacion.anio1,
+                    data: data.comparacion.data1,
+                    borderColor: '#28a745',
+                    tension: 0.4
+                },
+                {
+                    label: data.comparacion.anio2,
+                    data: data.comparacion.data2,
+                    borderColor: '#dc3545',
+                    tension: 0.4,
+                    borderDash: [5,5]
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx){
+                            return '$' + ctx.raw.toLocaleString('es-CO');
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        callback: function(value){
+                            return '$' + value.toLocaleString('es-CO');
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 🚀 INICIAR
 cargarDashboard();
 </script>
 
