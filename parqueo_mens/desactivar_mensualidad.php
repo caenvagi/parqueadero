@@ -5,7 +5,15 @@ require_once "../conexion/conexion.php";
 date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['id'])) {
-    die("Sesión no válida");
+    header("Location: index.php");
+}
+$id = $_SESSION['id'];
+$tipo_usuario = $_SESSION['tipo_usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
 }
 
 $placa = $_POST['placa'] ?? '';

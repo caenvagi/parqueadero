@@ -68,7 +68,7 @@ $planes = $stmtPlan->fetchAll();
 
                     <div id="respuesta"></div>
 
-                    <form id="formEditarCliente">
+                    <form id="formEditarCliente" method="POST" action="activar_mensualidad.php">
                         <input type="hidden" name="placa" value="<?= $cliente['placa'] ?>">
 
                         <div class="row">
@@ -134,7 +134,7 @@ $planes = $stmtPlan->fetchAll();
 
                             <div class="col-md-4 mt-2">
                                 <label>Plan</label>
-                                <select name="plan_tarifa" class="form-select" required>
+                                <select name="plan_tarifa" id="plan_tarifa" class="form-select" required>
                                     <option value="">Seleccione...</option>
 
 
@@ -155,7 +155,7 @@ $planes = $stmtPlan->fetchAll();
 
                             <div class="col-md-4 mt-2">
                                 <label>Mensualidad</label>
-                                <select name="mensualidad" class="form-control">
+                                <select name="mensualidad" class="form-control" disabled>
                                     <option value="SI" <?= $cliente['mensualidad'] == 'SI' ? 'selected' : '' ?>>SI</option>
                                     <option value="NO" <?= $cliente['mensualidad'] == 'NO' ? 'selected' : '' ?>>NO</option>
                                 </select>
@@ -163,7 +163,7 @@ $planes = $stmtPlan->fetchAll();
 
                             <div class="col-md-4 mt-2">
                                 <label>Estado</label>
-                                <select name="activo" class="form-control">
+                                <select name="activo" class="form-control" disabled>
                                     <option value="SI" <?= $cliente['activo'] == 'SI' ? 'selected' : '' ?>>Activo</option>
                                     <option value="NO" <?= $cliente['activo'] == 'NO' ? 'selected' : '' ?>>Inactivo</option>
                                 </select>
@@ -172,16 +172,26 @@ $planes = $stmtPlan->fetchAll();
 
                         <button class="btn btn-primary mt-3">Actualizar</button>
 
-                        <button type="button" id="btnDesactivar" class="btn btn-danger mt-3">
-                            Desactivar Mensualidad
-                        </button>
+                        <?php if ($cliente['activo'] == 'SI'): ?>
+
+                            <button type="button" id="btnDesactivar" class="btn btn-danger mt-3">
+                                Desactivar Mensualidad
+                            </button>
+
+                        <?php else: ?>
+
+                            <button type="button" id="btnActivar" class="btn btn-success mt-3">
+                                Activar Mensualidad
+                            </button>
+
+                        <?php endif; ?>
                     </form>
                 </div>
 
                 <script>
                     $("#formEditarCliente").submit(function(e) {
                         e.preventDefault();
-                         let placa = $("#placa").val(); // ✅ obtener placa                     
+                        let placa = $("#placa").val(); // ✅ obtener placa                     
                         $.ajax({
                             url: "actualizar_cliente.php",
                             type: "POST",
@@ -189,8 +199,8 @@ $planes = $stmtPlan->fetchAll();
                             success: function(resp) {
                                 $("#respuesta").html(resp);
                                 console.log(placa); // ✅ depuración                                
-                                    window.location.href = "mens_pagar.php?placa=" + placa;
-                                 
+                                window.location.href = "clientes_mensualidad.php";
+
                             }
                         });
                     });
@@ -214,7 +224,34 @@ $planes = $stmtPlan->fetchAll();
 
                                 setTimeout(function() {
                                     window.location.href = "clientes_mensualidad.php";
-                                }, 1000);
+                                }, 2000);
+                            }
+                        });
+
+                    });
+
+                    $("#btnActivar").click(function() {
+
+
+                        if (!confirm("¿Seguro que deseas activar la mensualidad?")) {
+                            return;
+                        }
+
+                        let placa = $("input[name='placa']").val();
+
+                        $.ajax({
+
+                            url: "activar_mensualidad.php",
+                            type: "POST",
+                            data: {
+                                placa: placa
+                            },
+                            success: function(resp) {
+                                $("#respuesta").html(resp);
+
+                                setTimeout(function() {
+                                    window.location.href = "clientes_mensualidad.php";
+                                }, 2000);
                             }
                         });
 
