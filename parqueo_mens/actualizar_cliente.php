@@ -62,6 +62,7 @@ try {
                 celular = ?,
                 vehiculo = ?,
                 valor = ?,
+                caseta = ?,
                 cli_tar_tiempo = ?,
                 mensualidad = ?,
                 activo = ?
@@ -74,6 +75,7 @@ try {
         $celular,
         $vehiculo,
         $valor,
+        $caseta,
         $plan_tarifa,
         $mensualidad,
         $activo,
@@ -81,18 +83,18 @@ try {
     ]);
 
 
-    $sqlHist = "INSERT INTO mensualidad_historial 
-                (placa, fecha_ingreso, caseta, valor, plan, usuario, observacion)
-                VALUES (:placa, NOW(), :caseta, :valor, :plan, :usuario, 'Ingreso a mensualidad')";
+    // $sqlHist = "INSERT INTO mensualidad_historial 
+    //             (placa, fecha_ingreso, caseta, valor, plan, usuario, observacion)
+    //             VALUES (:placa, NOW(), :caseta, :valor, :plan, :usuario, 'Ingreso a mensualidad')";
 
-    $stmt2 = $pdo->prepare($sqlHist);
-    $stmt2->execute([
-        'placa' => $placa,
-        'caseta' => $caseta,
-        'valor' => $valor,
-        'plan' => $plan_tarifa,
-        'usuario' => $usuario
-        ]);
+    // $stmt2 = $pdo->prepare($sqlHist);
+    // $stmt2->execute([
+    //     'placa' => $placa,
+    //     'caseta' => $caseta,
+    //     'valor' => $valor,
+    //     'plan' => $plan_tarifa,
+    //     'usuario' => $usuario
+    //     ]);
 
 
 $sqlPlan = "SELECT tar_tiempo FROM tar_tiempo WHERE tar_id_nombre = :plan";
@@ -101,21 +103,21 @@ $stmtPlan->execute(['plan' => $plan_tarifa]);
 
 $planNombre = $stmtPlan->fetchColumn();
 
-     $sqlPago = "INSERT INTO pagos 
-                (fecha, estado, placa, valor, plan, fecha_inicio, fecha_fin, usuario, caseta, observacion)
-         VALUES (NOW(), 'PENDIENTE', :placa, :valor, :plan, NOW(), :fecha_fin, :usuario, :caseta, :observacion)";
+    //  $sqlPago = "INSERT INTO pagos 
+    //             (fecha, estado, placa, valor, plan, fecha_inicio, fecha_fin, usuario, caseta, observacion)
+    //      VALUES (NOW(), 'PENDIENTE', :placa, :valor, :plan, NOW(), :fecha_fin, :usuario, :caseta, :observacion)";
 
-    $stmt3 = $pdo->prepare($sqlPago);   
+    // $stmt3 = $pdo->prepare($sqlPago);   
     
-    $stmt3->execute([
-        'placa' => $placa,
-        'caseta' => $caseta,
-        'valor' => $valor,
-        'plan' => $plan_tarifa,
-        'fecha_fin' => $fecha_fin,
-        'usuario' => $usuario,
-        'observacion' => "Cobro " . $planNombre
-        ]);   
+    // $stmt3->execute([
+    //     'placa' => $placa,
+    //     'caseta' => $caseta,
+    //     'valor' => $valor,
+    //     'plan' => $plan_tarifa,
+    //     'fecha_fin' => $fecha_fin,
+    //     'usuario' => $usuario,
+    //     'observacion' => "Cobro " . $planNombre
+    //     ]);   
 
 } catch (Exception $e) {
     echo '<div class="alert alert-danger">Error: '.$e->getMessage().'</div>';

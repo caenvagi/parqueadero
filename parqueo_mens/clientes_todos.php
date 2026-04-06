@@ -30,7 +30,6 @@ $sql = "SELECT
         FROM cliente cl
         LEFT JOIN casetas c ON cl.caseta = c.caseta_id
         LEFT JOIN categorias cat ON cl.categoria = cat.cat_id
-        WHERE cl.mensualidad = 'SI' AND activo = 'SI'
         ORDER BY cl.placa ASC";
 
 // ✅ EJECUCIÓN
@@ -233,7 +232,7 @@ $clientes = $stmt->fetchAll();
                     $('#tablaClientes').DataTable({
                         responsive: true,
                         pageLength: 25,
-                        order: [[4, "asc"]],                                
+
                         dom: 'Bfrtip',
 
                         buttons: [{
