@@ -21,8 +21,14 @@ try {
     // echo "✅ Conexión exitosa a la base de datos";
 
 } catch (PDOException $e) {
-    // Manejo seguro del error
-    error_log("Error de conexión a la base de datos: " . $e->getMessage(), 0);
-    die("Error de conexión. Intente nuevamente más tarde.");
+
+    error_log("Error de conexión: " . $e->getMessage(), 0);
+
+    echo json_encode([
+        "success" => false,
+        "mensaje" => "Error de conexión a la base de datos"
+    ]);
+
+    exit;
 }
 ?>
