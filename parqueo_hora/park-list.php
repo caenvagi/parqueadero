@@ -273,7 +273,7 @@ try {
         FROM parqueo AS PA
         INNER JOIN cliente AS CL ON PA.placa_cli = CL.placa
         INNER JOIN usuarios AS US ON PA.usuario = US.id
-        INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_id
+        INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_categoria
         INNER JOIN tar_tiempo AS TT ON TA.tar_nombre = TT.tar_id_nombre
         INNER JOIN categorias AS CA ON CA.CAT_ID = CL.categoria
         

@@ -1,6 +1,5 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 0);
+
 header('Content-Type: application/json');
 
 require_once "../conexion/conexion.php";
@@ -67,18 +66,23 @@ try {
 
     // 4️⃣ Insertar parqueo
     $sql = "INSERT INTO parqueo (placa_cli, fecha_ini, tarifa, caseta, usuario, estado)
-            VALUES (?, NOW(), 1, ?, 2, 'SI')";
+            VALUES (?, NOW(), ?, ?, 2, 'SI')";
     
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$placa, $caseta]);
+    $stmt->execute([$placa, $categoria, $caseta]);
+
+     $ticket =  $pdo->lastInsertId();
 
     // 5️⃣ Actualizar caseta
     $update = $pdo->prepare("UPDATE casetas SET casetas_estado = 'Ocupado' WHERE caseta_id = ?");
-    $update->execute([$caseta]);
+    $update->execute([$caseta]);   
+   
 
     echo json_encode([
         'success' => true,
-        'message' => "✅ Vehículo $placa ingresado correctamente"
+        'message' => "✅ Vehículo $placa ingresado correctamente ...🖨️imprimiendo ticket $ticket",
+        'ticket' => (int)$ticket,    
+        'recibo' => 0
     ]);
 
 } 

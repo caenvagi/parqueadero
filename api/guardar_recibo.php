@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once "../conexion/conexion.php";
+date_default_timezone_set('America/Bogota');
 
 try {
 
@@ -28,13 +29,12 @@ try {
      $tiempo = $_POST['tiempo'];
      $tarifa = $_POST['tarifa'];
      $valor = $_POST['valor'];
-     $usuario = $_POST['usuario'];
 
     // ✅ INSERT RECIBO
      $sql = "INSERT INTO recibo 
          (recibo_man, fecha_recibo, ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_pagado, valor_manual, usuario, cierre, periodo)
          VALUES 
-         ('NO', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, :valor, 0, :usuario, 'SI', 1)";
+         ('NO', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, :valor, 0, 2, 'NO', 1)";
 
      $stmt = $pdo->prepare($sql);
      $stmt->execute([
@@ -44,9 +44,10 @@ try {
          ':fecha_fin' => $fecha_fin,
          ':tiempo' => $tiempo,
          ':tarifa' => $tarifa,
-         ':valor' => $valor,
-         ':usuario' => $usuario
+         ':valor' => $valor
+
      ]);
+      $recibo =  $pdo->lastInsertId();
 
     // ✅ CERRAR PARQUEO
     $sql2 = "UPDATE parqueo SET estado='NO' WHERE parqueo_id=:id";
@@ -54,8 +55,10 @@ try {
     $stmt2->execute([':id' => $ticket]);
 
     echo json_encode([
-        "success" => true,
-        "message" => "Pago registrado correctamente"
+        'success' => true,
+        'message' => "Pago registrado correctamente",
+        'ticket' => (int)$ticket,
+        'recibo' => (int)$recibo
     ]);
 
 } catch (Exception $e) {
