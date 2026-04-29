@@ -4,6 +4,8 @@
 // ✅ Conexión actual del proyecto
 require_once '../conexion/conexion.PHP';
 
+header('Content-Type: application/json');
+
 require __DIR__ . '/autoload.php'; //Nota: si renombraste la carpeta a algo diferente de "ticket" cambia el nombre en esta línea
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -12,8 +14,6 @@ use Mike42\Escpos\Printer;
 
 $nombre_impresora = "POS-80C";
 
-$connector = new WindowsPrintConnector($nombre_impresora);
-$printer = new Printer($connector);
 
 /* Print top logo */
 //$printer -> setJustification(Printer::JUSTIFY_CENTER);
@@ -30,7 +30,15 @@ el salto de línea o llamar muchas
 veces a $printer->text()
  */
 
-$recibo = $_POST['recibo'];
+$recibo = $_POST['recibo'] ?? null;
+
+if (!$recibo) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Recibo no recibido"
+    ]);
+    exit;
+}
 
 if (!$recibo) {
     throw new Exception("Recibo no recibido");
@@ -172,15 +180,21 @@ la conexión con la impresora. Recuerda incluir esto al final de todos los archi
  */
 $printer->close();
 
-//header('Location: ../../config/parqueoAjax.php');
+
 
 echo json_encode([
-    "success" => true,
-    "message" => "recibo impreso"
+    'success' => true,
+    'message' => "recibo impreso"
 ]);
 
 exit;
 
 } catch (Exception $e) {
-    echo "⚠️ Error: " . $e->getMessage();
+
+    echo json_encode([
+        "success" => false,
+        "message" => $e->getMessage()
+    ]);
+
+    exit;
 }

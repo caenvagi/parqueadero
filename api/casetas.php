@@ -5,8 +5,8 @@ require_once "../conexion/conexion.php";
 
 try {
 
-    $sql = "SELECT caseta_id, casetas_nom FROM casetas";
-    $stmt = $pdo->prepare($sql);
+    $sql = "SELECT caseta_id, casetas_nom FROM casetas WHERE casetas_estado = 'Disponible'";
+    $stmt = $pdo->prepare($sql); 
     $stmt->execute();
 
     $casetas = $stmt->fetchAll(PDO::FETCH_ASSOC);

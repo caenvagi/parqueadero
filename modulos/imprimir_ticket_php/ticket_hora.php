@@ -23,7 +23,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 // ✅ Configura el nombre de la impresora (debe coincidir con el nombre compartido en Windows)
-$nombre_impresora = "xp-80c pos";
+$nombre_impresora = "POS-80C";
 
 try {
     $connector = new WindowsPrintConnector($nombre_impresora);
@@ -93,7 +93,7 @@ $printer->text("------------------------\n");
     // ✅ Código de barras
     $printer->setJustification(Printer::JUSTIFY_CENTER);
     $printer->setBarcodeTextPosition(Printer::BARCODE_TEXT_BELOW);
-    $printer->barcode("{B" . $row['placa_cli'], Printer::BARCODE_CODE128);
+    $printer->barcode("{B" . $row['parqueo_id'], Printer::BARCODE_CODE128);
     $printer->text("------------------------\n");
 
     // ✅ Reglamento

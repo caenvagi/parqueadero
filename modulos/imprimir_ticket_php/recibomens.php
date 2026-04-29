@@ -38,7 +38,7 @@ escribe el nombre de la tuya. Recuerda que debes compartirla
 desde el panel de control
  */
 
-$nombre_impresora = "xp-80c pos";
+$nombre_impresora = "POS-80C";
 
 try {
     $connector = new WindowsPrintConnector($nombre_impresora);

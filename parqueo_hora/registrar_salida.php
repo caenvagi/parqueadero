@@ -103,6 +103,7 @@ try {
 $stmt = $pdo->prepare("
     INSERT INTO recibo (
 
+    fecha_recibo,
     ticket,
     recibo_man, 
     placa, 
@@ -117,8 +118,9 @@ $stmt = $pdo->prepare("
 
     VALUES (
 
+    NOW(),
     :pid, 
-    '0', 
+    'NO', 
     :placa, 
     :fini, 
     :ffin, 

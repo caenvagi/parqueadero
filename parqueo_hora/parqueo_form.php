@@ -227,7 +227,8 @@ if ($tipo_usuario == 1) {
 
                         });
                         // Recarga periódica cada 15 segundos sin congelar el navegador
-                        //setInterval(cargarTabla, 15000);
+                        setInterval(cargarTabla, 15000);
+                        setInterval(obtenerCards, 15000);
                         // Envío del formulario con AJAX  
 
                         //ajax list parqueo cards 

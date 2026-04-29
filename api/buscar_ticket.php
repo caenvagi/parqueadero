@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once "../conexion/conexion.php";
 date_default_timezone_set('America/Bogota');
 
-$codigo = $_POST['codigo'] ?? null;
+$codigo = $_POST['codigo'];
 
 if (!$codigo) {
     echo json_encode([
