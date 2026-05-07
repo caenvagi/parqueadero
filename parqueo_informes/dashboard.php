@@ -326,6 +326,46 @@ $stmt->execute([
 ]);
 $total_hora_doce_semana_mes = (int) $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
+$movimiento_horas = array_fill(0, 24, [
+    'recibos' => 0,
+    'ventas' => 0,
+]);
+
+$stmt = $pdo->prepare("
+    SELECT
+        HOUR(fecha_recibo) AS hora,
+        COUNT(recibo_id) AS total_recibos,
+        COALESCE(SUM(valor_pagado), 0) AS total_ventas
+    FROM recibo
+    WHERE YEAR(fecha_recibo) = :anio_actual
+    AND MONTH(fecha_recibo) = :mes_actual
+    AND (plan IS NULL OR plan <> 8)
+    GROUP BY hora
+    ORDER BY hora
+");
+$stmt->execute([
+    ':anio_actual' => $anio_actual,
+    ':mes_actual' => $mes_actual,
+]);
+
+foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $fila) {
+    $hora = (int) $fila['hora'];
+    $movimiento_horas[$hora] = [
+        'recibos' => (int) $fila['total_recibos'],
+        'ventas' => (int) $fila['total_ventas'],
+    ];
+}
+
+$horas_labels = [];
+$horas_recibos = [];
+$horas_ventas = [];
+
+foreach ($movimiento_horas as $hora => $datos) {
+    $horas_labels[] = str_pad((string) $hora, 2, '0', STR_PAD_LEFT) . ':00';
+    $horas_recibos[] = $datos['recibos'];
+    $horas_ventas[] = $datos['ventas'];
+}
+
 function iconoCategoria($categoria)
 {
     $nombre = function_exists('mb_strtoupper')
@@ -623,6 +663,15 @@ function iconoCategoria($categoria)
                         </div>
                     </div>
                 <?php endif; ?>
+
+                <div class="card dashboard-card mt-4 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Movimiento del parqueadero por hora - <?= $meses[$mes_actual - 1] ?> <?= $anio_actual ?></h5>
+                        <div class="chart-area">
+                            <canvas id="movimientoHorasChart"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -636,6 +685,9 @@ function iconoCategoria($categoria)
         const categoriasLabels = <?= json_encode($categorias_labels); ?>;
         const categoriasValores = <?= json_encode($categorias_valores, JSON_NUMERIC_CHECK); ?>;
         const categoriasColores = <?= json_encode($categorias_colores); ?>;
+        const horasLabels = <?= json_encode($horas_labels); ?>;
+        const horasRecibos = <?= json_encode($horas_recibos, JSON_NUMERIC_CHECK); ?>;
+        const horasVentas = <?= json_encode($horas_ventas, JSON_NUMERIC_CHECK); ?>;
 
         function currencyChartOptions() {
             return {
@@ -799,6 +851,48 @@ function iconoCategoria($categoria)
                 plugins: [pieLabelsPlugin]
             });
         }
+
+        new Chart(document.getElementById('movimientoHorasChart'), {
+            type: 'bar',
+            data: {
+                labels: horasLabels,
+                datasets: [{
+                    label: 'Recibos',
+                    data: horasRecibos,
+                    backgroundColor: 'rgba(13, 110, 253, 0.72)',
+                    borderColor: 'rgba(13, 110, 253, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const index = context.dataIndex;
+                                return [
+                                    'Recibos: ' + Number(horasRecibos[index]).toLocaleString('es-CO'),
+                                    'Ventas: $' + Number(horasVentas[index]).toLocaleString('es-CO')
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
     </script>
 </body>
 
