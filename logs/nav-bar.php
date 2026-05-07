@@ -275,6 +275,10 @@ if ($tipo_usuario == 1) {
                                         <div><i class="fas fa-bed" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Listado de Recibos
                                     </a>
+                                    <a class="nav-link" href="../parqueo_informes/dashboard.php">
+                                        <div><i class="fas fa-bed" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Dashboard
+                                    </a>
                                     <!-- <a class="nav-link" href="#">
                                         <div><i class='fas fa-edit' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso Manual
