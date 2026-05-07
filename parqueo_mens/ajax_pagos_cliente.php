@@ -38,11 +38,7 @@ while ($row = $stmt->fetch()) {
 
     $row['valor'] = "$" . number_format($row['valor']);
 
-<<<<<<< HEAD
     if ($row['estado'] == 'PENDIENTE') {
-=======
-    if ($row['estado'] == 'pendiente') {
->>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
         $row['estado'] = '<span class="badge bg-warning">Pendiente</span>';
     } else {
         $row['estado'] = '<span class="badge bg-success">Pagado</span>';

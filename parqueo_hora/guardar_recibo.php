@@ -54,7 +54,6 @@ try {
         ':periodo' => 0
     ]);
 
-<<<<<<< HEAD
     // 2️⃣ Calcular el tiempo transcurrido
         $fecha_ini = new DateTime($_POST['fecha_ini']);
         $fecha_fin = new DateTime('now', new DateTimeZone('America/Bogota'));
@@ -107,8 +106,6 @@ $plan = $recibo['plan'];
         ':usuario' => $_SESSION['id'] ?? 'sistema'
     ]);
 
-=======
->>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
     echo "<div class='alert alert-success'>Recibo guardado correctamente</div>";
 
 } catch (PDOException $e) {

@@ -14,11 +14,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 // ✅ Configura el nombre de la impresora (debe coincidir con el nombre compartido en Windows)
-<<<<<<< HEAD
 $nombre_impresora = "xp-80c pos";
-=======
-$nombre_impresora = "POS-80C";
->>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
 
 $ticket = $_POST['ticket'] ?? $_GET['ticket'] ?? 0;
 

@@ -18,20 +18,11 @@ if ($tipo_usuario == 1) {
 
 
 // 💰 1. Total ingresos mensualidades (pagadas)
-<<<<<<< HEAD
 $sql_ingresos = "SELECT SUM(valor_pagado) as total 
                  FROM recibo 
                  WHERE cierre = 'SI'
                  AND MONTH(fecha_recibo) = MONTH(CURDATE()) 
                  AND YEAR(fecha_recibo) = YEAR(CURDATE())"; // ajusta si usas otro campo
-=======
-$sql_ingresos = "SELECT 			SUM(valor_pagado) as total 
-                 FROM recibo 
-                 WHERE 
-                  MONTH(fecha_recibo) = MONTH(CURDATE()) 
-                 AND YEAR(fecha_recibo) = YEAR(CURDATE())
-                 AND plan = '3'"; // ajusta si usas otro campo
->>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
 
 $stmt = $pdo->query($sql_ingresos);
 $total_ingresos = $stmt->fetch()['total'] ?? 0;
