@@ -39,10 +39,8 @@ escribe el nombre de la tuya. Recuerda que debes compartirla
 desde el panel de control
  */
 
-$nombre_impresora = "xp-80c pos";
+$nombre_impresora = "POS-80C";
 
-$connector = new WindowsPrintConnector($nombre_impresora);
-$printer = new Printer($connector);
 
 /* Print top logo */
 //$printer -> setJustification(Printer::JUSTIFY_CENTER);
@@ -58,6 +56,7 @@ Imprimimos un mensaje. Podemos usar
 el salto de línea o llamar muchas
 veces a $printer->text()
  */
+//$parqueo_id = $_GET['parqueo_id'];
 
    try {
     $connector = new WindowsPrintConnector($nombre_impresora);
@@ -90,10 +89,8 @@ veces a $printer->text()
         INNER JOIN usuarios u ON u.id = r.usuario
         INNER JOIN  tarifas AS TA  ON TA.tar_id = r.tarifa_recibo
         INNER JOIN  tar_tiempo AS TT ON TT.tar_id_nombre = TA.tar_nombre
-        
-        
         ORDER BY r.recibo_id DESC
-        LIMIT 1
+         LIMIT 1
     ");
 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -103,6 +103,7 @@ try {
     $stmt = $pdo->prepare("
     INSERT INTO recibo (
 
+    fecha_recibo,
     ticket,
     recibo_man,
     fecha_recibo, 
@@ -119,9 +120,14 @@ try {
 
     VALUES (
 
+    NOW(),
     :pid, 
+<<<<<<< HEAD
     '0',
     NOW(), 
+=======
+    'NO', 
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
     :placa, 
     :fini, 
     :ffin, 

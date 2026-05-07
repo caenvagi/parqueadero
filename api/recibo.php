@@ -12,7 +12,11 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 
+<<<<<<< HEAD
 $nombre_impresora = "xp-80c pos";
+=======
+$nombre_impresora = "POS-80C";
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
 
 
 /* Print top logo */

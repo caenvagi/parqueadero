@@ -32,9 +32,15 @@ try {
 
     // ✅ INSERT RECIBO
      $sql = "INSERT INTO recibo 
+<<<<<<< HEAD
          (recibo_man, fecha_recibo, ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, plan, valor_pagado, valor_manual, usuario, cierre, periodo)
          VALUES 
          ('NO', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, 1, :valor, 0, 2, 'NO', 1)";
+=======
+         (recibo_man, fecha_recibo, ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_pagado, valor_manual, usuario, cierre, periodo)
+         VALUES 
+         ('NO', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, :valor, 0, 2, 'NO', 1)";
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
 
      $stmt = $pdo->prepare($sql);
      $stmt->execute([
@@ -47,6 +53,7 @@ try {
          ':valor' => $valor
 
      ]);
+<<<<<<< HEAD
 
      SLEEP(1);
 
@@ -81,19 +88,29 @@ $plan = $recibo['plan'];
     ]);
 
      
+=======
+      $recibo =  $pdo->lastInsertId();
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
 
     // ✅ CERRAR PARQUEO
     $sql2 = "UPDATE parqueo SET estado='NO' WHERE parqueo_id=:id";
     $stmt2 = $pdo->prepare($sql2);
     $stmt2->execute([':id' => $ticket]);
 
+<<<<<<< HEAD
      $reciboUlt =  $pdo->lastInsertId();
 
+=======
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
     echo json_encode([
         'success' => true,
         'message' => "Pago registrado correctamente",
         'ticket' => (int)$ticket,
+<<<<<<< HEAD
         'recibo' => (int)$reciboUlt
+=======
+        'recibo' => (int)$recibo
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
     ]);
 
 } catch (Exception $e) {

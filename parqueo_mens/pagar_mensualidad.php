@@ -112,7 +112,10 @@ try {
         INSERT INTO recibo
         (
             fecha_recibo,
+<<<<<<< HEAD
             ticket,
+=======
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
             placa,
             recibo_man,
             fecha_ini,
@@ -124,12 +127,19 @@ try {
             usuario,
             cierre
         )
+<<<<<<< HEAD
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+=======
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
     ");
 
     $recibo->execute([
         date("Y-m-d-H:i:s"),
+<<<<<<< HEAD
         '0',
+=======
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
         $placa,
         '0',
         $fecha_inicio,

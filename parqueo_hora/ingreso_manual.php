@@ -142,10 +142,17 @@ if ($tipo_usuario == 1) {
                                             <option hidden selected value="">Seleccione categoria de vehiculo</option>
                                             <?php
 
+<<<<<<< HEAD
                                             $sql1 = "SELECT * FROM categorias";
                                             $stmt1 = $pdo->query($sql1);
 
                                             foreach ($stmt1 as $row) {
+=======
+                                            $sql = "SELECT * FROM categorias";
+                                            $stmt = $pdo->query($sql);
+
+                                            foreach ($stmt as $row) {
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
                                                 echo "<option value='{$row['cat_id']}'>{$row['cat_nombre']}</option>";
                                             }
 
@@ -157,6 +164,7 @@ if ($tipo_usuario == 1) {
                                 <!-- SELECT TARIFA -->
                                 <div class="input-group mb-2">
                                     <div class="input-group-prepend">
+<<<<<<< HEAD
                                         <span class="input-group-text" id="basic-addon2"><i class="fas fa-calendar-alt"></i>&nbsp;PLAN</span>
                                     </div>
                                     <select name="plan" id="plan" required='true' class="form-control">
@@ -172,6 +180,23 @@ if ($tipo_usuario == 1) {
                                         ?>
 
                                          <option selected value="">Seleccione plan de pago</option>
+=======
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-calendar-alt"></i>&nbsp;PLAN</span>
+                                    </div>
+                                    <select name="plan" id="plan" required='true' class="form-control" disabled>
+                                        
+                                        <?php
+
+
+                                        $sql = "SELECT * FROM tar_tiempo WHERE tar_id_nombre IN (1)";
+                                        $stmt = $pdo->query($sql);
+
+                                        foreach ($stmt as $row) {
+                                            echo "<option value='{$row['tar_id_nombre']}' selected>{$row['tar_tiempo']}</option>";
+                                        }
+
+                                        ?>
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
                                     </select>
                                 </div>
                                 <!-- SELECT TARIFA -->
@@ -313,7 +338,11 @@ $("#recibo").on("keyup blur", function() {
 
                 success: function(resp) {
                     $("#respuesta").html(resp);
+<<<<<<< HEAD
                     $("#formMensualidad")[0].reset();
+=======
+                    $("#formRecibo")[0].reset();
+>>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
                 }
             });
         });
