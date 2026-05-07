@@ -77,7 +77,7 @@ veces a $printer->text()
                r.fecha_ini,
                r.fecha_fin,
                r.tiempo,
-               r.valor_manual,
+               r.valor_pagado,
                r.usuario,
                cat.cat_nombre,
                u.nombre,
@@ -134,7 +134,7 @@ $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->setTextSize(1, 1);$printer->text("Estadia      :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tiempo']."\n");
 $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      $ ".number_format($row['tar_valor'], 0, ",", ".")." * ".$row['tar_tiempo']."\n");
 $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      $ ".number_format($row['tar_bloque'], 0, ",", ".")." * ".'12 horas'."\n");
-$printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 3);$printer->text("   $ ".number_format($row['valor_manual'], 0, ",", ".")."\n");
+$printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 3);$printer->text("   $ ".number_format($row['valor_pagado'], 0, ",", ".")."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");

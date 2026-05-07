@@ -32,9 +32,12 @@ $params = [
 ];
 
 // Consulta base
-$sql = "SELECT caja.*, usuarios.nombre AS nombre_usuario
+$sql = "SELECT  caja.*, 
+                usuarios.nombre AS nombre_usuario,
+                recibo.recibo_man AS FPAR
         FROM caja
         LEFT JOIN usuarios ON caja.user_login = usuarios.id
+        INNER JOIN recibo ON caja.recibo_id = recibo.recibo_id
         WHERE fecha_movimiento BETWEEN :fecha_inicio AND :fecha_fin";
 
 // Filtro por caja si se selecciona
@@ -129,7 +132,7 @@ $hora_actual = date('H:i:s');
                     <td><?= $mov['id_movimiento'] ?></td>                    
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
                     <td><?= $mov['recibo_id'] ?></td>
-                    <td><?= $mov['rec_manual'] ?></td>
+                    <td><?= $mov['FPAR'] ?></td>
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>

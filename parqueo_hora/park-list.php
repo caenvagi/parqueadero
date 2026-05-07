@@ -122,6 +122,21 @@ function conversorSegundosHoras($tiempo_en_segundos)
             $tarifa12Horas7 = $fila['tar_bloque'];
             $tarifaDia7 = $fila['tar_bloque'] * 2;
         }
+// CONSULTA TARIFAS PARA TRACTO CAMIONES
+    $sql = "SELECT 
+        t.tar_nombre,
+        t.tar_valor,
+        t.tar_bloque
+        FROM tarifas t
+        WHERE t.tar_categoria = 5";
+
+    $stmt = $pdo->query($sql);    
+
+    while ($fila = $stmt->fetch()) {    
+            $tarifaHora5 = $fila['tar_valor'];
+            $tarifa12Horas5 = $fila['tar_bloque'];
+            $tarifaDia5 = $fila['tar_bloque'] * 2;
+        }        
 // -------------------------------
 // FUNCIONES DE CÁLCULO POR CATEGORÍA
 // -------------------------------
@@ -134,7 +149,7 @@ function calcularMotos($minutos, $tarifaHora1, $tarifa12Horas1, $tarifaDia1)
     $tarifa12Horas =  $tarifa12Horas1;
     $tarifaDia = $tarifaDia1;
 
-    if ($minutos <= 10) return 0;
+    if ($minutos <= 15) return 0;
 
     $horasI = floor($minutos / 60);
     $minutosRestantes = $minutos % 60;
@@ -160,7 +175,7 @@ function calcularAutomoviles($minutos,$tarifaHora2, $tarifa12Horas2, $tarifaDia2
     $tarifa12Horas = $tarifa12Horas2;
     $tarifaDia = $tarifaDia2;
 
-    if ($minutos <= 10) return 0;
+    if ($minutos <= 15) return 0;
     $horasI = floor($minutos / 60);
     $minutosRestantes = $minutos % 60;
     $horas = max(1, $horasI);
@@ -184,7 +199,7 @@ function calcularTurbos($minutos,$tarifaHora3, $tarifa12Horas3, $tarifaDia3)
     $tarifa12Horas = $tarifa12Horas3;
     $tarifaDia = $tarifaDia3;
 
-    if ($minutos <= 10) return 0;
+    if ($minutos <= 15) return 0;
     $horasI = floor($minutos / 60);
     $minutosRestantes = $minutos % 60;
     $horas = max(1, $horasI);
@@ -208,7 +223,7 @@ function calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4)
     $tarifa12Horas = $tarifa12Horas4;
     $tarifaDia = $tarifaDia4;
 
-    if ($minutos <= 10) return 0;
+    if ($minutos <= 15) return 0;
     $horasI = floor($minutos / 60);
     $minutosRestantes = $minutos % 60;
     $horas = max(1, $horasI);
@@ -226,13 +241,37 @@ function calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4)
     }
 }
 
+function calcularTracto($minutos, $tarifaHora5, $tarifa12Horas5, $tarifaDia5)
+{
+    $tarifaHora = $tarifaHora5;
+    $tarifa12Horas = $tarifa12Horas5;
+    $tarifaDia = $tarifaDia5;
+
+    if ($minutos <= 15) return 0;
+    $horasI = floor($minutos / 60);
+    $minutosRestantes = $minutos % 60;
+    $horas = max(1, $horasI);
+
+    if ($minutosRestantes > 15 && $horasI >= 1) $horas++;
+    if ($horas <= 12) return min($horas * $tarifaHora, $tarifa12Horas);
+    elseif ($horas <= 24) {
+        $horasExtra = $horas - 12;
+        $costo = $tarifa12Horas + ($horasExtra * $tarifaHora);
+        return min($costo, $tarifaDia);
+    } else {
+        $diasCompletos = floor($horas / 24);
+        $horasRestantes = $horas % 24;
+        return ($diasCompletos * $tarifaDia) + calcularTracto($horasRestantes * 60, $tarifaHora5, $tarifa12Horas5, $tarifaDia5);
+    }
+}
+
 function calcularBusetas($minutos, $tarifaHora7, $tarifa12Horas7, $tarifaDia7)
 {
     $tarifaHora = $tarifaHora7;
     $tarifa12Horas = $tarifa12Horas7;
     $tarifaDia = $tarifaDia7;
 
-    if ($minutos <= 10) return 0;
+    if ($minutos <= 15) return 0;
     $horasI = floor($minutos / 60);
     $minutosRestantes = $minutos % 60;
     $horas = max(1, $horasI);
@@ -268,15 +307,15 @@ try {
             US.nombre,
             TA.tar_valor,
             TA.tar_bloque,
-            CL.categoria,
-            CA.cat_nombre
+            CL.categoria as categorias,
+            CA.cat_nombre,
+            TA.tar_categoria as categoria
         FROM parqueo AS PA
         INNER JOIN cliente AS CL ON PA.placa_cli = CL.placa
         INNER JOIN usuarios AS US ON PA.usuario = US.id
-        INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_id
+        INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_categoria
         INNER JOIN tar_tiempo AS TT ON TA.tar_nombre = TT.tar_id_nombre
-        INNER JOIN categorias AS CA ON CA.CAT_ID = CL.categoria
-        
+        INNER JOIN categorias AS CA ON CA.CAT_ID = CL.categoria        
         WHERE PA.estado = 'SI'
         ORDER BY PA.parqueo_id DESC
     ";
@@ -295,15 +334,16 @@ try {
         $tiempo1 = conversorSegundosHoras($tiempo_transcurrido);
         $minutos = floor($tiempo_transcurrido / 60);
 
-        switch ($row['categoria']) {
+        switch ($row['categorias']) {
             case 1: $valor = calcularMotos($minutos,$tarifaHora1,   $tarifa12Horas1, $tarifaDia1); break;
             case 2: $valor = calcularAutomoviles($minutos,$tarifaHora2,  $tarifa12Horas2, $tarifaDia2); break;
             case 3: $valor = calcularTurbos($minutos,$tarifaHora3, $tarifa12Horas3, $tarifaDia3); break;
-            case 4: $valor = calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4); break;
-            case 7: $valor = calcularBusetas($minutos, $tarifaHora7, $tarifa12Horas7, $tarifaDia7); break;
+            case 4: $valor = calcularCamiones($minutos,$tarifaHora4, $tarifa12Horas4, $tarifaDia4); break;  
+            case 5: $valor = calcularTracto($minutos, $tarifaHora5, $tarifa12Horas5, $tarifaDia5); break;          
+            case 7: $valor = calcularBusetas($minutos, $tarifaHora7, $tarifa12Horas7, $tarifaDia7); break;            
             default: $valor = 0;
         }
-
+    
         $json[] = [
             'parqueo_id' => $row['parqueo_id'],
             'fecha_ini' => $row['fecha_ini'],

@@ -235,7 +235,7 @@ try {
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-phone"></i>&nbsp;Usuario&nbsp;&nbsp;</span>
                                         </div>
-                                        <input type="text" class="form-control" name="user" id="user" placeholder="Usuario" value="<?= htmlspecialchars($usuario_lista['usuario']) ?>" aria-label="tel" aria-describedby="basic-addon1" minlength="10" maxlength="10" required autofocus>
+                                        <input type="text" class="form-control" name="user" id="user" placeholder="Usuario" value="<?= htmlspecialchars($usuario_lista['usuario']) ?>" aria-label="tel" aria-describedby="basic-addon1" minlength="5" maxlength="10" required autofocus>
                                     </div>
                                     <!-- <div class="input-group mb-2">
                                         <div class="input-group-prepend">

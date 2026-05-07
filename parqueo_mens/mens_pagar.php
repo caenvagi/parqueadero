@@ -422,6 +422,11 @@ $placa = $_GET['placa'] ?? '';
                                 data: $(this).serialize(),
 
                                 success: function(resp) {
+                                    window.open(
+                                            '../modulos/imprimir_ticket_php/recibomens.php',
+                                            '_blank',
+                                            'width=400,height=600'
+                                        );
                                     $("#respuesta").html(resp);
                                     $("#formPagos")[0].reset();
                                     $("#placa").val("");

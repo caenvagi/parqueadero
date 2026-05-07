@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':caja_tipo' => $caja_tipo,
             ':caja' => $caja        ]);
 
-        header("Location: caja_listado.php?mensaje=ok");
+        echo "OK";
         exit;
 
     } catch (PDOException $e) {

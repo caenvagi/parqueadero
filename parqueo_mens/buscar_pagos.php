@@ -1,24 +1,31 @@
 <?php
 
-session_start();
+
+//session_start();
 require_once "../conexion/conexion.php";
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 date_default_timezone_set('America/Bogota');
 
-if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
-}
-$id = $_SESSION['id'];
-$tipo_usuario = $_SESSION['tipo_usuario'];
 
-if ($tipo_usuario == 1) {
-    $where = "";
-} else if ($tipo_usuario == 2) {
-    $where = "WHERE id=$id";
-}
+
+// if (!isset($_SESSION['id'])) {
+//     header("Location: index.php");
+// }
+// $id = $_SESSION['id'];
+// $tipo_usuario = $_SESSION['tipo_usuario'];
+
+// if ($tipo_usuario == 1) {
+//     $where = "";
+// } else if ($tipo_usuario == 2) {
+//     $where = "WHERE id=$id";
+// }
 
 if (isset($_POST['placa'])) {
-
+    
     $placa = $_POST['placa'];
 
     $sql = "SELECT * FROM pagos WHERE placa = :placa and estado = 'PENDIENTE'";

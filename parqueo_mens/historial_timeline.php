@@ -108,7 +108,7 @@ if ($tipo_usuario == 1) {
 
                     $placa = $_GET['placa'];
 
-                    $sql = "SELECT mh.*, c.nombre, c.vehiculo, tt.tar_tiempo, u.nombre
+                    $sql = "SELECT mh.*, c.nombre as cliente, c.vehiculo, tt.tar_tiempo, u.nombre
                     FROM mensualidad_historial mh
                     LEFT JOIN cliente c ON mh.placa = c.placa
                     left JOIN tar_tiempo tt ON mh.plan = tt.tar_id_nombre
@@ -151,7 +151,7 @@ if ($tipo_usuario == 1) {
 
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <b>Cliente:</b> <?php echo $row['nombre'] ?? '---'; ?><br>
+                                                    <b>Cliente:</b> <?php echo $row['cliente'] ?? '---'; ?><br>
                                                     <b>Vehículo:</b> <?php echo $row['vehiculo'] ?? '---'; ?><br>
                                                     <b>Caseta:</b> <?php echo $row['caseta']; ?>
                                                 </div>

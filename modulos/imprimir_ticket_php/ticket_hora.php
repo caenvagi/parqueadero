@@ -1,15 +1,15 @@
 <?php
 sleep(1);
-session_start();
+//session_start();
 
 // ✅ Conexión actual del proyecto
 require_once '../../conexion/conexion.php';
 
 // ✅ Verificación de sesión
-if (!isset($_SESSION['id'])) {
-    header("Location: ../index.php");
-    exit();
-}
+// if (!isset($_SESSION['id'])) {
+//     header("Location: ../index.php");
+//     exit();
+// }
 
 $id = $_SESSION['id'];
 $nombre_usuario = $_SESSION['nombre'];
@@ -93,7 +93,7 @@ $printer->text("------------------------\n");
     // ✅ Código de barras
     $printer->setJustification(Printer::JUSTIFY_CENTER);
     $printer->setBarcodeTextPosition(Printer::BARCODE_TEXT_BELOW);
-    $printer->barcode("{B" . $row['placa_cli'], Printer::BARCODE_CODE128);
+    $printer->barcode("{B" . $row['parqueo_id'], Printer::BARCODE_CODE128);
     $printer->text("------------------------\n");
 
     // ✅ Reglamento

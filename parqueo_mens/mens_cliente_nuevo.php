@@ -151,9 +151,8 @@ $placa = htmlspecialchars($_GET['placa'] ?? '');
 
                                             $sql = "SELECT *
                                                                         FROM casetas
-                                                                        WHERE caseta_id NOT IN (
-                                                                        SELECT caseta FROM cliente WHERE mensualidad='SI'
-                                                                        )";
+                                                                        WHERE casetas_estado = 'Disponible'
+                                                                        ";
 
                                             $stmt = $pdo->query($sql);
 

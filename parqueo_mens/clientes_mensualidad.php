@@ -30,8 +30,8 @@ $sql = "SELECT
         FROM cliente cl
         LEFT JOIN casetas c ON cl.caseta = c.caseta_id
         LEFT JOIN categorias cat ON cl.categoria = cat.cat_id
-        WHERE cl.activo = 'SI'
-        ORDER BY cl.caseta ASC";
+        WHERE cl.mensualidad = 'SI' AND activo = 'SI'
+        ORDER BY cl.placa ASC";
 
 // ✅ EJECUCIÓN
 $stmt = $pdo->prepare($sql);
@@ -77,6 +77,28 @@ $clientes = $stmt->fetchAll();
         .badge-inactivo {
             background-color: #dc3545;
         }
+        .placa-tabla {
+    display: inline-block;
+    background: linear-gradient(to bottom, #FFD700, #e6c200);
+    color: #000;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 2px solid #111;
+    font-family: 'Arial Black', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.placa-link {
+    text-decoration: none;
+}
+
+.placa-tabla:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
     </style>
 </head>
 <?php require '../logs/nav-bar.php'; ?>
@@ -88,7 +110,7 @@ $clientes = $stmt->fetchAll();
                 <div class="card shadow">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
-                            <i class="bi bi-people"></i> Clientes mensualidades activas
+                            <i class="bi bi-people"></i> Clientes Mensualidad
                         </h5>
 
 
@@ -115,7 +137,13 @@ $clientes = $stmt->fetchAll();
                                 <tbody>
                                     <?php foreach ($clientes as $row): ?>
                                         <tr>
-                                            <td><strong><?= $row['placa'] ?></strong></td>
+                                           <td>
+    <a href="cliente_mens.php?placa=<?= $row['placa'] ?>" class="placa-link">
+        <div class="placa-tabla">
+            <?= strtoupper($row['placa']) ?>
+        </div>
+    </a>
+</td>
                                             <td><?= $row['nombre'] ?></td>
                                             <td><?= $row['vehiculo'] ?></td>
                                             <td><?= $row['cat_nombre'] ?></td>
@@ -204,9 +232,8 @@ $clientes = $stmt->fetchAll();
                 $(document).ready(function() {
                     $('#tablaClientes').DataTable({
                         responsive: true,
-                        "order": [[4, "asc"]],
                         pageLength: 25,
-
+                        order: [[4, "asc"]],                                
                         dom: 'Bfrtip',
 
                         buttons: [{

@@ -95,22 +95,24 @@ try {
 
     // Liberar la caseta
     $stmt = $pdo->prepare("UPDATE casetas SET casetas_estado = 'Disponible' WHERE caseta_id = :caseta");
-    $stmt->execute([':caseta' => $data['caseta']]); 
+    $stmt->execute([':caseta' => $data['caseta']]);
 
-    
 
-   // 5️⃣ Insertar en recibo
-$stmt = $pdo->prepare("
+
+    // 5️⃣ Insertar en recibo
+    $stmt = $pdo->prepare("
     INSERT INTO recibo (
 
     ticket,
-    recibo_man, 
+    recibo_man,
+    fecha_recibo, 
     placa, 
     fecha_ini, 
     fecha_fin, 
     tiempo, 
     tarifa_recibo,
     plan, 
+    valor_manual,
     valor_pagado, 
     usuario, 
     cierre)
@@ -118,34 +120,36 @@ $stmt = $pdo->prepare("
     VALUES (
 
     :pid, 
-    '0', 
+    '0',
+    NOW(), 
     :placa, 
     :fini, 
     :ffin, 
     :tiempo, 
     '1',
     '1', 
+    '0',
     :valor, 
     :usuario, 
     'NO')
 ");
 
-   // 🕒 Nuevo formato del tiempo: Días, Horas y Minutos
-if ($dias > 0) {
-    $tiempo_txt = sprintf("%d Dias %02d Horas %02d Min", $dias, $horas, $minutos);
-} else {
-    $tiempo_txt = sprintf("%02dh %02dm", $horas, $minutos);
-}
-    
+    // 🕒 Nuevo formato del tiempo: Días, Horas y Minutos
+    if ($dias > 0) {
+        $tiempo_txt = sprintf("%d Dias %02d Horas %02d Min", $dias, $horas, $minutos);
+    } else {
+        $tiempo_txt = sprintf("%02dh %02dm", $horas, $minutos);
+    }
+
     $stmt->execute([
-    ':pid' => $id,
-    ':placa' => $data['placa_cli'],
-    ':fini' => $data['fecha_ini'],        
-    ':ffin' => $fecha_fin->format('Y-m-d H:i:s'),
-    ':tiempo' => $tiempo_txt,
-    ':valor' => $total,
-    ':usuario' => $_SESSION['id'] ?? 'sistema'
-]);
+        ':pid' => $id,
+        ':placa' => $data['placa_cli'],
+        ':fini' => $data['fecha_ini'],
+        ':ffin' => $fecha_fin->format('Y-m-d H:i:s'),
+        ':tiempo' => $tiempo_txt,
+        ':valor' => $total,
+        ':usuario' => $_SESSION['id'] ?? 'sistema'
+    ]);
 
     $recibo_id = $pdo->lastInsertId();
 

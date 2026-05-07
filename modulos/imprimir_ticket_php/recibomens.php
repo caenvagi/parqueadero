@@ -1,20 +1,24 @@
 <?php
+
 sleep(1);
 session_start();
 
-// ✅ Conexión actual del proyecto
-require_once '../../conexion/conexion.PHP';
+require_once '../../conexion/conexion.php';
 
-// ✅ Verificación de sesión
 if (!isset($_SESSION['id'])) {
     header("Location: ../index.php");
-    exit();
 }
-
 $id = $_SESSION['id'];
-$nombre_usuario = $_SESSION['nombre'];
+$nombre = $_SESSION['nombre'];
 $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = $_SESSION['usuario'];
+$usuarios = $_SESSION['usuario'];
+
+if ($tipo_usuario == 1) {
+    $where = "";
+} else if ($tipo_usuario == 2) {
+    $where = "WHERE id=$id";
+}
 
 require __DIR__ . '/autoload.php'; //Nota: si renombraste la carpeta a algo diferente de "ticket" cambia el nombre en esta línea
 use Mike42\Escpos\EscposImage;
@@ -40,40 +44,8 @@ desde el panel de control
 
 $nombre_impresora = "xp-80c pos";
 
-try {
-    $connector = new WindowsPrintConnector($nombre_impresora);
-    $printer = new Printer($connector);
-
-     // ✅ Consulta del último ingreso
-    $stmt = $pdo->query("
-        SELECT r.recibo_id,
-               r.recibo_man,
-               r.fecha_recibo,
-               r.ticket,
-               r.placa,
-               r.fecha_ini,
-               r.fecha_fin,
-               r.tiempo,
-               r.valor_manual,
-               r.usuario,
-               cat.cat_nombre,           
-        FROM recibo r
-        INNER JOIN cliente c ON c.placa = r.placa
-        INNER JOIN categorias cat ON cat.cat_id = c.categoria
-        
-        
-        ORDER BY p.parqueo_id DESC
-        LIMIT 1
-    ");
-
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$row) {
-        throw new Exception("No hay registros recientes de parqueo.");
-    }
-
-
-
+$connector = new WindowsPrintConnector($nombre_impresora);
+$printer = new Printer($connector);
 
 /* Print top logo */
 //$printer -> setJustification(Printer::JUSTIFY_CENTER);
@@ -90,7 +62,42 @@ el salto de línea o llamar muchas
 veces a $printer->text()
  */
 
-    // ✅ Encabezado del recibo
+    //$placa = $_POST['placa']; 
+    sleep(1);
+    $stmt = $pdo->query("      SELECT      RE.recibo_id,
+                                RE.fecha_recibo,
+                                RE.placa,
+                                DATE(RE.fecha_ini) as fechaini,
+                                TIME(RE.fecha_ini) as horaini,
+                                DATE(RE.fecha_fin) as fechafin,
+                                TIME(RE.fecha_fin) as horafin,
+                                RE.tiempo,
+                                RE.valor_pagado,
+                                RE.usuario,
+                                US.nombre as usuario,
+                                TT.tar_tiempo,
+                                CA.cat_nombre,
+                                CL.caseta,
+                                CT.casetas_nom,
+                                CL.nombre,
+                                CL.valor,
+                                CL.cli_tar_tiempo                          
+                    FROM        recibo      AS RE 
+                    INNER JOIN  usuarios    AS US ON US.id = RE.usuario
+                    
+                    INNER JOIN  tar_tiempo  AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN  cliente     AS CL ON CL.placa = RE.placa
+                    INNER JOIN  categorias  AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN  casetas     AS CT ON CL.caseta = CT.caseta_id
+                    ORDER BY    recibo_id
+                    DESC LIMIT 1;                    
+                        ");
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        throw new Exception("No hay registros recientes de parqueo.");
+    }
+
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 2);
 $printer->text("Parqueadero\n");
@@ -108,6 +115,7 @@ $printer->setTextSize(1, 2);$printer->text("Recibo No:");$printer->setTextSize(2
 $printer->setTextSize(1, 2);$printer->text("PLACA No:");$printer->setTextSize(3, 3);$printer->text("     ".$row['placa']."\n");
 $printer->setTextSize(1, 2);$printer->text("Tipo Vehiculo:");$printer->setTextSize(2, 2);$printer->text("     ".$row['cat_nombre']."\n");
 $printer->setTextSize(1, 2);$printer->text("Puesto:");$printer->setTextSize(2, 2);$printer->text("        ".$row['casetas_nom']."\n");
+$printer->setTextSize(1, 2);$printer->text("Propietario:");$printer->setTextSize(1, 2);$printer->text("           ".$row['nombre']."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");
@@ -122,14 +130,20 @@ $printer->text("------------------------\n");
 
 $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->setTextSize(1, 1);$printer->text("Estadia      :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tiempo']."\n");
-$printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tar_tiempo']."\n");
-$printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 2);$printer->text("   $ ".number_format($row['tar_valor'], 0, ",", ".")."\n");
+// $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tar_tiempo']."\n");
+$printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 2);$printer->text("   $ ".number_format($row['valor_pagado'], 0, ",", ".")."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");
 
 $printer->setJustification(Printer::JUSTIFY_LEFT);
-$printer->setTextSize(1, 1);$printer->text("Cajero:");$printer->setTextSize(1, 2);$printer->text("          ".$row['nombre']."\n");
+$printer->setTextSize(1, 1);$printer->text("Cajero:");$printer->setTextSize(1, 2);$printer->text("              ".$row['usuario']."\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("------------------------\n");
+
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 1);$printer->text("Fecha Recibo:");$printer->setTextSize(1, 2);$printer->text("        ".$row['fecha_recibo']."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");
@@ -170,6 +184,133 @@ ningún error
  */
 $printer->cut();
 
+sleep(1);
+     $stmt = $pdo->query("      SELECT      RE.recibo_id,
+                                RE.fecha_recibo,
+                                RE.placa,
+                                DATE(RE.fecha_ini) as fechaini,
+                                TIME(RE.fecha_ini) as horaini,
+                                DATE(RE.fecha_fin) as fechafin,
+                                TIME(RE.fecha_fin) as horafin,
+                                RE.tiempo,
+                                RE.valor_pagado,
+                                RE.usuario,
+                                US.nombre as usuario,
+                                TT.tar_tiempo,
+                                CA.cat_nombre,
+                                CL.caseta,
+                                CT.casetas_nom,
+                                CL.nombre,
+                                CL.valor,
+                                CL.cli_tar_tiempo                          
+                    FROM        recibo      AS RE 
+                    INNER JOIN  usuarios    AS US ON US.id = RE.usuario
+                    
+                    INNER JOIN  tar_tiempo  AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN  cliente     AS CL ON CL.placa = RE.placa
+                    INNER JOIN  categorias  AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN  casetas     AS CT ON CL.caseta = CT.caseta_id
+                    ORDER BY    recibo_id
+                    DESC LIMIT 1; ;                    
+                        ");
+    $row1 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row1) {
+        throw new Exception("No hay registros recientes de parqueo.");
+    }
+
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 2);
+$printer->text("Parqueadero\n");
+$printer->setTextSize(2, 2);
+$printer->text("Parque de la familia");
+$printer->setTextSize(2, 1);
+$printer->feed();
+$printer->text("Nit\n");
+$printer->text("801.001.111-1\n");
+$printer->text("Mensualidad\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->text("------------------------\n");
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 2);$printer->text("Recibo No:");$printer->setTextSize(2, 2);$printer->text("       ".$row1['recibo_id']."\n");
+$printer->setTextSize(1, 2);$printer->text("PLACA No:");$printer->setTextSize(3, 3);$printer->text("     ".$row1['placa']."\n");
+$printer->setTextSize(1, 2);$printer->text("Tipo Vehiculo:");$printer->setTextSize(2, 2);$printer->text("     ".$row1['cat_nombre']."\n");
+$printer->setTextSize(1, 2);$printer->text("Puesto:");$printer->setTextSize(2, 2);$printer->text("        ".$row1['casetas_nom']."\n");
+$printer->setTextSize(1, 2);$printer->text("Propietario:");$printer->setTextSize(1, 2);$printer->text("           ".$row1['nombre']."\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("------------------------\n");
+
+ $printer->setJustification(Printer::JUSTIFY_LEFT);
+ $printer->setTextSize(1, 1);$printer->text("Fecha Inicio:");$printer->setTextSize(2, 1); $printer->text("     ".$row1['fechaini']."\n");
+ 
+ $printer->setTextSize(1, 1);$printer->text("Fecha Vencimiento :");$printer->setTextSize(2, 1); $printer->text("  ".$row1['fechafin']."\n");
+ 
+ $printer->setJustification(Printer::JUSTIFY_CENTER);
+ $printer->text("------------------------\n");
+
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 1);$printer->text("Estadia      :");$printer->setTextSize(1, 2);$printer->text("      ".$row1['tiempo']."\n");
+// $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tar_tiempo']."\n");
+$printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 2);$printer->text("   $ ".number_format($row1['valor_pagado'], 0, ",", ".")."\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("------------------------\n");
+
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 1);$printer->text("Cajero:");$printer->setTextSize(1, 2);$printer->text("              ".$row1['usuario']."\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("------------------------\n");
+
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 1);$printer->text("Fecha Recibo:");$printer->setTextSize(1, 2);$printer->text("        ".$row1['fecha_recibo']."\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("------------------------\n");
+
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->setTextSize(2, 1);
+$printer->text("REGLAMENTO\n");
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setTextSize(1, 1);
+$printer->text("1-El vehiculo se entrega al portador del recibo.
+2-No se aceptan ordenes telefonicas ni escritas.
+3-Retirado el vehiculo no aceptamos ningun tipo
+  de reclamo.
+4-No se responde por objetos dejados en el
+  vehiculo.
+5-No se responde por la perdida, deterioro, o 
+  danos ocurridos como consecuencia de incendio,
+  terremoto,vendavales,asonada o revolucion 
+  u otras causas similares.
+6-El conductor debe asegurar bien su vehiculo
+  (Ventanas y seguros).
+7-No se permite la permanencia de personas 
+  dentro del vehiculo una vez estacionado.\n");
+
+
+
+// $printer->text("Wathsapp 1234567890\n\nParzibyte.me\n\nNo olvides suscribirte");
+/*
+Hacemos que el papel salga. Es como
+dejar muchos saltos de línea sin escribir nada
+ */
+$printer->feed(1);
+
+/*
+Cortamos el papel. Si nuestra impresora
+no tiene soporte para ello, no generará
+ningún error
+ */
+$printer->cut();
+
+
+
+
+
+
+
 /*
 Por medio de la impresora mandamos un pulso.
 Esto es útil cuando la tenemos conectada
@@ -188,7 +329,3 @@ $printer->close();
 echo "<script>window.close();</script>";
 
 exit;
-
-} catch (Exception $e) {
-    echo "⚠️ Error: " . $e->getMessage();
-}

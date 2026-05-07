@@ -20,6 +20,6 @@
 
 
 </body>  
-<script src="js/mensajes.js"></script>
+<!-- <script src="js/mensajes.js"></script> -->
 
 </html>

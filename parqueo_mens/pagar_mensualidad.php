@@ -111,6 +111,8 @@ try {
     $recibo = $pdo->prepare("
         INSERT INTO recibo
         (
+            fecha_recibo,
+            ticket,
             placa,
             recibo_man,
             fecha_ini,
@@ -122,10 +124,12 @@ try {
             usuario,
             cierre
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
     ");
 
     $recibo->execute([
+        date("Y-m-d-H:i:s"),
+        '0',
         $placa,
         '0',
         $fecha_inicio,
@@ -151,25 +155,25 @@ try {
             movimiento,
             desc_movimiento,
             recibo_id,
-            rec_manual,
             valor_ingreso,
             valor_egreso,
             user_login,
             caja_tipo,
-            caja
+            caja,
+            liquidado
         )
         VALUES        
         (
         NOW(),
         '3',
-        '$plan - $placa - $nombre',
+        '$plan - $placa - $nombre - $fecha_inicio a $fecha_fin',
         ?,
-        '-',
         ?,
         '0',
         ?,
         'INGRESO',
-        'PARQUEADERO'
+        'PARQUEADERO',
+        'NO'
 
         
         
@@ -221,7 +225,7 @@ try {
 
     $pdo->commit();
 
-    echo "ok";
+    echo "OK";
 
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
