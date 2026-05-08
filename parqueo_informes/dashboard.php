@@ -384,16 +384,20 @@ function iconoCategoria($categoria)
         return '🚲';
     }
 
-    if (strpos($nombre, 'CAMION') !== false || strpos($nombre, 'CAMIÓN') !== false) {
+    if (strpos($nombre, 'TURBO') !== false || strpos($nombre, 'TURBO') !== false) {
         return '🚚';
+    }
+
+    if (strpos($nombre, 'CAMION') !== false || strpos($nombre, 'CAMIÓN') !== false) {
+        return '🚛';
     }
 
     if (strpos($nombre, 'BUS') !== false || strpos($nombre, 'BUSETA') !== false) {
         return '🚌';
     }
 
-    if (strpos($nombre, 'ALOJ') !== false || strpos($nombre, 'HABIT') !== false) {
-        return '🏨';
+    if (strpos($nombre, 'PARQUE') !== false || strpos($nombre, 'PARQUE') !== false) {
+        return '💦';
     }
 
     return '🏷️';
@@ -516,7 +520,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-primary shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">👥</div>
+                                <div class="monthly-card-icon" aria-hidden="true">🅿️</div>
                                 <div>
                                     <h5 class="card-title">Mensualidades activas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_activas, 0, ',', '.') ?></h3>
@@ -529,7 +533,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-success shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">➕</div>
+                                <div class="monthly-card-icon" aria-hidden="true">⬅️🚗</div>
                                 <div>
                                     <h5 class="card-title">Mensualidades nuevas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_nuevas_mes, 0, ',', '.') ?></h3>
@@ -542,7 +546,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-danger shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">↪️</div>
+                                <div class="monthly-card-icon" aria-hidden="true">➡️🚗</div>
                                 <div>
                                     <h5 class="card-title">Mensualidades retiradas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_retiradas_mes, 0, ',', '.') ?></h3>

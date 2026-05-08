@@ -104,7 +104,7 @@ if ($tipo_usuario == 1) {
 
         <!-- Navbar Brand -->
         <a class="logo2" id="logo-parqueadero" href="../principal/dashboard.php"><img class="logo2" src="../assets/img/logo1.jpg"></a>
-        <a class="navbar-brand ps-3" id="titulo-parqueadero" href="../principal/dashboard.php">Parque de la familia</a>
+        <a class="navbar-brand ps-3" id="titulo-parqueadero" href="../parqueo_informes/dashboard.php">Parque de la familia</a>
         <!-- Sidebar Toggle -->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" aria-label="menu" href="#!"><i class="bi bi-list-ol"></i></button>
 
