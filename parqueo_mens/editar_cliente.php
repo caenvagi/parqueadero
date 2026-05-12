@@ -155,15 +155,19 @@ $planes = $stmtPlan->fetchAll();
 
                             <div class="col-md-4 mt-2">
                                 <label>Mensualidad</label>
-                                <select name="mensualidad" class="form-control" disabled>
+                                <select name="mensualidad" class="form-control" readonly>
+                                    <option value="" <?= $cliente['mensualidad'] == '' ? 'selected' : '' ?>></option>
                                     <option value="SI" <?= $cliente['mensualidad'] == 'SI' ? 'selected' : '' ?>>SI</option>
                                     <option value="NO" <?= $cliente['mensualidad'] == 'NO' ? 'selected' : '' ?>>NO</option>
                                 </select>
                             </div>
 
+                            
+
                             <div class="col-md-4 mt-2">
                                 <label>Estado</label>
-                                <select name="activo" class="form-control" disabled>
+                                <select name="activo" id="activo" class="form-control" readonly>
+                                    <option value="" <?= $cliente['activo'] == '' ? 'selected' : '' ?>></option>
                                     <option value="SI" <?= $cliente['activo'] == 'SI' ? 'selected' : '' ?>>Activo</option>
                                     <option value="NO" <?= $cliente['activo'] == 'NO' ? 'selected' : '' ?>>Inactivo</option>
                                 </select>
@@ -199,7 +203,7 @@ $planes = $stmtPlan->fetchAll();
                             success: function(resp) {
                                 $("#respuesta").html(resp);
                                 console.log(placa); // ✅ depuración                                
-                                window.location.href = "clientes_mensualidad.php";
+                               window.location.href = "clientes_mensualidad.php";
 
                             }
                         });

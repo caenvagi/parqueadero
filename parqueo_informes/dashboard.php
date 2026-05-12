@@ -373,31 +373,31 @@ function iconoCategoria($categoria)
         : strtoupper($categoria);
 
     if (strpos($nombre, 'MOTO') !== false) {
-        return '🏍️';
+        return '<i class="bi bi-bicycle"></i>';
     }
 
     if (strpos($nombre, 'CARRO') !== false || strpos($nombre, 'AUTO') !== false || strpos($nombre, 'VEHIC') !== false) {
-        return '🚗';
+        return '<i class="bi bi-car-front"></i>';
     }
 
     if (strpos($nombre, 'BICI') !== false || strpos($nombre, 'CICLA') !== false) {
-        return '🚲';
+        return '<i class="bi bi-bicycle"></i>';
     }
 
     if (strpos($nombre, 'TURBO') !== false || strpos($nombre, 'TURBO') !== false) {
-        return '🚚';
+        return '<i class="bi bi-truck"></i>';
     }
 
     if (strpos($nombre, 'CAMION') !== false || strpos($nombre, 'CAMIÓN') !== false) {
-        return '🚛';
+        return '<i class="bi bi-truck-flatbed"></i>';
     }
 
     if (strpos($nombre, 'BUS') !== false || strpos($nombre, 'BUSETA') !== false) {
-        return '🚌';
+        return '<i class="bi bi-bus-front"></i>';
     }
 
     if (strpos($nombre, 'PARQUE') !== false || strpos($nombre, 'PARQUE') !== false) {
-        return '💦';
+        return '<i class="bi bi-water"></i>';
     }
 
     return '🏷️';
@@ -470,7 +470,7 @@ function iconoCategoria($categoria)
             <div class="container-fluid mt-4">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                     <div>
-                        <h3 class="mb-1">Dashboard de informes</h3>
+                        <h3 class="mb-1"><i class="bi bi-speedometer"> </i>Dashboard de informes</h3>
                         <p class="text-muted mb-0">Ventas y recibos por mes</p>
                     </div>
                     <div class="text-muted">
@@ -520,7 +520,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-primary shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">🅿️</div>
+                                <div class="monthly-card-icon" aria-hidden="true"><i class="bi bi-car-front-fill"></i></div>
                                 <div>
                                     <h5 class="card-title">Mensualidades activas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_activas, 0, ',', '.') ?></h3>
@@ -533,7 +533,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-success shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">⬅️🚗</div>
+                                <div class="monthly-card-icon" aria-hidden="true"><i class="bi bi-sign-intersection-fill"></i></div>
                                 <div>
                                     <h5 class="card-title">Mensualidades nuevas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_nuevas_mes, 0, ',', '.') ?></h3>
@@ -546,7 +546,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-4">
                         <div class="card text-white bg-danger shadow h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="monthly-card-icon" aria-hidden="true">➡️🚗</div>
+                                <div class="monthly-card-icon" aria-hidden="true"><i class="bi bi-sign-stop-fill"></i></div>
                                 <div>
                                     <h5 class="card-title">Mensualidades retiradas</h5>
                                     <h3 class="mb-1"><?= number_format($mensualidades_retiradas_mes, 0, ',', '.') ?></h3>
@@ -561,7 +561,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-6">
                         <div class="card dashboard-card h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="category-icon" aria-hidden="true">📅</div>
+                                <div class="category-icon" aria-hidden="true"><i class="bi bi-calendar3"></i></div>
                                 <div>
                                     <div class="text-muted mb-1">Mensualidad + Quincena</div>
                                     <div class="kpi-value">$<?= number_format($total_mensualidad_quincena_mes, 0, ',', '.') ?></div>
@@ -574,7 +574,7 @@ function iconoCategoria($categoria)
                     <div class="col-md-6">
                         <div class="card dashboard-card h-100">
                             <div class="card-body d-flex align-items-center gap-3">
-                                <div class="category-icon" aria-hidden="true">⏱️</div>
+                                <div class="category-icon" aria-hidden="true"><i class="bi bi-calendar-week"></i></div>
                                 <div>
                                     <div class="text-muted mb-1">Hora + 12 horas + Semana</div>
                                     <div class="kpi-value">$<?= number_format($total_hora_doce_semana_mes, 0, ',', '.') ?></div>
@@ -659,7 +659,7 @@ function iconoCategoria($categoria)
 
                         <div class="card dashboard-card mt-4">
                             <div class="card-body">
-                                <h5 class="card-title mb-3">Participación por categoría</h5>
+                                <h5 class="card-title mb-3"><i class="bi bi-pie-chart-fill"></i>&nbsp;Participación por categoría</h5>
                                 <div class="pie-chart-area">
                                     <canvas id="categoriasPieChart"></canvas>
                                 </div>
@@ -670,7 +670,7 @@ function iconoCategoria($categoria)
 
                 <div class="card dashboard-card mt-4 mb-4">
                     <div class="card-body">
-                        <h5 class="card-title mb-3">Movimiento del parqueadero por hora - <?= $meses[$mes_actual - 1] ?> <?= $anio_actual ?></h5>
+                        <h5 class="card-title mb-3"><i class="bi bi-activity"></i>&nbsp;Movimiento del parqueadero por hora - <?= $meses[$mes_actual - 1] ?> <?= $anio_actual ?></h5>
                         <div class="chart-area">
                             <canvas id="movimientoHorasChart"></canvas>
                         </div>

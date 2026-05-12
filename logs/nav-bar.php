@@ -189,12 +189,12 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso
                                     </a>
-                                    <a class="nav-link" href="../parqueo_hora/ingreso_manual.php">
-                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                    <!-- <a class="nav-link" href="../parqueo_hora/ingreso_manual.php">
+                                        <div><i class="bi bi-keyboard" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Ingreso Manual
-                                    </a>
+                                    </a> -->
                                     <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_hora.php">
-                                        <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-shop-window" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
                                     </a>
                                     <a class="nav-link" href="../parqueo_hora/parqueo_tarifas.php">
@@ -220,31 +220,32 @@ if ($tipo_usuario == 1) {
                             <div class="collapse" id="collapse-mensualidad" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="../parqueo_mens/mens_cliente_nuevo.php">
-                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-person-add" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Crear cliente
                                     </a>
                                     <a class="nav-link" href="../parqueo_mens/mens_pagar.php">
-                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-wallet2" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Pagar Mes
                                     </a>
+                                    <a class="nav-link" href="../parqueo_mens/mens_vencidas.php">
+                                        <div><i class='bi bi-calendar-x' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Vencimientos
+                                    </a>
                                     <a class="nav-link" href="../parqueo_casetas/parqueo_casetas_mens.php">
-                                        <div><i class="bi bi-house-door-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-shop-window" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Casetas
                                     </a>
                                     <a class="nav-link" href="../parqueo_mens/clientes_mensualidad.php">
-                                        <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
+                                        <div><i class="bi bi-card-list" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Mensualidades
                                     </a>
-                                    <a class="nav-link" href="../parqueo_mens/clientes_todos.php">
-                                        <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Clientes
-                                    </a>
+                                    
                                      <a class="nav-link" href="../parqueo_mens/historial_timeline.php">
-                                        <div><i class='bi bi-house-door-fill' style='font-size:20px'></i></div>
+                                        <div><i class='bi bi-clock-history' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Historial veh.
                                     </a>
                                     <a class="nav-link" href="../parqueo_mens/dashboard_mens.php">
-                                        <div><i class='bi bi-house-door-fill' style='font-size:20px'></i></div>
+                                        <div><i class='bi bi-speedometer' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Dashboard
                                     </a>
                                     <!--<a class="nav-link" href="../config/parqueomanual.php">
@@ -263,20 +264,64 @@ if ($tipo_usuario == 1) {
                             </div>
                         <!-- MENU PARQUEO FIN-->
 
+                        <!-- MENU RECIBOS MANUALES INICIO-->
+                            <a class="nav-link collapsed" href="../parqueo_hora/ingreso_manual.php" data-bs-toggle="collapse" data-bs-target="#collapse-manual" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div><i class="bi bi-receipt" style='font-size:24px'></i></div>
+                                &nbsp;&nbsp;&nbsp;Recibo Manual
+                                <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
+                            </a>
+                            <div class="collapse" id="collapse-manual" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="../parqueo_manual/ingreso_manual.php">
+                                        <div><i class="bi bi-file-earmark-plus" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Ingresar
+                                    </a>
+                                    <a class="nav-link" href="../parqueo_manual/listado_manual.php">
+                                        <div><i class="bi bi-person-lines-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Listado FPAR
+                                    </a>
+                                    <!-- <a class="nav-link" href="../parqueo_informes/dashboard.php">
+                                        <div><i class='bi bi-speedometer' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Dashboard
+                                    </a> -->
+                                    <!-- <a class="nav-link" href="#">
+                                        <div><i class='fas fa-edit' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Ingreso Manual
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        <div><i class='fas fa-calendar-alt' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Inventario
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        <div><i class='fas fa-list-ol' style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Reservas
+                                    </a>
+                                    <a class="nav-link" href="#">
+                                        <div><i class='fas fa-calendar-check' style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Habitaciones
+                                    </a> -->
+                                </nav>
+                            </div>
+                        <!-- MENU ALOJAMIENTO FIN-->
+
                         <!-- MENU ALOJAMIENTO INICIO-->
                             <a class="nav-link collapsed" href="../aloj/aloj_habitaciones.php" data-bs-toggle="collapse" data-bs-target="#collapse-informes" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                <div><i class="bbi bi-graph-up" style='font-size:24px'></i></div>
                                 &nbsp;&nbsp;&nbsp;Informes
                                 <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                             </a>
                             <div class="collapse" id="collapse-informes" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="../parqueo_informes/listado.php">
-                                        <div><i class="fas fa-bed" style='font-size:24px'></i></div>
-                                        &nbsp;&nbsp;&nbsp;Listado de Recibos
+                                        <div><i class="bi bi-journal-text" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Recibos
+                                    </a>
+                                    <a class="nav-link" href="../parqueo_mens/clientes_todos.php">
+                                        <div><i class="bi bi-person-lines-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Clientes
                                     </a>
                                     <a class="nav-link" href="../parqueo_informes/dashboard.php">
-                                        <div><i class="fas fa-bed" style='font-size:24px'></i></div>
+                                        <div><i class='bi bi-speedometer' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Dashboard
                                     </a>
                                     <!-- <a class="nav-link" href="#">
@@ -312,11 +357,11 @@ if ($tipo_usuario == 1) {
                                         &nbsp;&nbsp;&nbsp;Caja diaria
                                     </a>
                                     <a class="nav-link" href="../caja/caja_liquidacion.php">
-                                        <div><i class="bi bi-calculator" style="font-size:24px"></i></div>
+                                        <div><i class="bi bi-card-checklist" style="font-size:24px"></i></div>
                                         &nbsp;&nbsp;&nbsp;Liquidar
                                     </a>
                                     <a class="nav-link" href="../caja/caja_registro.php">
-                                        <div><i class="bi bi-printer-fill" style="font-size:24px"></i></div>
+                                        <div><i class="bi bi-journal-plus" style="font-size:24px"></i></div>
                                         &nbsp;&nbsp;&nbsp;Registros
                                     </a>
                                     <!-- <a class="nav-link" href="../config/caja_conceptos.php">
@@ -354,7 +399,7 @@ if ($tipo_usuario == 1) {
                         <!-- MENU ALOJAMIENTO-->
                             <?php if ($tipo_usuario == 1) { ?>
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-alojamiento" aria-expanded="false" aria-controls="collapseLayouts">
-                                    <div><i style="font-size:24px" class="bi bi-house-door-fill"></i></div>
+                                    <div><i style="font-size:24px" class="bi bi-house-door"></i></div>
                                     &nbsp;&nbsp;&nbsp;Alojamiento
                                     <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-left"></i></div>
                                 </a>
@@ -362,23 +407,23 @@ if ($tipo_usuario == 1) {
                                     <nav class="sb-sidenav-menu-nested nav">
 
                                         <a class="nav-link" href="../aloj/aloj_clientes.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-up" style="font-size:24px"></i></div>
                                             &nbsp;&nbsp;&nbsp;Huespedes
                                         </a>
 
                                         
                                         
                                         <a class="nav-link" href="../aloj/aloj_reservas_listado.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-calendar-check"></i></div>
                                             &nbsp;&nbsp;&nbsp;Reservas
                                         </a>
                                         <a class="nav-link" href="../aloj/aloj_calendario.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-calendar3"></i></div>
                                             &nbsp;&nbsp;&nbsp;Calendario
                                         </a>
 
                                         <a class="nav-link" href="../aloj/aloj_habitaciones.php">
-                                            <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-houses" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Habitaciones
                                         </a>
                                         <!-- <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
@@ -408,23 +453,23 @@ if ($tipo_usuario == 1) {
                                 <div class="collapse" id="collapse-configuracion" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                     <nav class="sb-sidenav-menu-nested nav">
                                         <a class="nav-link" href="../usuarios/usuarios_lista.php">
-                                            <div><i class="fa fa-user-circle" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-arms-up" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Empleados
                                         </a>
                                         <a class="nav-link" href="../turnos/usuarios_turnos_calendario.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-lines-fill" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Turnos
                                         </a>
                                         <a class="nav-link" href="../turnos/usuarios_turnos_nomina.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-vcard" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Nomina
                                         </a>
                                         <a class="nav-link" href="../usuarios/tipo_cargo.php">
-                                            <div><i class="fas fa-user-tie" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-badge" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Cargos
                                         </a>
                                         <a class="nav-link" href="../usuarios/tipo_usuarios.php">
-                                            <div><i class="fas fa-user-cog" style='font-size:24px'></i></div>
+                                            <div><i class="bi bi-person-gear" style='font-size:24px'></i></div>
                                             &nbsp;&nbsp;&nbsp;Roles user
                                         </a>
                                     </nav>

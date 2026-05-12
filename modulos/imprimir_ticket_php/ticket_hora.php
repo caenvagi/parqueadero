@@ -23,7 +23,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 // ✅ Configura el nombre de la impresora (debe coincidir con el nombre compartido en Windows)
-$nombre_impresora = "POS-80C";
+$nombre_impresora = "xp-80c pos";
 
 try {
     $connector = new WindowsPrintConnector($nombre_impresora);

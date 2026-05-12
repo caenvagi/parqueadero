@@ -41,7 +41,8 @@ if ($tipo_usuario == 1) {
                         <!-- <div id="respuesta"></div> -->
                         <form id="formMensualidad" name="formMensualidad" action="">
                             <div class="card" id="cardForm_parqueo">
-                                <div class="header">Ingresar datos de la mensualidad:</div>
+                                
+                                <div class="header"><i class="bi bi-receipt-cutoff"></i>  Ingresar datos del recibo:</div>
                                 <!-- INPUT NUMERO RECIBO -->
                                 <div class="input-group mb-2">
                                     <input type="hidden" value="" class="form-control" id="recibo_id" name="recibo_id" placeholder="parqueo_id" aria-label="parqueo_id" aria-describedby="basic-addon1">
