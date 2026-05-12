@@ -269,7 +269,7 @@ $historial = $stmtH->fetchAll();
                             $('#tablaPagos').DataTable({
                                 ajax: {
                                     url: 'ajax_pagos_cliente.php',
-                                    type: 'POST',
+                                    type: 'GET',
                                     data: {
                                         placa: placa
                                     }
@@ -287,17 +287,17 @@ $historial = $stmtH->fetchAll();
                                         data: 'valor'
                                     },
                                     {
-                                        data: 'estado'
+                                        
+                                        data: 'estado',
+                                        render: function(data) {
+                                            return data;
+                                        }
                                     }
+                                    
                                 ],
-<<<<<<< HEAD
                                  order: [[0, 'desc']],
                                 language: {
                                     url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-=======
-                                language: {
-                                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
->>>>>>> 0c01399d41973a4d211c2dd4c4f6aab373b4577b
                                 }
                             });
 

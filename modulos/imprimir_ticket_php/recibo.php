@@ -39,7 +39,7 @@ escribe el nombre de la tuya. Recuerda que debes compartirla
 desde el panel de control
  */
 
-$nombre_impresora = "POS-80C";
+$nombre_impresora = "xp-80c pos";
 
 
 /* Print top logo */
