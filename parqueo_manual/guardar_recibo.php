@@ -29,6 +29,56 @@ if ($existe > 0) {
     exit;
 }
 
+// Validar cliente: si existe actualizar, si no crear
+$placa_cli = strtoupper(trim($_POST['placa'] ?? ''));
+$categoria_cli = $_POST['categoria'] ?? null;
+$valor_cli = $_POST['valor'] ?? null;
+$plan_cli = $_POST['plan'] ?? null;
+$user_cli = $id;
+
+if ($placa_cli) {
+    $stmtC = $pdo->prepare("SELECT placa FROM cliente WHERE placa = ? LIMIT 1");
+    $stmtC->execute([$placa_cli]);
+    if ($stmtC->rowCount() > 0) {
+        $updateC = $pdo->prepare("UPDATE cliente SET categoria = ?, valor = ?, cli_tar_tiempo = ?, user = ? WHERE placa = ?");
+        $updateC->execute([$categoria_cli, $valor_cli, $plan_cli, $user_cli, $placa_cli]);
+    } else {
+        $insertC = $pdo->prepare("INSERT INTO cliente (
+                                                fecha_creacion, 
+                                                placa, 
+                                                nombre, 
+                                                cedula, 
+                                                celular, 
+                                                vehiculo, 
+                                                categoria, 
+                                                valor, 
+                                                cli_tar_tiempo, 
+                                                caseta, 
+                                                mensualidad, 
+                                                activo, 
+                                                user) 
+                                                VALUES (
+                                                NOW(), 
+                                                ?, 
+                                                'CLIENTE GENERAL', 
+                                                0, 
+                                                '', 
+                                                '', 
+                                                ?, 
+                                                ?, 
+                                                ?, 
+                                                85, 
+                                                'NO', 
+                                                'NO', 
+                                                ?)");
+                            $insertC->execute([ $placa_cli, 
+                                                $categoria_cli, 
+                                                $valor_cli, 
+                                                $plan_cli, 
+                                                $user_cli]);
+    }
+}
+
 try {
 
     $sql = "INSERT INTO recibo 

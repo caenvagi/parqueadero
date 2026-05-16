@@ -103,10 +103,9 @@ try {
     $stmt = $pdo->prepare("
     INSERT INTO recibo (
 
+    recibo_man,
     fecha_recibo,
     ticket,
-    recibo_man,
-    fecha_recibo, 
     placa, 
     fecha_ini, 
     fecha_fin, 
@@ -120,10 +119,9 @@ try {
 
     VALUES (
 
-    NOW(),
-    :pid, 
     '0',
-    NOW(), 
+    NOW(),
+    :pid,
     :placa, 
     :fini, 
     :ffin, 
@@ -163,7 +161,7 @@ try {
     $stmt->execute([
         ':recibo' => $recibo_id,
         ':valor' => $total,
-        ':tiempo' => 'Tarifa por '.$tiempo_txt,
+        ':tiempo' => $data['categoria'] . ' - ' . $data['placa_cli'] . ' - Tarifa por ' . $tiempo_txt,
         ':usuario' => $_SESSION['id'] ?? 'sistema'
     ]);
 
