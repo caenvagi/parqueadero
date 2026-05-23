@@ -32,7 +32,7 @@ try {
 
     // 🔹 1. Activar cliente
     $sqlCliente = "UPDATE cliente 
-                   SET mensualidad = 'SI', activo = 'SI'
+                   SET mensualidad = 'SI', activo = 'SI', fecha_creacion = CURDATE()
                    WHERE placa = ?";
     $stmt = $pdo->prepare($sqlCliente);
     $stmt->execute([$placa]);
@@ -76,6 +76,24 @@ try {
         $plan,
         $usuario
     ]);
+
+    // 🔹 4. Insertar PAGO nuevo con inicio de creacion
+    $sql2 = "INSERT INTO pagos
+            (fecha,estado,placa,valor,plan,fecha_inicio,fecha_fin,usuario,caseta,observacion)
+            VALUES (now(),'PENDIENTE',?,?,?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH), ?, ?, 'Pago generado por activación de mensualidad')";
+
+    $stmt2 = $pdo->prepare($sql2);
+    $stmt2->execute([
+        $placa,
+        $valor,
+        $plan,
+        $usuario,
+        $caseta
+    ]);
+
+  
+        
+    
 
     echo "✅ Mensualidad activada correctamente";
 

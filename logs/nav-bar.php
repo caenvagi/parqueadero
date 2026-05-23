@@ -201,6 +201,10 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-ticket-perforated-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Tarifas
                                     </a>
+                                    <a class="nav-link" href="../parqueo_hora/parqueo_tickets.php">
+                                        <div><i class="bi bi-car-front-fill" style='font-size:24px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Tickets
+                                    </a>
                                     <a class="nav-link" href="../parqueo_hora/dashboard.php">
                                         <div><i class="bi bi-speedometer" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Dashboard

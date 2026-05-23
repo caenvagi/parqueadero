@@ -147,6 +147,17 @@ try {
     // 🔥 Obtener el ID del recibo recién creado
     $recibo_id = $pdo->lastInsertId();
 
+    // Buscar nombre de la categoría
+$sqlCategoria = $pdo->prepare("
+    SELECT cat_nombre 
+    FROM categorias 
+    WHERE cat_id = ?;
+");
+
+$sqlCategoria->execute([$categoria]);
+
+$nombre_categoria = $sqlCategoria->fetchColumn();
+
     // 3️⃣ GUARDAR EN CAJA
     $caja = $pdo->prepare("
         INSERT INTO caja
@@ -166,7 +177,7 @@ try {
         (
         NOW(),
         '3',
-        '$plan - $placa - $nombre - $fecha_inicio a $fecha_fin',
+        '$nombre_categoria - $plan - $placa - $nombre - $fecha_inicio a $fecha_fin',
         ?,
         ?,
         '0',
@@ -191,6 +202,14 @@ try {
 
     $nueva_inicio = date("Y-m-d", strtotime($fecha_fin . " +0 day"));
     $nueva_fin = date("Y-m-d", strtotime($nueva_inicio . " +1 MONTH"));
+
+    // Obtener mes y año en español desde $fecha_inicio
+setlocale(LC_TIME, 'es_ES.UTF-8', 'Spanish_Spain', 'Spanish');
+
+$mes_anio = strftime('%B %Y', strtotime($fecha_inicio));
+
+// Primera letra en mayúscula
+$mes_anio = ucfirst($mes_anio);
 
     $nuevo = $pdo->prepare("
         INSERT INTO pagos
@@ -219,7 +238,7 @@ try {
         $valor,
         'PENDIENTE',
         $usuario,
-        'Pago Mensualidad'
+        $mes_anio
 
     ]);
 

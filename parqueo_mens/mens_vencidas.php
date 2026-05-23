@@ -129,9 +129,9 @@ function claseAtraso($dias)
                                     <tr>
                                         <th>Placa</th>
                                         <th>Nombre</th>
+                                        <th>celular</th>
                                         <th>Categoria</th>
                                         <th>Vehiculo</th>
-                                        <th>Fecha de pago</th>
                                         <th>Fecha de vencimiento</th>
                                         <th>Dias atrasado</th>
                                     </tr>
@@ -146,10 +146,10 @@ function claseAtraso($dias)
                                                 </span>
                                             </td>
                                             <td><?php echo htmlspecialchars($row['nombre']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['celular']); ?></td>
                                             <td><?php echo htmlspecialchars($row['categoria'] ?? 'Sin categoria'); ?></td>
                                             <td><?php echo htmlspecialchars($row['vehiculo']); ?></td>
-                                            <td><?php echo htmlspecialchars($row['fecha']); ?></td>
-                                            <td><?php echo  htmlspecialchars($row['fecha']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['fecha_inicio']); ?></td>
                                             <td>
                                                 <span class="badge bg-dark">
                                                     <?php echo $dias_atraso; ?> dias
@@ -182,7 +182,7 @@ function claseAtraso($dias)
                             responsive: true,
                             pageLength: 50,
                             order: [
-                                [4, 'asc']
+                                [5, 'asc']
                             ],
                             dom: 'Bfrtip',
                             buttons: [{

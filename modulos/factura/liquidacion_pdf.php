@@ -173,7 +173,7 @@ $fpdf->SetFillColor(40, 40, 40);
 $fpdf->SetTextColor(255, 255, 255);
 
 $fpdf->Cell(10, 8, 'Id', 1, 0, 'C', true);
-$fpdf->Cell(32, 8, 'Fecha', 1, 0, 'C', true);
+$fpdf->Cell(25, 8, 'Fecha', 1, 0, 'C', true);
 $fpdf->Cell(12, 8, 'Rec', 1, 0, 'C', true);
 $fpdf->Cell(18, 8, 'F-PAR', 1, 0, 'C', true);
 $fpdf->Cell(95, 8, 'Descripcion', 1, 0, 'C', true);
@@ -182,7 +182,7 @@ $fpdf->Cell(18, 8, 'Egreso', 1, 1, 'C', true);
 
 // RESET COLOR TEXTO
 $fpdf->SetTextColor(0, 0, 0);
-$fpdf->SetFont('Arial', '', 8);
+$fpdf->SetFont('Arial', '', 7);
 
 $total_ingreso = 0;
 $total_egreso = 0;
@@ -198,7 +198,7 @@ foreach ($rows as $row) {
     $fpdf->SetFillColor(230, 230, 230);
 
     $fpdf->Cell(10, 5, $row['id_movimiento'], 1, 0, 'C', $fill);
-    $fpdf->Cell(32, 5, $row['fecha_movimiento'], 1, 0, 'C', $fill);
+    $fpdf->Cell(25, 5, $row['fecha_movimiento'], 1, 0, 'C', $fill);
     $fpdf->Cell(12, 5, $row['recibo_id'], 1, 0, 'L', $fill);
     $fpdf->Cell(18, 5, $row['recibo_man'], 1, 0, 'L', $fill);    
     $fpdf->Cell(95, 5, $row['desc_movimiento'], 1, 0, 'L', $fill);
@@ -234,21 +234,21 @@ $fpdf->Ln(0);
 $fpdf->SetFont('Arial', 'B', 10);
 
 // TOTAL INGRESOS
-$fpdf->Cell(167, 8, 'TOTAL INGRESOS', 1, 0, 'R');
+$fpdf->Cell(160, 8, 'TOTAL INGRESOS', 1, 0, 'R');
 $fpdf->SetTextColor(0, 128, 0);
 $fpdf->Cell(18, 8, number_format($total_ingreso, 0, ",", "."), 1, 0, 'R');
 $fpdf->Cell(18, 8, '', 1, 1);
 
 // TOTAL EGRESOS
 $fpdf->SetTextColor(0, 0, 0);
-$fpdf->Cell(167, 8, 'TOTAL EGRESOS', 1, 0, 'R');
+$fpdf->Cell(160, 8, 'TOTAL EGRESOS', 1, 0, 'R');
 $fpdf->Cell(18, 8, '', 1, 0);
 $fpdf->SetTextColor(255, 0, 0);
 $fpdf->Cell(18, 8, number_format($total_egreso, 0, ",", "."), 1, 1, 'R');
 
 // TOTAL GENERAL
 $fpdf->SetTextColor(0, 0, 0);
-$fpdf->Cell(167, 8, 'TOTAL A ENTREGAR', 1, 0, 'R');
+$fpdf->Cell(160, 8, 'TOTAL A ENTREGAR', 1, 0, 'R');
 $fpdf->Cell(36, 8, number_format($total_ingreso - $total_egreso, 0, ",", "."), 1, 1, 'R');
 
 $stmtObs = $pdo->prepare("
@@ -271,7 +271,7 @@ $fpdf->SetFont('Arial', '', 10);
 // Mover a la derecha antes de MultiCell
 $x = $fpdf->GetX();
 $y = $fpdf->GetY();
-$fpdf->MultiCell(153, 7, $obs, 1, 'L');
+$fpdf->MultiCell(146, 7, $obs, 1, 'L');
 // Volver a la misma línea si necesitas seguir
 $fpdf->SetXY($x + 144, $y);
 

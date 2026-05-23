@@ -34,35 +34,20 @@ try {
     }
 
     // === GUARDAR ===
-    $stmt = $pdo->prepare("
-        INSERT INTO aloj_pagos 
+    // 1) Obtener datos de la reserva para recibo y para el cierre si se cubre el monto total
+    $stmtReserva = $pdo->prepare("SELECT habitacion_id, valor_total, fecha_ingreso, fecha_salida FROM aloj_reservas WHERE id = ?");
+    $stmtReserva->execute([$reserva_id]);
+    $reserva = $stmtReserva->fetch();
+
+    if (!$reserva) {
+        throw new Exception("Reserva no encontrada.");
+    }
+
+    $stmt = $pdo->prepare(
+        "INSERT INTO aloj_pagos 
         (reserva_id, fecha_pago, monto, metodo_pago, tipo_pago, observaciones, usuario_id, created_at)
-        VALUES (?, NOW(), ?, ?, ?, ?, ?, ?)
-    ");
-
-    // Registrar movimiento en caja
-$desc = "Pago de reserva #$reserva_id ($tipo_pago)";
-$stmtCaja = $pdo->prepare("INSERT INTO caja (
-    fecha_movimiento,
-    movimiento,
-    desc_movimiento,
-    valor_ingreso,
-    valor_egreso,
-    user_login,
-    liquidado,
-    caja_tipo,
-    caja
-  ) VALUES (
-    NOW(), 3, ?, ?, 0, ?, 'NO', 'INGRESO','Alojamiento'
-  )");
-
-$stmtCaja->execute([
-               // movimiento
-  $desc,                   // descripción
-  $monto,                  // valor_ingreso
-  $usuario_id              // user_login
-]);
-
+        VALUES (?, NOW(), ?, ?, ?, ?, ?, ?)"
+    );
 
     $stmt->execute([
         $reserva_id,
@@ -74,32 +59,98 @@ $stmtCaja->execute([
         $created_at
     ]);
 
-    // 1) Obtener datos de la reserva, especialmente el habitacion_id y valor_total
-$stmt2 = $pdo->prepare("SELECT habitacion_id, valor_total FROM aloj_reservas WHERE id = ?");
-$stmt2->execute([$reserva_id]);
-$res = $stmt2->fetch();
+    // 2) Registrar en recibo
+    $stmtRecibo = $pdo->prepare(
+        "INSERT INTO recibo (
+            recibo_man,
+            fecha_recibo,
+            ticket,
+            placa,
+            fecha_ini,
+            fecha_fin,
+            tiempo,
+            tarifa_recibo,
+            plan,
+            valor_manual,
+            valor_pagado,
+            usuario,
+            cierre,
+            periodo
+            
+        ) VALUES (
+            ? ,
+            NOW(),
+            0,
+            'ZZZ888' ,
+            ?,
+            ?,
+            TIMESTAMPDIFF(DAY, ?, ?),
+            6,
+            8,
+            0,
+            ?,
+            ?,
+            'NO',
+            1
+           
+        )"
+    );
 
-if ($res) {
-    $habitacion_id = $res['habitacion_id'];
-    $valor_total   = floatval($res['valor_total']);
+    //$descripcionRecibo = "Alojamiento reserva #$reserva_id";
 
-    // 2) Sumar todos los pagos registrados para esta reserva
+    $stmtRecibo->execute([
+        'ALOJ-'.$reserva_id,
+        $reserva['fecha_ingreso'],
+        $reserva['fecha_salida'],
+        $reserva['fecha_ingreso'],
+        $reserva['fecha_salida'],
+        $monto,
+        $usuario_id
+    ]);
+        
+    sleep(1); // Asegurar que el ID se genere antes de continuar
+    $recibo_id = $pdo->lastInsertId();
+
+    //Registrar movimiento en caja
+    $desc = "Pago de reserva #$reserva_id ($tipo_pago)";
+    $stmtCaja = $pdo->prepare("INSERT INTO caja (
+        fecha_movimiento,
+        movimiento,
+        desc_movimiento,
+        valor_ingreso,
+        valor_egreso,
+        user_login,
+        liquidado,
+        caja_tipo,
+        caja,
+        recibo_id
+      ) VALUES (
+        NOW(), 3, ?, ?, 0, ?, 'NO', 'INGRESO','Alojamiento', ?
+      )");
+
+    $stmtCaja->execute([
+        $desc,
+        $monto,
+        $usuario_id,
+        $recibo_id
+    ]);
+
+    // 3) Sumar todos los pagos registrados para esta reserva
+    $habitacion_id = $reserva['habitacion_id'];
+    $valor_total   = floatval($reserva['valor_total']);
+
     $stmt3 = $pdo->prepare("SELECT SUM(monto) AS total_pagado FROM aloj_pagos WHERE reserva_id = ?");
     $stmt3->execute([$reserva_id]);
     $pagos = $stmt3->fetch();
     $total_pagado = floatval($pagos['total_pagado']);
 
-    // 3) Si ya cubre el valor total, actualizamos reserva y habitación
     if ($total_pagado >= $valor_total) {
-        // a) Marcamos la reserva como cancelada
         $upd1 = $pdo->prepare("UPDATE aloj_reservas SET estado = 'confirmada' WHERE id = ?");
         $upd1->execute([$reserva_id]);
 
-        // b) Marcamos la habitación como ocupada
         $upd2 = $pdo->prepare("UPDATE aloj_habitaciones SET estado = 'ocupada' WHERE id = ?");
         $upd2->execute([$habitacion_id]);
     }
-}
 
     echo "<script>
             alert('✅ Pago registrado correctamente.');

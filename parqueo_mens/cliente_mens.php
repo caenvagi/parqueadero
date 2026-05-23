@@ -23,7 +23,9 @@ if (!$placa) {
 }
 
 // 🔹 DATOS CLIENTE
-$sqlCliente = "SELECT * FROM cliente WHERE placa = ?";
+$sqlCliente = " SELECT  * 
+                FROM    cliente
+                WHERE   placa = ?";
 $stmt = $pdo->prepare($sqlCliente);
 $stmt->execute([$placa]);
 $cliente = $stmt->fetch();

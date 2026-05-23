@@ -49,7 +49,7 @@ foreach($pagos as $p){
     }elseif($p['estado']=='PENDIENTE'){
         $estado = "<span class='badge bg-warning text-dark'>Pendiente</span>";
     }else{
-        $estado = "<span class='badge bg-danger'>Pendiente</span>";
+        $estado = "<span class='badge bg-danger'>Retirado</span>";
     }
 
     echo "<tr>

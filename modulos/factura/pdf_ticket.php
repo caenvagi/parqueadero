@@ -2,7 +2,7 @@
 usleep(500000);
 session_start();
 
-require '../conexion/conexion.php';
+require_once __DIR__ . '/../../conexion/conexion.php';
 
 if (!isset($_SESSION['id'])) {
     header("Location: ../index.php");
@@ -22,11 +22,7 @@ if ($tipo_usuario == 1) {
 //require('../fpdf/fpdf.php');
 //require('../fpdf/code128.php');
 
-require("../conexion/conexion4.php");
-
-$mysqli = retornarConexion();
-
-require('../fpdf/code128.php');
+require_once __DIR__ . '/../fpdf/code128.php';
 // $pdf = new PDF_Code128();
 //     $pdf->AddPage();
 //     $pdf->SetFont('Arial', '', 10);
@@ -42,20 +38,21 @@ require('../fpdf/code128.php');
 // $pdf->Output();
 
 
-$fpdf = new PDF_Code128('P', 'mm', array(80, 165));
+
+$fpdf = new PDF_Code128('P', 'mm', array(80, 170));
 $fpdf->SetAutoPageBreak(true); //Disable automatic page break
-$fpdf->AddPage('portrait', array(80, 165));
+$fpdf->AddPage('portrait', array(80, 170));
 
 $fpdf->SetMargins(2, 5, 5);
 
-cabecera($fpdf, $mysqli);
+cabecera($fpdf, $pdo);
 // titulosdetalle($fpdf);
 // imprimirdetalle($fpdf, $mysqli);
 // piedepagina($fpdf, $mysqli);
 // piedepagina2($fpdf, $mysqli);
-function cabecera($fpdf, $mysqli)
+function cabecera($fpdf, $pdo)
 {
-    $fpdf->Image('../assets/img/logo.png', 30, 2, 20);
+    $fpdf->Image(__DIR__ . '/../../assets/img/logo.png', 30, 2, 20);
     $fecha = date_default_timezone_set('America/Bogota');
     setlocale(LC_TIME, 'spanish');
     $fecha = strftime('%A, %d de %B de %Y ');
@@ -69,33 +66,37 @@ function cabecera($fpdf, $mysqli)
     $fpdf->cell(70, 5, 'Parque de la familia', 0, 1, 'C');
 
     $fpdf->SetFont('Arial', '', 8);
-    $fpdf->MultiCell(70, 5, 'WathApp 314-8139800', 0, 'C');
+    $fpdf->MultiCell(70, 5, 'WathApp 300-1087869', 0, 'C');
 
     $fpdf->SetFont('Arial', '', 10);
     $fpdf->cell(75, 5, '-------------------------------------------------------------------------------', 0, 1, 'C');
 
     //$placa = $_POST['placa'];    
     usleep(500000);
+
+    $ticket = $_GET['parqueo_id'];
+
     $query = "      SELECT      parqueo_id,
                                 placa_cli,
                                 DATE(fecha_ini) as fecha,
                                 TIME(fecha_ini) as hora,
-                                PD.usuario,
-                                tarifa,
-                                tar_valor,
-                                tar_tiempo,
-                                nombre
-                    FROM        parqueo AS PD 
-                    INNER JOIN  usuarios AS US ON US.id = PD.usuario 
-                    INNER JOIN  tarifas AS TA  ON TA.tar_id = PD.tarifa
-                    INNER JOIN  tar_tiempo As TT ON TT.tar_id_nombre = TA.tar_nombre  
-                    ORDER BY    parqueo_id
-                    DESC LIMIT 1;
+                                PA.tarifa,
+                                CA.cat_nombre as categoria,
+                                TA.tar_valor as tarifa,
+                                PA.usuario,
+                                US.nombre
+                                
+                    FROM        parqueo AS PA
+
+                    INNER JOIN categorias AS CA ON PA.tarifa = CA.cat_id 
+                    INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_categoria
+                    INNER JOIN usuarios AS US ON PA.usuario = US.id
+
+                    WHERE      parqueo_id = $ticket
                     
                         ";
-    $parqueo = $mysqli->query($query);
-
-    $row = $parqueo->fetch_assoc();
+    $stmt = $pdo->query($query);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $fpdf->Ln(0);
     $fpdf->SetFont('Arial', '', 12);
@@ -127,11 +128,15 @@ function cabecera($fpdf, $mysqli)
     $fpdf->Cell(30, 6, 'Hora Entrada: ', 0, 0, 'L');
     $fpdf->SetFont('Arial', '', 12);
     $fpdf->Cell(40, 6, $row['hora'], 0, 1, 'L');
+    $fpdf->SetFont('Arial', '', 12);
+    $fpdf->Cell(30, 6, 'Categoria: ', 0, 0, 'L');
+    $fpdf->SetFont('Arial', '', 12);
+    $fpdf->Cell(40, 6, $row['categoria'], 0, 1, 'L');
     $fpdf->Ln(0);
     $fpdf->SetFont('Arial', '', 12);
     $fpdf->Cell(30, 6, 'Tarifa : ', 0, 0, 'L');
     $fpdf->SetFont('Arial', '', 10);
-    $fpdf->MultiCell(40, 6, '$' . number_format($row['tar_valor'], 0, ",", ".") . " * " . $row['tar_tiempo'] . " Y/O FRACCION ", 0, 'L');
+    $fpdf->MultiCell(40, 6, '$' . number_format($row['tarifa'], 0, ",", ".") . " * " . 'HORA' . " Y/O FRACCION ", 0, 'L');
 
 
     $fpdf->SetFont('Arial', '', 10);
@@ -149,9 +154,9 @@ function cabecera($fpdf, $mysqli)
 
     $fpdf->Ln(0);
     $fpdf->SetFont('Arial', '', 10);
-    $code = $row['placa_cli'];
-    $fpdf->Code128(5, 90, $code, 70, 15);
-    $fpdf->Cell(0, 40, $row['placa_cli'], 0, 1, 'C');
+    $code = $row['parqueo_id'];
+    $fpdf->Code128(5, 93, $code, 70, 15);
+    $fpdf->Cell(0, 40, $row['parqueo_id'], 0, 1, 'C');
 
     $fpdf->Ln(-20);
     $fpdf->SetFont('Arial', '', 10);

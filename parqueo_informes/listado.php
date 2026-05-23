@@ -55,7 +55,7 @@ INNER JOIN cliente AS CL ON RE.placa = CL.placa
 INNER JOIN usuarios AS US ON RE.usuario = US.id
 INNER JOIN categorias AS CA ON RE.tarifa_recibo = CA.cat_id
 ORDER BY RE.recibo_id DESC
-LIMIT 500
+LIMIT 1000
 ";
 
 $stmt = $pdo->query($query);
