@@ -6,7 +6,9 @@ date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['id'])) {
     header("Location: index.php");
+    exit;
 }
+
 $id = $_SESSION['id'];
 $tipo_usuario = $_SESSION['tipo_usuario'];
 
@@ -17,39 +19,77 @@ if ($tipo_usuario == 1) {
 }
 
 $placa = $_POST['placa'] ?? '';
-$caseta = $_POST['caseta'] ?? '';
-$valor = $_POST['valor'] ?? '';
-$plan = $_POST['plan_tarifa'] ?? '';
 $usuario = $_SESSION['id'] ?? 'Desconocido';
 
 if (!$placa) {
-    die("Placa no válida");
+    die("Placa no valida");
 }
 
+function calcularFechaFinPeriodo($fechaInicio, $plan)
+{
+    switch ((int)$plan) {
+        case 7:
+            return date('Y-m-d', strtotime($fechaInicio . ' +7 days'));
+        case 6:
+            return calcularFechaFinQuincena($fechaInicio);
+        case 3:
+            return calcularFechaFinMes($fechaInicio);
+        default:
+            throw new Exception("Plan de pago no valido");
+    }
+}
 
+function calcularFechaFinQuincena($fechaInicio)
+{
+    $inicio = new DateTime($fechaInicio);
+    $dia = (int)$inicio->format('j');
+    $mes = (int)$inicio->format('n');
+    $anio = (int)$inicio->format('Y');
+
+    if ($dia <= 15) {
+        return crearFechaConDia($anio, $mes, $dia + 15);
+    }
+
+    $inicio->modify('first day of next month');
+    return crearFechaConDia((int)$inicio->format('Y'), (int)$inicio->format('n'), $dia - 15);
+}
+
+function calcularFechaFinMes($fechaInicio)
+{
+    $inicio = new DateTime($fechaInicio);
+    $dia = (int)$inicio->format('j');
+    $inicio->modify('first day of next month');
+
+    return crearFechaConDia((int)$inicio->format('Y'), (int)$inicio->format('n'), $dia);
+}
+
+function crearFechaConDia($anio, $mes, $dia)
+{
+    $primerDia = DateTime::createFromFormat('!Y-n-j', "$anio-$mes-1");
+    $ultimoDia = (int)$primerDia->format('t');
+    $dia = min($dia, $ultimoDia);
+
+    return sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+}
 
 try {
-
-    // 🔹 1. Activar cliente
-    $sqlCliente = "UPDATE cliente 
+    $sqlCliente = "UPDATE cliente
                    SET mensualidad = 'SI', activo = 'SI', fecha_creacion = CURDATE()
                    WHERE placa = ?";
     $stmt = $pdo->prepare($sqlCliente);
     $stmt->execute([$placa]);
 
-    // 🔹 1. Validar si ya tiene mensualidad activa
-    $sql = "SELECT COUNT(*) FROM mensualidad_historial 
+    $sql = "SELECT COUNT(*) FROM mensualidad_historial
             WHERE placa = ? AND fecha_retiro IS NULL";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$placa]);
 
     if ($stmt->fetchColumn() > 0) {
-        die("Este vehículo ya tiene una mensualidad activa");
+        die("Este vehiculo ya tiene una mensualidad activa");
     }
 
-    // 🔹 2. Obtener datos del cliente/vehículo
-    $sql = "SELECT caseta, valor, cli_tar_tiempo AS plan 
-            FROM cliente 
+    $sql = "SELECT caseta, valor, cli_tar_tiempo AS plan
+            FROM cliente
             WHERE placa = ?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$placa]);
@@ -60,11 +100,12 @@ try {
     }
 
     $caseta = $cliente['caseta'];
-    $valor  = $cliente['valor'];
-    $plan   = $cliente['plan'];
+    $valor = $cliente['valor'];
+    $plan = $cliente['plan'];
+    $fecha_inicio = date('Y-m-d');
+    $fecha_fin = calcularFechaFinPeriodo($fecha_inicio, $plan);
 
-    // 🔹 3. Insertar como REINGRESO
-    $sql = "INSERT INTO mensualidad_historial 
+    $sql = "INSERT INTO mensualidad_historial
             (placa, fecha_ingreso, caseta, valor, plan, usuario, observacion)
             VALUES (?, CURDATE(), ?, ?, ?, ?, 'Reingreso de mensualidad')";
 
@@ -77,26 +118,22 @@ try {
         $usuario
     ]);
 
-    // 🔹 4. Insertar PAGO nuevo con inicio de creacion
     $sql2 = "INSERT INTO pagos
-            (fecha,estado,placa,valor,plan,fecha_inicio,fecha_fin,usuario,caseta,observacion)
-            VALUES (now(),'PENDIENTE',?,?,?, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 MONTH), ?, ?, 'Pago generado por activación de mensualidad')";
+            (fecha, estado, placa, valor, plan, fecha_inicio, fecha_fin, usuario, caseta, observacion)
+            VALUES (NOW(), 'PENDIENTE', ?, ?, ?, ?, ?, ?, ?, 'Pago generado por activacion de mensualidad')";
 
     $stmt2 = $pdo->prepare($sql2);
     $stmt2->execute([
         $placa,
         $valor,
         $plan,
+        $fecha_inicio,
+        $fecha_fin,
         $usuario,
         $caseta
     ]);
 
-  
-        
-    
-
-    echo "✅ Mensualidad activada correctamente";
-
-} catch (PDOException $e) {
+    echo "Mensualidad activada correctamente";
+} catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }

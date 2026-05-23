@@ -56,10 +56,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return date('Y-m-d', strtotime($fechaInicio . ' +7 days'));
 
         if ($plan == 6)
-            return date('Y-m-d', strtotime($fechaInicio . ' +15 days'));
+            return calcularFechaFinQuincena($fechaInicio);
 
         if ($plan == 3)
-            return date('Y-m-d', strtotime($fechaInicio . ' +1 month'));
+            return calcularFechaFinMes($fechaInicio);
+    }
+
+    function calcularFechaFinQuincena($fechaInicio)
+    {
+        $inicio = new DateTime($fechaInicio);
+        $dia = (int)$inicio->format('j');
+        $mes = (int)$inicio->format('n');
+        $anio = (int)$inicio->format('Y');
+
+        if ($dia <= 15) {
+            return crearFechaConDia($anio, $mes, $dia + 15);
+        }
+
+        $inicio->modify('first day of next month');
+        return crearFechaConDia((int)$inicio->format('Y'), (int)$inicio->format('n'), $dia - 15);
+    }
+
+    function calcularFechaFinMes($fechaInicio)
+    {
+        $inicio = new DateTime($fechaInicio);
+        $dia = (int)$inicio->format('j');
+        $inicio->modify('first day of next month');
+
+        return crearFechaConDia((int)$inicio->format('Y'), (int)$inicio->format('n'), $dia);
+    }
+
+    function crearFechaConDia($anio, $mes, $dia)
+    {
+        $primerDia = DateTime::createFromFormat('!Y-n-j', "$anio-$mes-1");
+        $ultimoDia = (int)$primerDia->format('t');
+        $dia = min($dia, $ultimoDia);
+
+        return sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
     }
 
     $fecha_fin = calcularFechaFin($fechaInicio, $plan);
