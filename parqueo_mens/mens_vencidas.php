@@ -152,17 +152,17 @@ function claseAtraso($dias)
                                                 </span>
                                             </td>
                                             <td><?php echo htmlspecialchars($row['nombre']); ?></td>
-<<<<<<< HEAD
+
                                             <td><?php echo htmlspecialchars($row['celular']); ?></td>
                                             <td><?php echo htmlspecialchars($row['categoria'] ?? 'Sin categoria'); ?></td>
                                             <td><?php echo htmlspecialchars($row['vehiculo']); ?></td>
                                             <td><?php echo htmlspecialchars($row['fecha_inicio']); ?></td>
-=======
-                                            <td><?php echo htmlspecialchars($row['categoria'] ?? 'Sin categoria'); ?></td>
-                                            <td><?php echo htmlspecialchars($row['vehiculo']); ?></td>
+
+                                            <!-- <td><?php echo htmlspecialchars($row['categoria'] ?? 'Sin categoria'); ?></td>
+                                            <td><?php echo htmlspecialchars($row['vehiculo']); ?></td> -->
                                             <td><?php echo htmlspecialchars($row['fecha']); ?></td>
                                             <td><?php echo  htmlspecialchars($row['fecha']); ?></td>
->>>>>>> fe7ab7f189661b6d3f3dc65beffefc5cc53a8751
+
                                             <td>
                                                 <span class="badge bg-dark">
                                                     <?php echo $dias_atraso; ?> dias
@@ -195,11 +195,8 @@ function claseAtraso($dias)
                             responsive: true,
                             pageLength: 50,
                             order: [
-<<<<<<< HEAD
+
                                 [5, 'asc']
-=======
-                                [4, 'asc']
->>>>>>> fe7ab7f189661b6d3f3dc65beffefc5cc53a8751
                             ],
                             dom: 'Bfrtip',
                             buttons: [{

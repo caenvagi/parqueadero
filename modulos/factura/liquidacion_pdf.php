@@ -99,7 +99,7 @@ $fpdf->Cell(190, 8, 'RESUMEN DE LIQUIDACION', 0, 1, 'C');
 $fpdf->SetFont('Arial', 'B', 10);
 $fpdf->Cell(25, 6, 'Fecha: ', 0, 0, 'L');
 $fpdf->SetFont('Arial', '', 10);
-$fpdf->Cell(55, 6, date('d/m/Y H:i'), 0, 0, 'L');
+$fpdf->Cell(55, 6, $rows1[0]['fecha_liquidacion'], 0, 0, 'L');
 $fpdf->SetFont('Arial', 'B', 10);
 $fpdf->Cell(30, 6, 'Movimiento No: ', 0, 0, 'L');
 $fpdf->SetFont('Arial', '', 10);
@@ -253,9 +253,8 @@ $fpdf->Cell(36, 8, number_format($total_ingreso - $total_egreso, 0, ",", "."), 1
 
 $stmtObs = $pdo->prepare("
     SELECT observaciones 
-    FROM caja_liquidaciones 
-    ORDER BY id_liquidacion DESC 
-    LIMIT 1
+    FROM caja_liquidaciones
+    WHERE id_liquidacion = $id_liquidacion
 ");
 $stmtObs->execute();
 
