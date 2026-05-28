@@ -158,11 +158,6 @@ function claseAtraso($dias)
                                             <td><?php echo htmlspecialchars($row['vehiculo']); ?></td>
                                             <td><?php echo htmlspecialchars($row['fecha_inicio']); ?></td>
 
-                                            <!-- <td><?php echo htmlspecialchars($row['categoria'] ?? 'Sin categoria'); ?></td>
-                                            <td><?php echo htmlspecialchars($row['vehiculo']); ?></td> -->
-                                            <td><?php echo htmlspecialchars($row['fecha']); ?></td>
-                                            <td><?php echo  htmlspecialchars($row['fecha']); ?></td>
-
                                             <td>
                                                 <span class="badge bg-dark">
                                                     <?php echo $dias_atraso; ?> dias
