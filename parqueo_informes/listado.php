@@ -36,6 +36,8 @@ $where = ($tipo_usuario == 1) ? "" : "WHERE RE.usuario = $id";
 $query = "
 SELECT 
     RE.recibo_id,
+    CJ.id_movimiento,
+    CJ.id_liquidacion,
     RE.fecha_recibo,
     RE.ticket,
     RE.recibo_man,
@@ -54,8 +56,9 @@ FROM recibo AS RE
 INNER JOIN cliente AS CL ON RE.placa = CL.placa
 INNER JOIN usuarios AS US ON RE.usuario = US.id
 INNER JOIN categorias AS CA ON RE.tarifa_recibo = CA.cat_id
+INNER JOIN caja AS CJ ON CJ.recibo_id = RE.recibo_id
 ORDER BY RE.recibo_id DESC
-LIMIT 1000
+LIMIT 500
 ";
 
 $stmt = $pdo->query($query);
@@ -124,6 +127,8 @@ $parqueoUlt1 = $stmt->fetchAll();
                                     <tr>
                                         <td></td>
                                         <th>ID</th>
+                                        <th>CAJA</th>
+                                        <th>LIQ</th>
                                         <th>REC</th>
                                         <th>TICKET</th>
                                         <th>FECHA</th>
@@ -145,8 +150,12 @@ $parqueoUlt1 = $stmt->fetchAll();
                                         <tr>
                                             <td></td>
                                             <td><a href="../modulos/factura/pdf_recibo_mens.php?recibo_id=<?= $fila['recibo_id'] ?>" target="_blank">
-        <?= $fila['recibo_id'] ?>
-    </a></td>
+                                                <?= $fila['recibo_id'] ?>
+                                            </a></td>
+                                            <td><?= $fila['id_movimiento'] ?></td>
+                                            <td><a href="../modulos/factura/liquidacion_pdf.php?id_liquidacion=<?= $fila['id_liquidacion'] ?>" target="_blank">
+                                                <?= $fila['id_liquidacion'] ?>
+                                            </a></td>
                                             <td><?= $fila['recibo_man'] ?></td>
                                             <td><?= $fila['ticket'] ?></td>
                                             <td><?= $fila['fecha_recibo'] ?></td>
