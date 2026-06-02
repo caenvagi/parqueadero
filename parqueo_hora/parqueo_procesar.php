@@ -29,6 +29,11 @@ try {
         throw new Exception('Datos incompletos');
     }
 
+    // Validar formato del celular
+    if (!preg_match('/^\d{10}$/', $celular)) {
+        throw new Exception('El celular debe tener exactamente 10 digitos numericos.');
+    }
+
     // 1️⃣ Validar si la placa ya está registrada en parqueo con estado activo
     $sql_check = "SELECT * FROM parqueo WHERE placa_cli = :placa AND estado = 'SI'";
     $stmt_check = $pdo->prepare($sql_check);

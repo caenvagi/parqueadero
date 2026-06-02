@@ -57,7 +57,10 @@ if ($tipo_usuario == 1) {
                                         <div class="input-group-prepend">
                                             <!-- <span class="input-group-text" id="basic-addon1"><i class="fas fa-tachometer-alt"></i>&nbsp;NOMBRE</span> -->
                                         </div>
-                                        <input type="number" value="" onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control" name="celular" id="celular" placeholder="Celular" aria-label="celular" aria-describedby="basic-addon1" required='true' autofocus>
+                                        <input type="text" value="" class="form-control" name="celular" id="celular" placeholder="Celular" aria-label="celular" aria-describedby="celularError" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required='true' autofocus>
+                                        <div class="invalid-feedback" id="celularError">
+                                            El celular debe tener exactamente 10 digitos numericos.
+                                        </div>
                                     </div>
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
@@ -157,6 +160,7 @@ if ($tipo_usuario == 1) {
 
                                         document.getElementById("nombre").value = data.nombre ?? "";
                                         document.getElementById("celular").value = data.celular ?? "";
+                                        validarCelular();
                                         document.getElementById("vehiculo").value = data.vehiculo ?? "";
                                         document.getElementById("categoria").value = data.categoria ?? "";
 
@@ -171,11 +175,35 @@ if ($tipo_usuario == 1) {
                             
 
                         // Envío del formulario con AJAX
+                        function validarCelular() {
+                            const celular = $('#celular');
+                            const valor = celular.val().replace(/\D/g, '');
+
+                            if (celular.val() !== valor) {
+                                celular.val(valor);
+                            }
+
+                            if (!/^\d{10}$/.test(valor)) {
+                                celular.addClass('is-invalid');
+                                return false;
+                            }
+
+                            celular.removeClass('is-invalid');
+                            return true;
+                        }
+
+                        $('#celular').on('input blur', validarCelular);
+
                         $('#formParqueo').on('submit', function(e) {
 
                             e.preventDefault();
 
                             let form = this;
+
+                            if (!validarCelular()) {
+                                $('#celular').focus();
+                                return;
+                            }
 
                             $.ajax({
                                 url: 'parqueo_procesar.php',
