@@ -324,6 +324,10 @@ if ($tipo_usuario == 1) {
                                         <div><i class="bi bi-person-lines-fill" style='font-size:24px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Clientes
                                     </a>
+                                    <a class="nav-link" href="../parqueo_informes/mens_ingreso.php">
+                                        <div><i class='bi bi-speedometer' style='font-size:20px'></i></div>
+                                        &nbsp;&nbsp;&nbsp;Ingresos
+                                    </a>                                    
                                     <a class="nav-link" href="../parqueo_informes/mens_retiradas.php">
                                         <div><i class='bi bi-speedometer' style='font-size:20px'></i></div>
                                         &nbsp;&nbsp;&nbsp;Retiros
