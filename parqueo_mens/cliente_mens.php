@@ -197,6 +197,7 @@ $historial = $stmtH->fetchAll();
                                                     <th>Fin</th>
                                                     <th>Valor</th>
                                                     <th>Estado</th>
+                                                    <th>Observación</th>
                                                 </tr>
                                             </thead>
                                         </table>
@@ -294,6 +295,9 @@ $historial = $stmtH->fetchAll();
                                         render: function(data) {
                                             return data;
                                         }
+                                    },
+                                    {
+                                        data: 'observacion',
                                     }
                                     
                                 ],

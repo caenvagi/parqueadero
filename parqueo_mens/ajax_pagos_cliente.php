@@ -28,7 +28,8 @@ try {
                 fecha_inicio,
                 fecha_fin,
                 valor,
-                estado
+                estado,
+                observacion
             FROM pagos
             WHERE placa = ?
             ORDER BY fecha DESC";
@@ -62,7 +63,8 @@ try {
             "fecha_inicio" => $row['fecha_inicio'],
             "fecha_fin" => $row['fecha_fin'],
             "valor" => "$" . number_format($row['valor']),
-            "estado" => $estadoHtml
+            "estado" => $estadoHtml,
+            "observacion" => $row['observacion']
         ];
     }
 
