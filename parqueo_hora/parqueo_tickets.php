@@ -98,7 +98,7 @@ $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             <td><?= htmlspecialchars($ticket['cajero'] ?? 'Sin cajero') ?></td>
                                             <td class="text-center">
                                                 <a
-                                                    class="btn btn-sm btn-primary"
+                                                    class="btn btn-sm btn-secondary"
                                                     href="../modulos/factura/pdf_ticket.php?parqueo_id=<?= urlencode($ticket['parqueo_id']) ?>"
                                                     target="_blank"
                                                     rel="noopener"

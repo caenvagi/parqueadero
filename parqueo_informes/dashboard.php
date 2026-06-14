@@ -4,8 +4,21 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
+// Control de inactividad: timeout de prueba 30 segundos (usar 20*60 en producción)
+// Tiempo de inactividad en segundos (20 minutos - producción).
+// Para pruebas locales, cambiar temporalmente a 30 (segundos).
+$inactive = 20 * 60; // 20 minutos (producción)
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
+    session_unset();
+    session_destroy();
+    header("Location: ../index.php?mensaje=timeout");
+    exit;
+}
+// actualizar última actividad
+$_SESSION['last_activity'] = time();
+
 if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
 
@@ -897,6 +910,38 @@ function iconoCategoria($categoria)
                 }
             }
         });
+    </script>
+    <script>
+        // Cliente: redirigir automáticamente a logout después de 30s de inactividad
+        (function() {
+            var inactivityTime = function () {
+                var time;
+                // Tiempo inactividad cliente (20 minutos en producción).
+                // Para pruebas locales, use 30 * 1000 (30s).
+                var maxInactive = 20 * 60 * 1000; // 20 minutos
+
+                function logout() {
+                    // Redirige a logout para destruir sesión en el servidor
+                    window.location.href = '../logout.php?timeout=1';
+                }
+
+                function resetTimer() {
+                    clearTimeout(time);
+                    time = setTimeout(logout, maxInactive);
+                }
+
+                // Eventos que resetearán el temporizador
+                window.onload = resetTimer;
+                document.onmousemove = resetTimer;
+                document.onmousedown = resetTimer; // touchscreen
+                document.onclick = resetTimer;
+                document.onscroll = resetTimer;
+                document.onkeypress = resetTimer;
+                document.addEventListener('touchstart', resetTimer, false);
+            };
+
+            inactivityTime();
+        })();
     </script>
 </body>
 

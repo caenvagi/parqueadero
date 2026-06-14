@@ -1,7 +1,22 @@
 <?php
-//session_start();
+// Asegurar que la sesión esté iniciada
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once "../conexion/conexion.php";
+
+// Control de inactividad: cerrar sesión después de 20 minutos (1200 segundos)
+$inactive = 20 * 60; // 20 minutos
+// Valor de producción: 20 minutos. Para pruebas reducir temporalmente a 30 (segundos).
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
+    session_unset();
+    session_destroy();
+    header("Location: index.php?mensaje=timeout");
+    exit();
+}
+// actualizar último tiempo de actividad
+$_SESSION['last_activity'] = time();
 
 if (!isset($_SESSION['id'])) {
     header("Location: index.php");

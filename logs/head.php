@@ -39,4 +39,40 @@
 
     
     
+    <!-- Inactivity auto-logout script (aplicado globalmente) -->
+    <script>
+        (function() {
+            // Tiempo de inactividad en milisegundos (20 minutos - producción)
+            // Para pruebas locales cambiar a 30 * 1000 (30 segundos)
+            var maxInactive = 20 * 60 * 1000; // 20 minutos
+
+            var timer;
+            function logout() {
+                // Redirige al logout del proyecto (ruta absoluta)
+                window.location.href = '/parqueadero/logout.php?timeout=1';
+            }
+
+            function resetTimer() {
+                clearTimeout(timer);
+                timer = setTimeout(logout, maxInactive);
+            }
+
+            // Registrar eventos que indiquen actividad
+            window.addEventListener('load', resetTimer);
+            document.addEventListener('mousemove', resetTimer);
+            document.addEventListener('mousedown', resetTimer);
+            document.addEventListener('click', resetTimer);
+            document.addEventListener('scroll', resetTimer);
+            document.addEventListener('keypress', resetTimer);
+            document.addEventListener('touchstart', resetTimer);
+
+            // Opcional: cuando se cierra la ventana, limpiar timer
+            window.addEventListener('beforeunload', function() { clearTimeout(timer); });
+        })();
+    </script>
     
+
+
+
+
+

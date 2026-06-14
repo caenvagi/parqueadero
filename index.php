@@ -28,6 +28,9 @@ if ($_POST) {
 		$_SESSION['avatar'] = $row['avatar'];			
 		$_SESSION['activo'] = $row['activo'];
 
+		// Registrar la última actividad para control de inactividad (20 minutos)
+		$_SESSION['last_activity'] = time();
+
 		header("location: parqueo_informes/dashboard.php");
 		exit();
 	} else {
