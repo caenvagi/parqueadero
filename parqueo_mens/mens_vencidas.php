@@ -129,15 +129,9 @@ function claseAtraso($dias)
                                     <tr>
                                         <th>Placa</th>
                                         <th>Nombre</th>
-<<<<<<< HEAD
                                         <th>celular</th>
                                         <th>Categoria</th>
                                         <th>Vehiculo</th>
-=======
-                                        <th>Categoria</th>
-                                        <th>Vehiculo</th>
-                                        <th>Fecha de pago</th>
->>>>>>> fe7ab7f189661b6d3f3dc65beffefc5cc53a8751
                                         <th>Fecha de vencimiento</th>
                                         <th>Dias atrasado</th>
                                     </tr>
@@ -147,9 +141,11 @@ function claseAtraso($dias)
                                         <?php $dias_atraso = (int) $row['dias_atraso']; ?>
                                         <tr class="<?php echo claseAtraso($dias_atraso); ?>">
                                             <td>
-                                                <span class="placa-tabla">
-                                                    <?php echo htmlspecialchars(strtoupper($row['placa'])); ?>
-                                                </span>
+                                                <a href="cliente_mens.php?placa=<?php echo urlencode($row['placa']); ?>" class="text-decoration-none">
+                                                    <span class="placa-tabla">
+                                                        <?php echo htmlspecialchars(strtoupper($row['placa'])); ?>
+                                                    </span>
+                                                </a>
                                             </td>
                                             <td><?php echo htmlspecialchars($row['nombre']); ?></td>
 

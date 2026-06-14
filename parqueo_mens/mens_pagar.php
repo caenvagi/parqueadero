@@ -495,6 +495,78 @@ $placa = $_GET['placa'] ?? '';
 
                         });        
 
+                        // Si la URL trae datos de un pago pendiente, autocompletar el formulario
+                        $(document).ready(function() {
+                            const params = new URLSearchParams(window.location.search);
+                            const pagoId = params.get('id');
+                            const placaParam = params.get('placa');
+                            const fechaInicio = params.get('fecha_inicio');
+                            const fechaFin = params.get('fecha_fin');
+                            const valorParam = params.get('valor');
+
+                            if (placaParam) {
+                                // establecer placa y cargar datos del cliente
+                                $("#placa").val(placaParam);
+                                // disparar búsqueda de datos del cliente
+                                if (placaParam.length == 6) {
+                                    $.ajax({
+                                        url: 'buscar_placa.php',
+                                        type: 'POST',
+                                        data: { placa: placaParam },
+                                        dataType: 'json',
+                                        success: function(resp) {
+                                            if (resp.existe) {
+                                                $('#mensaje').html('');
+                                                $('#nombre').val(resp.nombre);
+                                                $('#cedula').val(resp.cedula);
+                                                $('#vehiculo').val(resp.vehiculo);
+                                                $('#caseta').val(resp.caseta);
+                                                $('#valor_real').val(resp.valor);
+                                                $('#categoria').val(resp.categoria);
+                                                $('#plan').val(resp.plan);
+                                                let valorFormateado = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(resp.valor);
+                                                $('#valor').val(valorFormateado);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+
+                            if (fechaInicio) {
+                                $('#fecha_inicio').val(fechaInicio);
+                            }
+                            if (fechaFin) {
+                                $('#fecha_fin').val(fechaFin);
+                            }
+                            if (valorParam) {
+                                // asignar valor real y formato
+                                $('#valor_real').val(valorParam);
+                                let valorFormateado2 = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(parseFloat(valorParam));
+                                $('#valor').val(valorFormateado2);
+                            }
+
+                            if (pagoId && placaParam) {
+                                // cargar opciones de pagos y seleccionar el id correspondiente
+                                $.ajax({
+                                    url: 'buscar_pagos.php',
+                                    type: 'POST',
+                                    data: { placa: placaParam },
+                                    success: function(respuesta) {
+                                        $('#pagos').html(respuesta);
+                                        // seleccionar la opción con el id recibido
+                                        setTimeout(function() {
+                                            $('#pagos').val(pagoId);
+                                        }, 200);
+                                    }
+                                });
+                            }
+
+                            // limpiar la URL para mayor limpieza
+                            if (pagoId || fechaInicio || fechaFin || valorParam) {
+                                window.history.replaceState({}, document.title, window.location.pathname + '?placa=' + (placaParam || ''));
+                            }
+                        });
+
                         function cargarClientes() {
                             $.ajax({
                                 url: "listar_clientes.php",

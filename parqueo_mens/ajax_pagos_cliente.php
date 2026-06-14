@@ -24,6 +24,8 @@ try {
     $placa = $_GET['placa'] ?? '';
 
     $sql = "SELECT 
+                id,
+                placa,
                 fecha,
                 fecha_inicio,
                 fecha_fin,
@@ -45,9 +47,23 @@ try {
 
         $estado = trim($row['estado']);
 
+        $accionHtml = '';
+
         if ($estado === 'PENDIENTE') {
 
+            // Mantener badge 'Pendiente' y crear botón de Pagar aparte
             $estadoHtml = '<span class="badge bg-warning">Pendiente</span>';
+
+            $params = http_build_query([
+                'placa' => $row['placa'],
+                'id' => $row['id'],
+                'fecha_inicio' => $row['fecha_inicio'],
+                'fecha_fin' => $row['fecha_fin'],
+                'valor' => $row['valor']
+            ]);
+
+            // Usar enlace estilizado pequeño (sin botón anidado) para ocupar menos espacio
+            $accionHtml = '<a href="mens_pagar.php?'.$params.'" class="text-decoration-none btn btn-sm btn-secondary" style="padding: .15rem .45rem; font-size: .75rem; line-height:1;">Pagar</a>';
 
         } elseif ($estado === 'RETIRADO') {
 
@@ -64,6 +80,7 @@ try {
             "fecha_fin" => $row['fecha_fin'],
             "valor" => "$" . number_format($row['valor']),
             "estado" => $estadoHtml,
+            "accion" => $accionHtml,
             "observacion" => $row['observacion']
         ];
     }

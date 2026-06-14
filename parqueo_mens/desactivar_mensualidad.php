@@ -42,6 +42,17 @@ try {
     $stmt2 = $pdo->prepare($sqlHist);
     $stmt2->execute([$placa]);
 
+    // 🔹 3. Actualizar el último registro de pagos de la placa de PENDIENTE a RETIRADO
+    $sqlPago = "SELECT id FROM pagos WHERE placa = ? ORDER BY id DESC LIMIT 1";
+    $stmt3 = $pdo->prepare($sqlPago);
+    $stmt3->execute([$placa]);
+    $pago = $stmt3->fetch(PDO::FETCH_ASSOC);
+
+    if ($pago) {
+        $sqlPagoUpdate = "UPDATE pagos SET estado = 'RETIRADO' WHERE id = ? AND estado = 'PENDIENTE'";
+        $stmt4 = $pdo->prepare($sqlPagoUpdate);
+        $stmt4->execute([$pago['id']]);
+    }
 
     echo "<div class='alert alert-success'>
             Mensualidad desactivada correctamente

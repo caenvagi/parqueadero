@@ -141,9 +141,15 @@ $historial = $stmtH->fetchAll();
                                 <div class="placa">
                                     <?= strtoupper($cliente['placa']) ?>
                                 </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <a href="editar_cliente.php?placa=<?= urlencode($cliente['placa']) ?>" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square"></i> Editar cliente
+                                    </a>
+                                </div>
                             </div>
 
                             <div class="col-md-9">
+                                
                                 <div class="row">
                                     <div class="col-md-4"><b>Nombre:</b> <?= $cliente['nombre'] ?></div>
                                     <div class="col-md-3"><b>Cédula:</b> <?= $cliente['cedula'] ?></div>
@@ -197,6 +203,7 @@ $historial = $stmtH->fetchAll();
                                                     <th>Fin</th>
                                                     <th>Valor</th>
                                                     <th>Estado</th>
+                                                    <th>Acción</th>
                                                     <th>Observación</th>
                                                 </tr>
                                             </thead>
@@ -297,11 +304,17 @@ $historial = $stmtH->fetchAll();
                                         }
                                     },
                                     {
+                                        data: 'accion',
+                                        render: function(data) {
+                                            return data;
+                                        }
+                                    },
+                                    {
                                         data: 'observacion',
                                     }
                                     
                                 ],
-                                 order: [[0, 'desc']],
+                                order: [[1, 'desc']],
                                 language: {
                                     url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
                                 }

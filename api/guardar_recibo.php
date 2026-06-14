@@ -32,9 +32,9 @@ try {
 
     // ✅ INSERT RECIBO
      $sql = "INSERT INTO recibo 
-         (recibo_man, fecha_recibo, ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, valor_pagado, valor_manual, usuario, cierre, periodo)
+         (recibo_man, fecha_recibo, ticket, placa, fecha_ini, fecha_fin, tiempo, tarifa_recibo, plan, valor_pagado, valor_manual, usuario, cierre, periodo)
          VALUES 
-         ('NO', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, :valor, 0, 2, 'NO', 1)";
+         ('0', NOW(), :ticket, :placa, :fecha_ini, :fecha_fin, :tiempo, :tarifa, :plan, :valor, 0, 2, 'NO', 1)";
 
      $stmt = $pdo->prepare($sql);
      $stmt->execute([
@@ -44,6 +44,7 @@ try {
          ':fecha_fin' => $fecha_fin,
          ':tiempo' => $tiempo,
          ':tarifa' => $tarifa,
+         ':plan' => '1',
          ':valor' => $valor
 
      ]);
@@ -52,7 +53,7 @@ try {
 
       // 6️⃣ Registrar movimiento en caja
 
-$stmt = $pdo->query("  SELECT R.recibo_id,
+$stmt = $pdo->query("  SELECT  R.recibo_id,
                                R.tarifa_recibo as categoria,
                                C.cat_nombre,
                                T.tar_tiempo as plan
