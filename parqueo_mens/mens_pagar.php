@@ -150,6 +150,19 @@ $placa = $_GET['placa'] ?? '';
                                                     <option value="">Seleccione un Periodo</option>
                                                 </select>
                                             </div>
+                                            <!-- TIPO RECIBO -->
+                                            <div class="col-md-12 mt-2">
+                                                <label class="form-label">Tipo de recibo</label>
+                                                <select name="recibo_tipo" id="recibo_tipo" class="form-select">
+                                                    <option value="electronico">Electrónico</option>
+                                                    <option value="manual">Manual</option>
+                                                </select>
+                                            </div>
+                                            <!-- FPAR (solo si es manual) -->
+                                            <div class="col-md-12 mt-2" id="div_fpar" style="display:none;">
+                                                <label class="form-label">FPAR (Número recibo manual)</label>
+                                                <input type="text" class="form-control" id="FPAR" name="FPAR" placeholder="Ingrese número de recibo manual">
+                                            </div>
                                             <!-- FECHA INICIO -->
                                             <!-- <div class="col-md-12">
                                                     <label class="form-label">Inicio Periodo</label>-->
@@ -424,8 +437,33 @@ $placa = $_GET['placa'] ?? '';
                             $('#formPagos').submit();
                         });
 
+                        // Mostrar/ocultar campo FPAR según tipo de recibo
+                        $(document).on('change', '#recibo_tipo', function() {
+                            const tipo = $(this).val();
+                            if (tipo === 'manual') {
+                                $('#div_fpar').show();
+                            } else {
+                                $('#div_fpar').hide();
+                                $('#FPAR').val('');
+                            }
+                        });
+
+                        // Forzar mayúsculas en FPAR mientras se escribe
+                        $(document).on('input', '#FPAR', function() {
+                            this.value = this.value.toUpperCase();
+                        });
+
                         $("#formPagos").submit(function(e) {
                             e.preventDefault();
+                            // Validar FPAR si el recibo es manual
+                            const tipoRecibo = $('#recibo_tipo').val();
+                            if (tipoRecibo === 'manual') {
+                                const fpar = $('#FPAR').val() || '';
+                                if ($.trim(fpar) === '') {
+                                    $("#respuesta").html('<div class="alert alert-danger">Por favor ingrese el número de recibo manual (FPAR).</div>');
+                                    return;
+                                }
+                            }
                             const accion = $('#accion').val();
                             $.ajax({
                                 url: "pagar_mensualidad.php",

@@ -14,6 +14,18 @@ $usuario = $_SESSION['id'];
 $fecha = date("Y-m-d");
 $placa = strtoupper(trim($_POST['placa'] ?? ''));
 $pago_id = $_POST['pagos'] ?? '';
+// Tipo de recibo: 'electronico' o 'manual'
+$recibo_tipo = $_POST['recibo_tipo'] ?? 'electronico';
+// Forzar FPAR en mayúsculas
+$fpar = isset($_POST['FPAR']) ? strtoupper(trim($_POST['FPAR'])) : '';
+
+if ($recibo_tipo === 'manual' && $fpar === '') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['resultado' => 'ERROR', 'error' => 'FPAR es requerido para recibo manual']);
+    exit;
+}
+
+$recibo_man_val = ($recibo_tipo === 'manual') ? $fpar : 0;
 
 function calcularFechaFinPeriodo($fechaInicio, $plan)
 {
@@ -208,7 +220,7 @@ try {
         date("Y-m-d-H:i:s"),
         '0',
         $placa,
-        '0',
+        $recibo_man_val,
         $fecha_inicio,
         $fecha_fin,
         $tiempo_txt,
