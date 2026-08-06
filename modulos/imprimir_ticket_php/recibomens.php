@@ -14,6 +14,8 @@ $tipo_usuario = $_SESSION['tipo_usuario'];
 $usuario = $_SESSION['usuario'];
 $usuarios = $_SESSION['usuario'];
 
+$recibo_id = isset($_GET['recibo_id']) ? intval($_GET['recibo_id']) : 0;
+
 if ($tipo_usuario == 1) {
     $where = "";
 } else if ($tipo_usuario == 2) {
@@ -64,7 +66,8 @@ veces a $printer->text()
 
     //$placa = $_POST['placa']; 
     sleep(1);
-    $stmt = $pdo->query("      SELECT      RE.recibo_id,
+    if ($recibo_id) {
+        $stmt = $pdo->prepare("SELECT RE.recibo_id,
                                 RE.fecha_recibo,
                                 RE.placa,
                                 DATE(RE.fecha_ini) as fechaini,
@@ -81,17 +84,42 @@ veces a $printer->text()
                                 CT.casetas_nom,
                                 CL.nombre,
                                 CL.valor,
-                                CL.cli_tar_tiempo                          
-                    FROM        recibo      AS RE 
-                    INNER JOIN  usuarios    AS US ON US.id = RE.usuario
-                    
-                    INNER JOIN  tar_tiempo  AS TT ON TT.tar_id_nombre = RE.plan
-                    INNER JOIN  cliente     AS CL ON CL.placa = RE.placa
-                    INNER JOIN  categorias  AS CA ON CA.cat_id = CL.categoria
-                    INNER JOIN  casetas     AS CT ON CL.caseta = CT.caseta_id
-                    ORDER BY    recibo_id
-                    DESC LIMIT 1;                    
-                        ");
+                                CL.cli_tar_tiempo
+                    FROM recibo AS RE
+                    INNER JOIN usuarios AS US ON US.id = RE.usuario
+                    INNER JOIN tar_tiempo AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN cliente AS CL ON CL.placa = RE.placa
+                    INNER JOIN categorias AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN casetas AS CT ON CL.caseta = CT.caseta_id
+                    WHERE RE.recibo_id = ?");
+        $stmt->execute([$recibo_id]);
+    } else {
+        $stmt = $pdo->query("SELECT RE.recibo_id,
+                                RE.fecha_recibo,
+                                RE.placa,
+                                DATE(RE.fecha_ini) as fechaini,
+                                TIME(RE.fecha_ini) as horaini,
+                                DATE(RE.fecha_fin) as fechafin,
+                                TIME(RE.fecha_fin) as horafin,
+                                RE.tiempo,
+                                RE.valor_pagado,
+                                RE.usuario,
+                                US.nombre as usuario,
+                                TT.tar_tiempo,
+                                CA.cat_nombre,
+                                CL.caseta,
+                                CT.casetas_nom,
+                                CL.nombre,
+                                CL.valor,
+                                CL.cli_tar_tiempo
+                    FROM recibo AS RE
+                    INNER JOIN usuarios AS US ON US.id = RE.usuario
+                    INNER JOIN tar_tiempo AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN cliente AS CL ON CL.placa = RE.placa
+                    INNER JOIN categorias AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN casetas AS CT ON CL.caseta = CT.caseta_id
+                    ORDER BY recibo_id DESC LIMIT 1");
+    }
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
@@ -185,7 +213,8 @@ ningún error
 $printer->cut();
 
 sleep(1);
-     $stmt = $pdo->query("      SELECT      RE.recibo_id,
+     if ($recibo_id) {
+        $stmt = $pdo->prepare("SELECT RE.recibo_id,
                                 RE.fecha_recibo,
                                 RE.placa,
                                 DATE(RE.fecha_ini) as fechaini,
@@ -202,17 +231,42 @@ sleep(1);
                                 CT.casetas_nom,
                                 CL.nombre,
                                 CL.valor,
-                                CL.cli_tar_tiempo                          
-                    FROM        recibo      AS RE 
-                    INNER JOIN  usuarios    AS US ON US.id = RE.usuario
-                    
-                    INNER JOIN  tar_tiempo  AS TT ON TT.tar_id_nombre = RE.plan
-                    INNER JOIN  cliente     AS CL ON CL.placa = RE.placa
-                    INNER JOIN  categorias  AS CA ON CA.cat_id = CL.categoria
-                    INNER JOIN  casetas     AS CT ON CL.caseta = CT.caseta_id
-                    ORDER BY    recibo_id
-                    DESC LIMIT 1; ;                    
-                        ");
+                                CL.cli_tar_tiempo
+                    FROM recibo AS RE
+                    INNER JOIN usuarios AS US ON US.id = RE.usuario
+                    INNER JOIN tar_tiempo AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN cliente AS CL ON CL.placa = RE.placa
+                    INNER JOIN categorias AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN casetas AS CT ON CL.caseta = CT.caseta_id
+                    WHERE RE.recibo_id = ?");
+        $stmt->execute([$recibo_id]);
+    } else {
+        $stmt = $pdo->query("SELECT RE.recibo_id,
+                                RE.fecha_recibo,
+                                RE.placa,
+                                DATE(RE.fecha_ini) as fechaini,
+                                TIME(RE.fecha_ini) as horaini,
+                                DATE(RE.fecha_fin) as fechafin,
+                                TIME(RE.fecha_fin) as horafin,
+                                RE.tiempo,
+                                RE.valor_pagado,
+                                RE.usuario,
+                                US.nombre as usuario,
+                                TT.tar_tiempo,
+                                CA.cat_nombre,
+                                CL.caseta,
+                                CT.casetas_nom,
+                                CL.nombre,
+                                CL.valor,
+                                CL.cli_tar_tiempo
+                    FROM recibo AS RE
+                    INNER JOIN usuarios AS US ON US.id = RE.usuario
+                    INNER JOIN tar_tiempo AS TT ON TT.tar_id_nombre = RE.plan
+                    INNER JOIN cliente AS CL ON CL.placa = RE.placa
+                    INNER JOIN categorias AS CA ON CA.cat_id = CL.categoria
+                    INNER JOIN casetas AS CT ON CL.caseta = CT.caseta_id
+                    ORDER BY recibo_id DESC LIMIT 1");
+    }
     $row1 = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row1) {

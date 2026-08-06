@@ -74,29 +74,37 @@ function cabecera($fpdf, $pdo)
     //$placa = $_POST['placa'];    
     usleep(500000);
 
-    $ticket = $_GET['parqueo_id'];
+    $ticket = isset($_GET['parqueo_id']) ? (int)$_GET['parqueo_id'] : 0;
 
-    $query = "      SELECT      parqueo_id,
-                                placa_cli,
-                                DATE(fecha_ini) as fecha,
-                                TIME(fecha_ini) as hora,
-                                PA.tarifa,
-                                CA.cat_nombre as categoria,
-                                TA.tar_valor as tarifa,
-                                PA.usuario,
-                                US.nombre
-                                
-                    FROM        parqueo AS PA
+    $query = "SELECT
+                    PA.parqueo_id,
+                    PA.placa_cli,
+                    DATE(PA.fecha_ini) AS fecha,
+                    TIME(PA.fecha_ini) AS hora,
+                    PA.usuario,
+                    US.nombre,
+                    COALESCE(CLI.categoria, PA.tarifa) AS categoria_id,
+                    COALESCE(CAT.cat_nombre, 'Sin categoría') AS categoria,
+                    COALESCE(TA.tar_valor, 0) AS tarifa,
+                    COALESCE(TT.tar_tiempo, 'HORA') AS tarifa_tiempo
+                FROM parqueo AS PA
+                INNER JOIN usuarios AS US ON PA.usuario = US.id
+                LEFT JOIN cliente AS CLI ON CLI.placa = PA.placa_cli
+                LEFT JOIN categorias AS CAT ON CAT.cat_id = COALESCE(CLI.categoria, PA.tarifa)
+                LEFT JOIN tarifas AS TA ON TA.tar_categoria = COALESCE(CLI.categoria, PA.tarifa)
+                LEFT JOIN tar_tiempo AS TT ON TT.tar_id_nombre = TA.tar_nombre
+                WHERE PA.parqueo_id = :ticket";
 
-                    INNER JOIN categorias AS CA ON PA.tarifa = CA.cat_id 
-                    INNER JOIN tarifas AS TA ON PA.tarifa = TA.tar_categoria
-                    INNER JOIN usuarios AS US ON PA.usuario = US.id
-
-                    WHERE      parqueo_id = $ticket
-                    
-                        ";
-    $stmt = $pdo->query($query);
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([':ticket' => $ticket]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        $fpdf->SetFont('Arial', '', 10);
+        $fpdf->Cell(0, 10, 'No se encontró el ticket solicitado', 0, 1, 'C');
+        $fpdf->Output();
+        exit;
+    }
 
     $fpdf->Ln(0);
     $fpdf->SetFont('Arial', '', 12);
@@ -136,7 +144,7 @@ function cabecera($fpdf, $pdo)
     $fpdf->SetFont('Arial', '', 12);
     $fpdf->Cell(30, 6, 'Tarifa : ', 0, 0, 'L');
     $fpdf->SetFont('Arial', '', 10);
-    $fpdf->MultiCell(40, 6, '$' . number_format($row['tarifa'], 0, ",", ".") . " * " . 'HORA' . " Y/O FRACCION ", 0, 'L');
+    $fpdf->MultiCell(40, 6, '$' . number_format((float)$row['tarifa'], 0, ",", ".") . ' * ' . ($row['tarifa_tiempo'] ?? 'HORA') . ' Y/O FRACCION ', 0, 'L');
 
 
     $fpdf->SetFont('Arial', '', 10);

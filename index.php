@@ -110,6 +110,18 @@ if ($_POST) {
 										}
 										?>
 										<!-- fin Mensaje error usuario -->
+										<!-- Mensaje timeout sesión -->
+										<?php
+										if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'timeout') {
+										?>
+											<div class="alerta alert alert-info alert-dismissible fade show" role="alert">
+												<strong>Sesión Expirada</strong> Su sesión ha caducado por inactividad (20 minutos). Por favor, inicie sesión nuevamente.
+												<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+											</div>
+										<?php
+										}
+										?>
+										<!-- fin Mensaje timeout sesión -->
 									<!-- Mensajes -->
 										<form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 											<div class="input-group  mb-3">

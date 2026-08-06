@@ -4,9 +4,9 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
-// Tiempo de inactividad en segundos (20 minutos)
-// Este es el valor de producción. Para pruebas locales, reemplaza por un valor menor (ej. 30).
-$inactive = 20 * 60; // 20 minutos (producción)
+// Tiempo de inactividad en segundos (3 minutos - pruebas)
+// Para producción cambiar a 20 * 60 (20 minutos).
+$inactive = 3 * 60; // 3 minutos (pruebas)
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     // destruir sesión y redirigir al login
     session_unset();

@@ -42,6 +42,7 @@ SELECT
     RE.ticket,
     RE.recibo_man,
     RE.placa,
+    COALESCE(CL.nombre, 'Sin propietario') AS propietario,
     RE.fecha_ini,
     RE.fecha_fin,
     RE.tiempo,
@@ -53,7 +54,7 @@ SELECT
     US.nombre,
     CA.cat_nombre
 FROM recibo AS RE
-INNER JOIN cliente AS CL ON RE.placa = CL.placa
+LEFT JOIN cliente AS CL ON RE.placa = CL.placa
 INNER JOIN usuarios AS US ON RE.usuario = US.id
 INNER JOIN categorias AS CA ON RE.tarifa_recibo = CA.cat_id
 INNER JOIN caja AS CJ ON CJ.recibo_id = RE.recibo_id
@@ -134,6 +135,7 @@ $parqueoUlt1 = $stmt->fetchAll();
                                         <th>FECHA</th>
                                         <th>CAJERO</th>
                                         <th>PLACA</th>
+                                        <th>PROPIETARIO</th>
                                         <th>INGRESO</th>
                                         <th>SALIDA</th>
                                         <th>TIEMPO</th>
@@ -161,6 +163,7 @@ $parqueoUlt1 = $stmt->fetchAll();
                                             <td><?= $fila['fecha_recibo'] ?></td>
                                             <td><?= $fila['nombre'] ?></td>
                                             <td><?= $fila['placa'] ?></td>
+                                            <td><?= htmlspecialchars($fila['propietario'] ?? 'Sin propietario') ?></td>
                                             <td><?= $fila['fecha_ini'] ?></td>
                                             <td><?= $fila['fecha_fin'] ?></td>
                                             <td><?= $fila['tiempo'] ?></td>

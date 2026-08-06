@@ -167,9 +167,13 @@ $placa = $_GET['placa'] ?? '';
                                                 id="fecha_fin"
                                                 name="fecha_fin">
                                             <!-- </div> -->
-                                            <div class="col-md-12 mt-4 d-flex align-items-end">
-                                                <button class="btn btn-success btn-lg w-100" id="btnPagar">
-                                                    Pagar Mensualidad
+                                            <input type="hidden" id="accion" name="accion" value="imprimir">
+                                            <div class="col-md-12 mt-4 d-flex gap-2">
+                                                <button type="button" class="btn btn-success btn-lg flex-fill" id="btnPagarImprimir" data-action="imprimir">
+                                                    Pagar e Imprimir
+                                                </button>
+                                                <button type="button" class="btn btn-secondary btn-lg flex-fill" id="btnPagarGenerar" data-action="generar">
+                                                    Pagar sin imprimir
                                                 </button>
                                             </div>
                                             <div id="respuesta"></div>
@@ -414,24 +418,47 @@ $placa = $_GET['placa'] ?? '';
                             }
                         });
 
+                        $('#btnPagarImprimir, #btnPagarGenerar').click(function(e) {
+                            e.preventDefault();
+                            $('#accion').val($(this).data('action'));
+                            $('#formPagos').submit();
+                        });
+
                         $("#formPagos").submit(function(e) {
                             e.preventDefault();
+                            const accion = $('#accion').val();
                             $.ajax({
                                 url: "pagar_mensualidad.php",
                                 type: "POST",
+                                dataType: 'json',
                                 data: $(this).serialize(),
-
                                 success: function(resp) {
-                                    window.open(
-                                            '../modulos/imprimir_ticket_php/recibomens.php',
-                                            '_blank',
-                                            'width=400,height=600'
-                                        );
-                                    $("#respuesta").html(resp);
-                                    $("#formPagos")[0].reset();
-                                    $("#placa").val("");
-                                    $('#tablaPagos').html('');
-                                    //location.reload(); // 🔥 recarga la página
+                                    if (resp.resultado === 'OK') {
+                                        let mensaje = 'Pago registrado correctamente.';
+                                        if (accion === 'imprimir' && resp.recibo_id) {
+                                            mensaje += ' Se está imprimiendo el ticket.';
+                                            window.open(
+                                                '../modulos/imprimir_ticket_php/recibomens.php?recibo_id=' + resp.recibo_id,
+                                                '_blank',
+                                                'width=400,height=600'
+                                            );
+                                        } else if (accion === 'generar' && resp.recibo_id) {
+                                            mensaje += ' Se generó el recibo en PDF.';
+                                            window.open(
+                                                '../modulos/factura/pdf_recibo_mens.php?recibo_id=' + resp.recibo_id,
+                                                '_blank'
+                                            );
+                                        }
+                                        $("#respuesta").html('<div class="alert alert-success">' + mensaje + '</div>');
+                                        $("#formPagos")[0].reset();
+                                        $("#placa").val("");
+                                        $('#tablaPagos').html('');
+                                    } else {
+                                        $("#respuesta").html('<div class="alert alert-danger">Error: ' + (resp.error || 'No se pudo procesar el pago.') + '</div>');
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    $("#respuesta").html('<div class="alert alert-danger">Error: ' + error + '</div>');
                                 }
                             });
                         });

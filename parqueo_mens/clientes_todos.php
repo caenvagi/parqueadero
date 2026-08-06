@@ -98,6 +98,45 @@ $clientes = $stmt->fetchAll();
     transform: scale(1.1);
     box-shadow: 0 3px 8px rgba(0,0,0,0.3);
 }
+.table-responsive {
+    position: relative;
+}
+
+.spinner-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.92);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: #343a40;
+}
+
+.spinner-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+#pageLoading {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    color: #343a40;
+}
+
+#pageLoading .spinner-border {
+    width: 4rem;
+    height: 4rem;
+}
     </style>
 </head>
 <?php require '../logs/nav-bar.php'; ?>
@@ -105,6 +144,12 @@ $clientes = $stmt->fetchAll();
     <main class="ms-5 me-5">
 
         <body class="bg-light">
+            <div id="pageLoading">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <div>Cargando la página...</div>
+            </div>
             <div class="container mt-4">
                 <div class="card shadow">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -118,6 +163,12 @@ $clientes = $stmt->fetchAll();
                     <div class="card-body">
 
                         <div class="table-responsive">
+                            <div id="tablaCargando" class="spinner-overlay">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <div>Cargando clientes...</div>
+                            </div>
                             <table class="table table-hover align-middle" id="tablaClientes">
                                 <thead>
                                     <tr>
@@ -227,11 +278,35 @@ $clientes = $stmt->fetchAll();
 
 
 
+            <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+            <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+            <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+            <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+            <!-- Excel -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+            <!-- PDF -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
             <script>
                 $(document).ready(function() {
-                    $('#tablaClientes').DataTable({
+                    var tabla = $('#tablaClientes').DataTable({
                         responsive: true,
                         pageLength: 25,
+                        processing: true,
 
                         dom: 'Bfrtip',
 
@@ -266,38 +341,25 @@ $clientes = $stmt->fetchAll();
                         ],
 
                         language: {
-                            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+                            processing: "Cargando clientes..."
                         },
+
+                        initComplete: function() {
+                            $('#tablaCargando').fadeOut(200);
+                            $('#pageLoading').fadeOut(200);
+                        }
 
                         // columnDefs: [
                         //     { orderable: false, targets: 7 } // columna Acciones
                         // ]
                     });
+
+                    $('#tablaClientes').on('processing.dt', function(e, settings, processing) {
+                        $('#tablaCargando').toggle(processing);
+                    });
                 });
             </script>
-
-            <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-            <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
-            <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
-            <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
-
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
-            <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-
-            <!-- Excel -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-            <!-- PDF -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
 
 </div>

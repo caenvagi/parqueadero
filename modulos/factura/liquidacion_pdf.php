@@ -156,7 +156,7 @@ INNER JOIN recibo AS R ON C.recibo_id = R.recibo_id
 WHERE CL.id_liquidacion = $id_liquidacion
 
 
-ORDER BY C.id_movimiento ASC";
+ORDER BY R.recibo_man ASC, R.recibo_id ASC, C.fecha_movimiento ASC, C.id_movimiento ASC";
 
 $stmt = $pdo->prepare($query);
 $stmt->execute();

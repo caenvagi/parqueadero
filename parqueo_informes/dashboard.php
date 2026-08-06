@@ -4,10 +4,10 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
-// Control de inactividad: timeout de prueba 30 segundos (usar 20*60 en producción)
-// Tiempo de inactividad en segundos (20 minutos - producción).
-// Para pruebas locales, cambiar temporalmente a 30 (segundos).
-$inactive = 20 * 60; // 20 minutos (producción)
+// Control de inactividad: timeout de prueba 3 minutos
+// Tiempo de inactividad en segundos (3 minutos - pruebas).
+// Para producción cambiar a 20 * 60 (20 minutos).
+$inactive = 3 * 60; // 3 minutos (pruebas)
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     session_unset();
     session_destroy();

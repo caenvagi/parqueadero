@@ -103,7 +103,8 @@ function construirTextoTiempo($fechaInicio, $fechaFin)
 }
 
 if (!$placa) {
-    echo "error 1";
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['resultado' => 'ERROR', 'error' => 'Placa no enviada']);
     exit;
 }
 
@@ -291,14 +292,19 @@ try {
     ]);
 
     $pdo->commit();
-
-    echo "OK";
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['resultado' => 'OK', 'recibo_id' => $recibo_id]);
+    exit;
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-
-    echo "Error: " . $e->getMessage();
-    echo "<br>Linea: " . $e->getLine();
-    echo "<br>Archivo: " . $e->getFile();
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'resultado' => 'ERROR',
+        'error' => $e->getMessage(),
+        'linea' => $e->getLine(),
+        'archivo' => $e->getFile(),
+    ]);
+    exit;
 }

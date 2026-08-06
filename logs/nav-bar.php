@@ -6,21 +6,12 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once "../conexion/conexion.php";
 
-// Control de inactividad: cerrar sesión después de 20 minutos (1200 segundos)
-$inactive = 20 * 60; // 20 minutos
-// Valor de producción: 20 minutos. Para pruebas reducir temporalmente a 30 (segundos).
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
-    session_unset();
-    session_destroy();
-    header("Location: index.php?mensaje=timeout");
+// Verificar que la sesión está activa (el control de timeout ya se hace en el archivo principal)
+if (!isset($_SESSION['id'])) {
+    header("Location: ../index.php");
     exit();
 }
-// actualizar último tiempo de actividad
-$_SESSION['last_activity'] = time();
 
-if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
-}
 $id = $_SESSION['id'];
 $nombre = $_SESSION['nombre'];
 $tipo_usuario = $_SESSION['tipo_usuario'];
@@ -390,6 +381,10 @@ if ($tipo_usuario == 1) {
                                     <a class="nav-link" href="../caja/caja_registro.php">
                                         <div><i class="bi bi-journal-plus" style="font-size:24px"></i></div>
                                         &nbsp;&nbsp;&nbsp;Registros
+                                    </a>
+                                    <a class="nav-link" href="../caja/liquidaciones_listado.php">
+                                        <div><i class="bi bi-journal-plus" style="font-size:24px"></i></div>
+                                        &nbsp;&nbsp;&nbsp;Liquidaciones
                                     </a>
                                     <!-- <a class="nav-link" href="../config/caja_conceptos.php">
                                         <div><i class="bi bi-card-checklist" style="font-size:24px"></i></div>

@@ -42,20 +42,44 @@
     <!-- Inactivity auto-logout script (aplicado globalmente) -->
     <script>
         (function() {
-            // Tiempo de inactividad en milisegundos (20 minutos - producción)
-            // Para pruebas locales cambiar a 30 * 1000 (30 segundos)
-            var maxInactive = 20 * 60 * 1000; // 20 minutos
+            // Tiempo de inactividad en milisegundos (3 minutos - pruebas)
+            // Para producción cambiar a 20 * 60 * 1000 (20 minutos)
+            var maxInactive = 3 * 60 * 1000; // 3 minutos
 
             var timer;
+            var isLoggingOut = false;
+            var lastActivityTime = new Date().getTime();
+            
             function logout() {
+                if (isLoggingOut) return; // Evitar múltiples redirecciones
+                isLoggingOut = true;
+                console.log('Timeout de sesión: Redirigiendo a logout...');
                 // Redirige al logout del proyecto (ruta absoluta)
-                window.location.href = '/parqueadero/logout.php?timeout=1';
+                var logoutUrl = window.location.protocol + '//' + window.location.hostname;
+                if (window.location.port) {
+                    logoutUrl += ':' + window.location.port;
+                }
+                logoutUrl += '/parqueadero/logout.php?timeout=1';
+                window.location.href = logoutUrl;
             }
 
             function resetTimer() {
+                lastActivityTime = new Date().getTime();
                 clearTimeout(timer);
                 timer = setTimeout(logout, maxInactive);
             }
+
+            // Verificación periódica del timeout (cada 10 segundos)
+            function checkInactivity() {
+                var currentTime = new Date().getTime();
+                var timeSinceActivity = currentTime - lastActivityTime;
+                console.log('Tiempo de inactividad: ' + Math.floor(timeSinceActivity / 1000) + ' segundos');
+                if (timeSinceActivity > maxInactive) {
+                    logout();
+                }
+            }
+            
+            setInterval(checkInactivity, 10000); // Verificar cada 10 segundos
 
             // Registrar eventos que indiquen actividad
             window.addEventListener('load', resetTimer);

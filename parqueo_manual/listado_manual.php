@@ -302,7 +302,7 @@ function h($valor)
                 $('#tablaFaltantesFpar').DataTable({
                     pageLength: 10,
                     order: [
-                        [0, 'asc']
+                        [0, 'desc']
                     ],
                     language: {
                         search: "Buscar:",

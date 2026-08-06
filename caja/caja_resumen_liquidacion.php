@@ -15,7 +15,8 @@ $in  = str_repeat('?,', count($ids) - 1) . '?';
 $sql = "SELECT C.id_movimiento, C.recibo_id, C.desc_movimiento, C.valor_ingreso, C.valor_egreso, R.recibo_man AS FPAR
         FROM caja as C 
         INNER JOIN recibo as R ON C.recibo_id = R.recibo_id
-        WHERE C.id_movimiento IN ($in)";
+    WHERE C.id_movimiento IN ($in)
+    ORDER BY R.recibo_man ASC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($ids);
 $rows = $stmt->fetchAll();

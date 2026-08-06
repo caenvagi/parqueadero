@@ -65,7 +65,8 @@ $conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_concepto
               <select name="movimiento" class="form-select" required>
                 <option value="">Seleccione un concepto</option>
                 <?php foreach ($conceptos as $concepto): ?>
-                  <option value="<?= $concepto['id_concepto'] ?>">
+                  <?php $nombreConcepto = strtolower(trim($concepto['nombre_concepto'])); ?>
+                  <option value="<?= $concepto['id_concepto'] ?>" data-recibo="<?= strpos($nombreConcepto, 'consign') !== false ? '1' : '0' ?>">
                     <?= htmlspecialchars($concepto['nombre_concepto']) ?>
                   </option>
                 <?php endforeach; ?>
@@ -74,6 +75,11 @@ $conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_concepto
             <div class="mb-1">
               <label for="valor" class="form-label">Valor</label>
               <input type="number" name="valor" class="form-control" required>
+            </div>
+
+            <div class="mb-1" id="reciboField" style="display:none;">
+              <label for="recibo" class="form-label">Número de recibo</label>
+              <input type="text" name="recibo" id="reciboInput" class="form-control" placeholder="Ingrese el número de recibo">
             </div>
 
             <div class="mb-1">
@@ -92,6 +98,27 @@ $conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_concepto
         </div>
       </div>
       <script>
+        function toggleReciboField() {
+          const tipo = $('input[name="tipo"]:checked').val();
+          const selectedOption = $('select[name="movimiento"] option:selected');
+          const requiereRecibo = selectedOption.attr('data-recibo') === '1';
+          const mostrar = tipo === 'EGRESO' && requiereRecibo;
+          const $field = $('#reciboField');
+          const $input = $('#reciboInput');
+
+          $field.toggle(mostrar);
+          $input.prop('required', mostrar);
+
+          if (!mostrar) {
+            $input.val('');
+          }
+        }
+
+        $(function () {
+          $('input[name="tipo"], select[name="movimiento"]').on('change', toggleReciboField);
+          toggleReciboField();
+        });
+
         $('#formCaja').on('submit', function(e) {
           e.preventDefault();
 
@@ -104,6 +131,7 @@ $conceptos = $pdo->query("SELECT id_concepto, nombre_concepto FROM caja_concepto
               if (res.trim() === "OK") {
                 alert("Guardado correctamente");
                 $('#formCaja')[0].reset();
+                toggleReciboField();
               } else {
                 alert(res); // solo si hay error
               }
