@@ -35,9 +35,12 @@ $sql = "SELECT
             ON p.caseta = c.caseta_id 
             AND p.estado = 'SI'
 
-            LEFT JOIN cliente cl 
+        LEFT JOIN cliente cl 
             ON cl.caseta = c.caseta_id 
-            AND cl.activo = 'SI' 
+            AND cl.activo = 'SI'
+
+        WHERE LOWER(TRIM(c.casetas_estado)) NOT LIKE '%inactivo%'
+          AND LOWER(TRIM(c.casetas_loc)) NOT LIKE '%inactivo%'
         
         ORDER BY c.caseta_id";
 
@@ -48,8 +51,32 @@ $casetas = $stmt->fetchAll();
 $casetas_por_loc = [];
 
 foreach ($casetas as $c) {
+    $loc = strtolower(trim((string)($c['casetas_loc'] ?? '')));
+    $estado = strtolower(trim((string)($c['casetas_estado'] ?? '')));
+
+    if (stripos($loc, 'inact') !== false || stripos($estado, 'inact') !== false) {
+        continue;
+    }
+
     $casetas_por_loc[$c['casetas_loc']][] = $c;
 }
+
+$orden_loc = [
+    'parqueadero' => 0,
+    'cancha' => 1,
+    'motos' => 2,
+    'lote' => 3,
+];
+
+uksort($casetas_por_loc, function ($a, $b) use ($orden_loc) {
+    $aKey = strtolower(trim((string)$a));
+    $bKey = strtolower(trim((string)$b));
+
+    $aOrder = $orden_loc[$aKey] ?? 999;
+    $bOrder = $orden_loc[$bKey] ?? 999;
+
+    return $aOrder <=> $bOrder;
+});
 ?>
 
 <!DOCTYPE html>
@@ -94,6 +121,12 @@ foreach ($casetas as $c) {
 <div class="row g-3">
 
 <?php foreach($casetas_por_loc as $loc => $listaCasetas): ?>
+<?php
+    $locNorm = strtolower(trim((string)$loc));
+    if (stripos($locNorm, 'inact') !== false) {
+        continue;
+    }
+?>
 
 <h4 class="mt-4 mb-3 text-primary">
 Ubicación: <?php echo $loc; ?>
