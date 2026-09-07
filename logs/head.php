@@ -44,7 +44,7 @@
         (function() {
             // Tiempo de inactividad en milisegundos (3 minutos - pruebas)
             // Para producción cambiar a 20 * 60 * 1000 (20 minutos)
-            var maxInactive = 3 * 60 * 1000; // 3 minutos
+            var maxInactive = 20 * 60 * 1000; // 20 minutos
 
             var timer;
             var isLoggingOut = false;

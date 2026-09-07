@@ -3,6 +3,7 @@ require_once "../conexion/conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha = $_POST['fecha_movimiento'];
+    $recibo_id = 0;
     $movimiento = $_POST['movimiento'];
     $desc = $_POST['desc_movimiento'];
     $tipo = $_POST['tipo'];
@@ -33,12 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo->exec("ALTER TABLE caja ADD COLUMN recibo_id VARCHAR(100) NULL");
         }
 
-        $sql = "INSERT INTO caja (fecha_movimiento, movimiento, desc_movimiento, valor_ingreso, valor_egreso, user_login, liquidado, caja_tipo, caja, recibo_id)
-                VALUES (:fecha, :movimiento, :descripcion, :valor_ingreso, :valor_egreso, :user_login, :liquidado, :caja_tipo, :caja, :recibo_id)";
+        $sql = "INSERT INTO caja (fecha_movimiento, recibo_id, movimiento, desc_movimiento, valor_ingreso, valor_egreso, user_login, liquidado, caja_tipo, caja)
+                VALUES (:fecha, :recibo_id, :movimiento, :descripcion, :valor_ingreso, :valor_egreso, :user_login, :liquidado, :caja_tipo, :caja)";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             ':fecha' => $fecha,
+            ':recibo_id' => $recibo_id,
             ':movimiento' => $movimiento,
             ':descripcion' => $desc,
             ':valor_ingreso' => $valor_ingreso,
@@ -46,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':user_login' => $user_login,
             ':liquidado' => $liquidado,
             ':caja_tipo' => $caja_tipo,
-            ':caja' => $caja,
-            ':recibo_id' => $reciboValor
+            ':caja' => $caja
+           // ':recibo_id' => $reciboValor
         ]);
 
         echo "OK";
