@@ -158,6 +158,20 @@ $placa = $_GET['placa'] ?? '';
                                                     <option value="manual">Manual</option>
                                                 </select>
                                             </div>
+                                            <!-- MEDIO DE PAGO -->
+                                            <div class="col-md-12 mt-2">
+                                                <label class="form-label">Tipo de pago</label>
+                                                <select name="tipo_pago" id="tipo_pago" class="form-select" required>
+                                                    <option value="">Seleccione el medio de pago</option>
+                                                    <option value="efectivo">Efectivo</option>
+                                                    <option value="nequi">Nequi</option>
+                                                    <option value="bancolombia">Bancolombia</option>
+                                                    <option value="bold">Bold</option>
+                                                    <option value="daviplata">Daviplata</option>
+                                                    <option value="llave">Llave</option>
+                                                    <option value="caja_parque">Parque</option>
+                                                </select>
+                                            </div>
                                             <!-- FPAR (solo si es manual) -->
                                             <div class="col-md-12 mt-2" id="div_fpar" style="display:none;">
                                                 <label class="form-label">FPAR (Número recibo manual)</label>
@@ -236,6 +250,7 @@ $placa = $_GET['placa'] ?? '';
                                             <th>Fecha Inicio</th>
                                             <th>Fecha Fin</th>
                                             <th>Valor</th>
+                                            <th>Tipo de pago</th>
                                             <th>Estado</th>
                                         </tr>
                                     </thead>

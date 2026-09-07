@@ -34,7 +34,8 @@ $params = [
 // Consulta base
 $sql = "SELECT  caja.*, 
                 usuarios.nombre AS nombre_usuario,
-                recibo.recibo_man AS FPAR
+                recibo.recibo_man AS FPAR,
+                recibo.tipo_pago
         FROM caja
         LEFT JOIN usuarios ON caja.user_login = usuarios.id
         INNER JOIN recibo ON caja.recibo_id = recibo.recibo_id
@@ -114,6 +115,7 @@ $hora_actual = date('H:i:s');
                 <th>Fecha</th>
                 <th>Recibo</th>
                 <th>F-PAR</th>
+                <th>Tipo de pago</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -133,6 +135,7 @@ $hora_actual = date('H:i:s');
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
                     <td><?= $mov['recibo_id'] ?></td>
                     <td><?= $mov['FPAR'] ?></td>
+                    <td><?= htmlspecialchars(ucfirst($mov['tipo_pago'] ?? 'No registrado')) ?></td>
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>
@@ -153,7 +156,7 @@ $hora_actual = date('H:i:s');
         </tbody>
         <tfoot>
             <tr class="table-secondary">
-                <th colspan="5">Totales</th>
+                <th colspan="6">Totales</th>
                 <th class="text-success"><?= number_format($total_ingresos) ?></th>
                 <th class="text-danger"><?= number_format($total_egresos) ?></th>
                 <th colspan="5">Saldo: <strong><?= number_format($saldo) ?></strong></th>
@@ -202,6 +205,7 @@ $hora_actual = date('H:i:s');
               <tr>
                 <th>Recibo</th>
                 <th>F-PAR</th>
+                <th>Tipo de pago</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -274,7 +278,8 @@ document.getElementById('btnPreliquidar').addEventListener('click', function () 
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${m.recibo_id}</td>
-                <td>${m.rec_manual}</td>
+                <td>${m.recibo_man}</td>
+                <td>${m.tipo_pago || 'No registrado'}</td>
                 <td>${m.descripcion}</td>
                 <td class="text-end text-success">${m.valor_ingreso ? m.valor_ingreso.toLocaleString() : ''}</td>
                 <td class="text-end text-danger">${m.valor_egreso ? m.valor_egreso.toLocaleString() : ''}</td>

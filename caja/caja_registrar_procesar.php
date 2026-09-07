@@ -3,12 +3,12 @@ require_once "../conexion/conexion.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha = $_POST['fecha_movimiento'];
-    $recibo_id = 0;
+    $recibo_id = $_POST['recibo'];;
     $movimiento = $_POST['movimiento'];
     $desc = $_POST['desc_movimiento'];
     $tipo = $_POST['tipo'];
     $valor = (int) $_POST['valor'];
-    $caja_tipo = $_POST['caja_tipo'];
+    $tipo = $_POST['tipo'];
     $user_login = $_POST['user_login'];
     $liquidado = $_POST['liquidado'];
     $caja = $_POST['caja_tipo'];
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':valor_egreso' => $valor_egreso,
             ':user_login' => $user_login,
             ':liquidado' => $liquidado,
-            ':caja_tipo' => $caja_tipo,
+            ':caja_tipo' => $tipo,
             ':caja' => $caja
            // ':recibo_id' => $reciboValor
         ]);

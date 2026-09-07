@@ -26,6 +26,7 @@ $sql = "SELECT
             fecha_inicio,
             fecha_fin,
             valor,
+            tipo_pago,
             estado,
             fecha
         FROM pagos
@@ -58,6 +59,7 @@ foreach($pagos as $p){
         <td>{$p['fecha_inicio']}</td>
         <td>{$p['fecha_fin']}</td>
         <td>$ ".number_format($p['valor'],0,',','.')."</td>
+        <td>".htmlspecialchars(ucfirst($p['tipo_pago'] ?? 'No registrado'))."</td>
         <td>$estado</td>
 
     </tr>";

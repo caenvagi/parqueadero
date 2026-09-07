@@ -34,7 +34,8 @@ $params = [
 // Consulta base
 $sql = "SELECT  caja.*, 
                 usuarios.nombre AS nombre_usuario,
-                recibo.recibo_man AS FPAR
+                recibo.recibo_man AS FPAR,
+                recibo.tipo_pago
         FROM caja
         LEFT JOIN usuarios ON caja.user_login = usuarios.id
         INNER JOIN recibo ON caja.recibo_id = recibo.recibo_id
@@ -57,9 +58,28 @@ $cajas_unicas = $pdo->query("SELECT DISTINCT caja FROM caja ORDER BY caja")->fet
 // Totales
 $total_ingresos = 0;
 $total_egresos = 0;
+$totales_por_usuario = [];
 foreach ($movimientos as $m) {
-    $total_ingresos += $m['valor_ingreso'];
-    $total_egresos += $m['valor_egreso'];
+    $ingreso = (float) ($m['valor_ingreso'] ?? 0);
+    $egreso = (float) ($m['valor_egreso'] ?? 0);
+    $total_ingresos += $ingreso;
+    $total_egresos += $egreso;
+
+    $usuarioId = (string) ($m['user_login'] ?? 'sin_usuario');
+    $tipoPago = strtolower(trim($m['tipo_pago'] ?? '')) ?: 'no registrado';
+    $clave_resumen = $usuarioId . '|' . $tipoPago;
+    if (!isset($totales_por_usuario[$clave_resumen])) {
+        $totales_por_usuario[$clave_resumen] = [
+            'nombre' => $m['nombre_usuario'] ?? 'Desconocido',
+            'tipo_pago' => $tipoPago,
+            'ingresos' => 0,
+            'egresos' => 0,
+            'movimientos' => 0,
+        ];
+    }
+    $totales_por_usuario[$clave_resumen]['ingresos'] += $ingreso;
+    $totales_por_usuario[$clave_resumen]['egresos'] += $egreso;
+    $totales_por_usuario[$clave_resumen]['movimientos']++;
 }
 $saldo = $total_ingresos - $total_egresos;
 
@@ -114,6 +134,7 @@ $hora_actual = date('H:i:s');
                 <th>Fecha</th>
                 <th>Recibo</th>
                 <th>F-PAR</th>
+                <th>Tipo de pago</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -133,6 +154,7 @@ $hora_actual = date('H:i:s');
                     <td><?= $fecha->format('d/m/Y H:i') ?></td>
                     <td><?= $mov['recibo_id'] ?></td>
                     <td><?= $mov['FPAR'] ?></td>
+                    <td><?= htmlspecialchars(ucfirst($mov['tipo_pago'] ?? 'No registrado')) ?></td>
                     <td><?= htmlspecialchars($mov['desc_movimiento']) ?></td>
                     <td class="text-success"><?= $mov['valor_ingreso'] ? number_format($mov['valor_ingreso']) : '' ?></td>
                     <td class="text-danger"><?= $mov['valor_egreso'] ? number_format($mov['valor_egreso']) : '' ?></td>
@@ -153,7 +175,7 @@ $hora_actual = date('H:i:s');
         </tbody>
         <tfoot>
             <tr class="table-secondary">
-                <th colspan="5">Totales</th>
+                <th colspan="6">Totales</th>
                 <th class="text-success"><?= number_format($total_ingresos) ?></th>
                 <th class="text-danger"><?= number_format($total_egresos) ?></th>
                 <th colspan="5">Saldo: <strong><?= number_format($saldo) ?></strong></th>
@@ -161,6 +183,44 @@ $hora_actual = date('H:i:s');
         </tfoot>
         
     </table>
+
+    <h4 class="mt-4">Resumen por usuario y tipo de pago</h4>
+    <p class="text-muted">Total cobrado y pagado por cada usuario, separado por medio de pago.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-info">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Tipo de pago</th>
+                    <th class="text-center">Movimientos</th>
+                    <th class="text-end text-success">Total cobrado</th>
+                    <th class="text-end text-danger">Total pagado</th>
+                    <th class="text-end">Saldo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (count($totales_por_usuario) > 0): ?>
+                    <?php foreach ($totales_por_usuario as $resumen_usuario): ?>
+                        <?php $saldo_usuario = $resumen_usuario['ingresos'] - $resumen_usuario['egresos']; ?>
+                        <tr>
+                            <td><?= htmlspecialchars($resumen_usuario['nombre']) ?></td>
+                            <td><?= htmlspecialchars(ucfirst($resumen_usuario['tipo_pago'])) ?></td>
+                            <td class="text-center"><?= $resumen_usuario['movimientos'] ?></td>
+                            <td class="text-end text-success">$<?= number_format($resumen_usuario['ingresos'], 0, ',', '.') ?></td>
+                            <td class="text-end text-danger">$<?= number_format($resumen_usuario['egresos'], 0, ',', '.') ?></td>
+                            <td class="text-end fw-bold <?= $saldo_usuario >= 0 ? 'text-primary' : 'text-danger' ?>">
+                                $<?= number_format($saldo_usuario, 0, ',', '.') ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No hay movimientos para resumir.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 
 
 
@@ -197,11 +257,26 @@ $hora_actual = date('H:i:s');
         <p><strong>Fecha:</strong> <span id="fechaActual"></span></p>
 
         <div class="table-responsive">
+                    <h6 class="mt-2">Resumen por usuario y tipo de pago seleccionado</h6>
+                    <table class="table table-bordered table-sm mb-4">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Tipo de pago</th>
+                                <th class="text-end text-success">Cobrado</th>
+                                <th class="text-end text-danger">Pagado</th>
+                                <th class="text-end">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaResumenUsuarios"></tbody>
+                    </table>
+
           <table class="table table-bordered table-striped">
             <thead class="table-dark">
               <tr>
                 <th>Recibo</th>
                 <th>F-PAR</th>
+                <th>Tipo de pago</th>
                 <th>Descripción</th>
                 <th>Ingreso</th>
                 <th>Egreso</th>
@@ -212,12 +287,12 @@ $hora_actual = date('H:i:s');
             </tbody>
             <tfoot>
   <tr class="table-secondary">
-    <th colspan="3" class="text-end">Totales:</th>
+    <th colspan="4" class="text-end">Totales:</th>
     <th id="totalIngreso" class="text-success text-end">$0</th>
     <th id="totalEgreso" class="text-danger text-end">$0</th>
   </tr>
   <tr class="table-info">
-    <th colspan="4" class="text-end">💰 Total a Liquidar:</th>
+    <th colspan="5" class="text-end">💰 Total a Liquidar:</th>
     <th id="totalLiquidar" class="text-end fw-bold">$0</th>
   </tr>
 </tfoot>
@@ -287,12 +362,14 @@ document.getElementById('btnPreliquidar').addEventListener('click', function () 
 
         let totalIngreso = 0;
         let totalEgreso = 0;
+        const totalesPorUsuario = {};
 
         data.movimientos.forEach(m => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${m.recibo_id}</td>
                 <td>${m.recibo_man}</td>
+                <td>${m.tipo_pago || 'No registrado'}</td>
                 <td>${m.descripcion}</td>
                 <td class="text-end text-success">${m.valor_ingreso ? m.valor_ingreso.toLocaleString() : ''}</td>
                 <td class="text-end text-danger">${m.valor_egreso ? m.valor_egreso.toLocaleString() : ''}</td>
@@ -301,6 +378,35 @@ document.getElementById('btnPreliquidar').addEventListener('click', function () 
 
             totalIngreso += m.valor_ingreso || 0;
             totalEgreso += m.valor_egreso || 0;
+
+            const usuarioId = m.user_login || 'sin_usuario';
+            const tipoPago = m.tipo_pago || 'no registrado';
+            const claveResumen = usuarioId + '|' + tipoPago;
+            if (!totalesPorUsuario[claveResumen]) {
+                totalesPorUsuario[claveResumen] = {
+                    nombre: m.nombre_usuario || 'Desconocido',
+                    tipo_pago: tipoPago,
+                    ingresos: 0,
+                    egresos: 0
+                };
+            }
+            totalesPorUsuario[claveResumen].ingresos += m.valor_ingreso || 0;
+            totalesPorUsuario[claveResumen].egresos += m.valor_egreso || 0;
+        });
+
+        const resumenUsuarios = document.getElementById('tablaResumenUsuarios');
+        resumenUsuarios.innerHTML = '';
+        Object.values(totalesPorUsuario).forEach(usuario => {
+            const saldoUsuario = usuario.ingresos - usuario.egresos;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${usuario.nombre}</td>
+                <td>${usuario.tipo_pago.charAt(0).toUpperCase() + usuario.tipo_pago.slice(1)}</td>
+                <td class="text-end text-success">$${usuario.ingresos.toLocaleString()}</td>
+                <td class="text-end text-danger">$${usuario.egresos.toLocaleString()}</td>
+                <td class="text-end fw-bold">$${saldoUsuario.toLocaleString()}</td>
+            `;
+            resumenUsuarios.appendChild(tr);
         });
 
         document.getElementById('totalIngreso').textContent = '$' + totalIngreso.toLocaleString();
