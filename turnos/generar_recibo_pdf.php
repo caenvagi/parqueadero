@@ -4,7 +4,7 @@ require_once "../conexion/conexion.php";
 require_once "../modulos/fpdf/fpdf.php";
 
 if (!isset($_SESSION['id'])) {
-  header("Location: index.php");
+    header("Location: ../index.php");
 }
 $id = $_SESSION['id'];
 $tipo_usuario = $_SESSION['tipo_usuario'];

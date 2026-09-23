@@ -4,21 +4,21 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
-// Tiempo de inactividad en segundos (3 minutos - pruebas)
-// Para producción cambiar a 20 * 60 (20 minutos).
-$inactive = 3 * 60; // 3 minutos (pruebas)
+// Tiempo máximo de inactividad: 15 minutos.
+$inactive = 15 * 60;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     // destruir sesión y redirigir al login
     session_unset();
     session_destroy();
-    header("Location: index.php?mensaje=timeout");
+    header("Location: /parqueadero/index.php?mensaje=timeout");
     exit();
 }
 // actualizar último tiempo de actividad
 $_SESSION['last_activity'] = time();
 
 if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
+    header("Location: /parqueadero/index.php");
+    exit();
 }
 $id = $_SESSION['id'];
 $tipo_usuario = $_SESSION['tipo_usuario'];

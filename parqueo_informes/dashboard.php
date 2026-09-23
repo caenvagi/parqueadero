@@ -4,10 +4,8 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
-// Control de inactividad: timeout de prueba 3 minutos
-// Tiempo de inactividad en segundos (3 minutos - pruebas).
-// Para producción cambiar a 20 * 60 (20 minutos).
-$inactive = 3 * 60; // 3 minutos (pruebas)
+// Tiempo máximo de inactividad: 15 minutos.
+$inactive = 15 * 60;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     session_unset();
     session_destroy();
@@ -912,13 +910,12 @@ function iconoCategoria($categoria)
         });
     </script>
     <script>
-        // Cliente: redirigir automáticamente a logout después de 30s de inactividad
+        // Cliente: redirigir automáticamente a logout después de 15 minutos de inactividad
         (function() {
             var inactivityTime = function () {
                 var time;
-                // Tiempo inactividad cliente (20 minutos en producción).
-                // Para pruebas locales, use 30 * 1000 (30s).
-                var maxInactive = 20 * 60 * 1000; // 20 minutos
+                // Tiempo máximo de inactividad cliente: 15 minutos.
+                var maxInactive = 15 * 60 * 1000;
 
                 function logout() {
                     // Redirige a logout para destruir sesión en el servidor

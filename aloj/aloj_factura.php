@@ -65,7 +65,7 @@ $dias = $noches + 1;
 
     // Título al centro
     $this->SetFont('Arial','B',14);
-    $this->Cell(0,10,utf8_decode('FACTURA DE RESERVA'),0,1,'C');
+    $this->Cell(0,10,utf8_decode('RESERVA ALOJAMIENTO'),0,1,'C');
     $this->Ln(5);
     $this->SetFont('Arial','',10);
     $this->Cell(0,5,'Alojamiento Parque de la Familia', 0, 1, 'C');
@@ -90,7 +90,7 @@ $pdf->Cell(0,6,"Cliente:          " . utf8_decode($reserva['cliente_nombre']), 0
 $pdf->Cell(0,6,"Documento:   ". $reserva['tipo_doc'] . ' ' . $reserva['documento'], 0, 1);
 $pdf->Cell(0,6,"Telefono:       " . $reserva['telefono'], 0, 1);
 $pdf->Cell(0,6,"Placa:            " . $reserva['placa_vehiculo'], 0, 1);
-$pdf->Cell(0,6,"Procedencia: " . $reserva['Procedencia'], 0, 1);
+$pdf->Cell(0,6,"Procedencia: " . utf8_decode($reserva['Procedencia']), 0, 1);
 
 $pdf->Cell(0,6,"Habitacion:    " . utf8_decode($reserva['habitacion_nombre']), 0, 1);
 $pdf->Cell(0,6,"Fechas:         " . $reserva['fecha_ingreso'] . ' 03:00 pm' . " al " . $reserva['fecha_salida'] . ' 01:00 pm', 0, 1);
@@ -176,8 +176,80 @@ $pdf->Ln(5);
 $pdf->Cell(95,8,"Saldo Pendiente",1,0,'C');
 $pdf->Cell(95,8,"$ " . number_format($pendiente, 0, ',', '.'),1,1,'C');
 
-$pdf->Ln(5);
+$pdf->Ln(3);
 $pdf->Cell(0, 8, "Atendido por: " . $reserva['nombre'], 0, 1);
+$pdf->Ln(3);
+$pdf->Cell(0, 8, "Inventario ". utf8_decode($reserva['habitacion_nombre']), 0, 1);
+$pdf->SetFont('Arial','B',10);
+    $pdf->SetFillColor(230, 230, 230);
+    $pdf->Cell(80, 6, 'Producto', 1, 0, 'C', true);
+    $pdf->Cell(20, 6, 'Cantidad', 1, 0, 'C', true);
+    $pdf->Cell(50, 6, 'Recibido', 1, 0, 'C', true);
+    $pdf->Cell(40, 6, 'Estado', 1, 1, 'C', true);
+	
+	$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Almohadas', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();
+		
+	$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Cobijas', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();	
+		
+	$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Toallas', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();	
+		
+	$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Toallas de mano', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();
 
-$pdf->Output("I", "factura_reserva_{$reserva_id}.pdf");
+	$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Controles', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();	
+	
+		$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Pie de cama', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();
+		
+		$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, 'Cojines', 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();
+		
+		$pdf->SetFont('Arial','',10);
+    
+        $pdf->Cell(80, 6, utf8_decode('Tapete de baño'), 1,0,'C');
+        $pdf->Cell(20, 6, '', 1,0,'C');
+        $pdf->Cell(50, 6, '', 1,0,'C');
+        $pdf->Cell(40, 6, '', 1);
+        $pdf->Ln();
+		
+$pdf->Output("I", "reserva_{$reserva_id}.pdf");
 ?>

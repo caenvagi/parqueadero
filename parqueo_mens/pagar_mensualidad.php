@@ -6,7 +6,7 @@ require_once "../conexion/conexion.php";
 date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
 
@@ -36,6 +36,8 @@ function calcularFechaFinPeriodo($fechaInicio, $plan)
             return calcularFechaFinQuincena($fechaInicio);
         case 3:
             return calcularFechaFinMes($fechaInicio);
+        case 9:
+            return calcularFechaFinMes($fechaInicio);    
         default:
             throw new Exception("Plan de pago no valido");
     }

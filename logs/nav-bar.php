@@ -6,7 +6,18 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once "../conexion/conexion.php";
 
-// Verificar que la sesión está activa (el control de timeout ya se hace en el archivo principal)
+// Control server-side centralizado: 15 minutos de inactividad.
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > (15 * 60)) {
+    session_unset();
+    session_destroy();
+    header("Location: ../index.php?mensaje=timeout");
+    exit();
+}
+
+// Actualizar la última actividad mientras la sesión siga vigente.
+$_SESSION['last_activity'] = time();
+
+// Verificar que la sesión está activa.
 if (!isset($_SESSION['id'])) {
     header("Location: ../index.php");
     exit();

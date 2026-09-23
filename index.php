@@ -28,7 +28,7 @@ if ($_POST) {
 		$_SESSION['avatar'] = $row['avatar'];			
 		$_SESSION['activo'] = $row['activo'];
 
-		// Registrar la última actividad para control de inactividad (20 minutos)
+		// Registrar la última actividad para control de inactividad (15 minutos)
 		$_SESSION['last_activity'] = time();
 
 		header("location: parqueo_informes/dashboard.php");
@@ -115,7 +115,7 @@ if ($_POST) {
 										if (isset($_GET['mensaje']) and $_GET['mensaje'] == 'timeout') {
 										?>
 											<div class="alerta alert alert-info alert-dismissible fade show" role="alert">
-												<strong>Sesión Expirada</strong> Su sesión ha caducado por inactividad (20 minutos). Por favor, inicie sesión nuevamente.
+												<strong>Sesión Expirada</strong> Su sesión ha caducado por inactividad (15 minutos). Por favor, inicie sesión nuevamente.
 												<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 											</div>
 										<?php

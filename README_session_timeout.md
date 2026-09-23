@@ -1,18 +1,18 @@
 Cambio: implementación de cierre automático de sesión por inactividad
 
 Resumen
-- Se añadió cierre automático de sesión tras 20 minutos de inactividad.
+- Se añadió cierre automático de sesión tras 15 minutos de inactividad.
 
 Archivos modificados
 - index.php: se establece `$_SESSION['last_activity'] = time()` al iniciar sesión.
 - base_html.php: verificación server-side del timeout y destrucción de la sesión si expira.
 - logs/nav-bar.php: verificación server-side adicional y actualización de `last_activity`.
-- logs/head.php: script JS global que redirige al `logout.php` tras 20 minutos de inactividad del cliente.
+- logs/head.php: script JS global que redirige al `logout.php` tras 15 minutos de inactividad del cliente.
 - parqueo_informes/dashboard.php: verificación server-side y script cliente local (se mantuvo para compatibilidad).
 - tests/session_timeout_test.php: script de inspección de sesión para pruebas.
 
 Cómo ajustar el timeout
-- Producción: el valor por defecto es 20 minutos (20 * 60 segundos).
+- Producción: el valor por defecto es 15 minutos (15 * 60 segundos).
 - Pruebas locales: cambiar temporalmente los valores a 30 (segundos) en:
   - `logs/head.php` (variable `maxInactive`)
   - `parqueo_informes/dashboard.php` (variable `maxInactive` en el script JS y `$inactive` en PHP)
@@ -26,7 +26,7 @@ Recomendación
 - Mantener el control server-side (PHP) como fuente de verdad y usar el script cliente solo para redirección automática UX.
 
 Commit sugerido
-- Mensaje: "feat: auto-logout por inactividad (20 minutos)"
+- Mensaje: "feat: auto-logout por inactividad (15 minutos)"
 - Archivos: index.php, base_html.php, logs/nav-bar.php, logs/head.php, parqueo_informes/dashboard.php, tests/session_timeout_test.php
 
 ¿Hacer commit ahora con ese mensaje?

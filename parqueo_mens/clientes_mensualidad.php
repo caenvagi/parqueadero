@@ -5,7 +5,7 @@ require_once "../conexion/conexion.php";
 date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
 }
 $id = $_SESSION['id'];
 $tipo_usuario = $_SESSION['tipo_usuario'];
@@ -124,6 +124,7 @@ $clientes = $stmt->fetchAll();
                                     <tr>
                                         <th>Placa</th>
                                         <th>Nombre</th>
+                                        <th>celular</th>
                                         <th>Vehículo</th>
                                         <th>Categoría</th>
                                         <th>Caseta</th>
@@ -145,6 +146,7 @@ $clientes = $stmt->fetchAll();
     </a>
 </td>
                                             <td><?= $row['nombre'] ?></td>
+                                            <td><?= $row['celular'] ?></td>
                                             <td><?= $row['vehiculo'] ?></td>
                                             <td><?= $row['cat_nombre'] ?></td>
                                             <td><?= $row['casetas_nom'] ?></td>
@@ -233,7 +235,7 @@ $clientes = $stmt->fetchAll();
                     $('#tablaClientes').DataTable({
                         responsive: true,
                         pageLength: 25,
-                        order: [[4, "asc"]],                                
+                        order: [[5, "asc"]],                                
                         dom: 'Bfrtip',
 
                         buttons: [{

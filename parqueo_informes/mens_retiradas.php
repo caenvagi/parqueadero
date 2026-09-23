@@ -5,7 +5,7 @@ require_once "../conexion/conexion.php";
 date_default_timezone_set('America/Bogota');
 
 if (!isset($_SESSION['id'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit;
 }
 

@@ -7,8 +7,8 @@ ini_set('display_errors', 1);
 
 date_default_timezone_set('America/Bogota');
 
-// Control de inactividad: cerrar sesión después de 3 minutos (180 segundos)
-$inactive = 3 * 60; // 3 minutos
+// Control de inactividad: cerrar sesión después de 20 minutos (1200 segundos)
+$inactive = 15 * 60; // 15 minutos
 // Para producción cambiar a: 20 * 60 (20 minutos)
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     session_unset();

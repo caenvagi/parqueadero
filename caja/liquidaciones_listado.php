@@ -4,7 +4,7 @@ require_once "../conexion/conexion.php";
 
 date_default_timezone_set('America/Bogota');
 
-$inactive = 20 * 60;
+$inactive = 15 * 60;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $inactive) {
     session_unset();
     session_destroy();
