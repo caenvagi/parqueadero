@@ -430,7 +430,7 @@ if ($tipo_usuario == 1) {
                         <!-- MENU FIN-->
 
                         <!-- MENU ALOJAMIENTO-->
-                            <?php if ($tipo_usuario == 1) { ?>
+                            
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-alojamiento" aria-expanded="false" aria-controls="collapseLayouts">
                                     <div><i style="font-size:24px" class="bi bi-house-door"></i></div>
                                     &nbsp;&nbsp;&nbsp;Alojamiento
@@ -473,11 +473,11 @@ if ($tipo_usuario == 1) {
                                         </a> -->
                                     </nav>
                                 </div>
-                            <?php  } ?>
+                            
                         <!-- MENU USUARIOS FIN-->
                         
                         <!-- MENU USUARIOS-->
-                            <?php if ($tipo_usuario == 1) { ?>
+                         
                                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse-configuracion" aria-expanded="false" aria-controls="collapseLayouts">
                                     <div><i style="font-size:24px" class="bi bi-people-fill"></i></div>
                                     &nbsp;&nbsp;&nbsp;Empleados
@@ -507,7 +507,7 @@ if ($tipo_usuario == 1) {
                                         </a>
                                     </nav>
                                 </div>
-                            <?php  } ?>
+                           
                         <!-- MENU USUARIOS FIN-->
 
                         <!-- OTRO MENU INICIO-->
