@@ -88,6 +88,7 @@ $query = "SELECT
             TIME(RE.fecha_fin) as horafin,
             RE.tiempo,
             RE.valor_pagado,
+            RE.tipo_pago,
             CL.cli_tar_tiempo,
             TT.tar_tiempo,
             CA.cat_nombre,
@@ -202,6 +203,10 @@ if (!$row) {
     $fpdf->Cell(30, 6, 'Valor a pagar: ', 0, 0, 'L');
     $fpdf->SetFont('Arial', 'B', 20);
     $fpdf->Cell(50, 6, '$' . number_format($row['valor_pagado'], 0, ",", "."), 0, 1, 'L');
+
+    $fpdf->SetFont('Arial', '', 12);
+    $fpdf->Cell(30, 6, 'Tipo de pago: ', 0, 0, 'L');
+    $fpdf->Cell(50, 6, ucfirst($row['tipo_pago'] ?? 'No registrado'), 0, 1, 'L');
 
     $fpdf->SetFont('Arial', '', 10);
     $fpdf->cell(75, 5, '-------------------------------------------------------------------------------', 0, 1, 'C');

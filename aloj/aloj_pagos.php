@@ -159,12 +159,16 @@ $acompanantes = $stmt->fetchAll();
                             <input type="hidden" name="reserva_id" value="<?= $reserva_id ?>">  
                              
                             <div class="mb-1 col col-md-6">
-                              <label class="form-label">Metodo pago</label>
+                              <label class="form-label">Medio de pago</label>
                             <select class="form-select" name="metodo_pago" required aria-label="Default select example">
-                              <option selected>Selecione...</option>
+                              <option value="" selected>Seleccione...</option>
                               <option value="efectivo">Efectivo</option>
-                              <option value="tarjeta">Tarjeta</option>
-                              <option value="transferencia">Transferencia</option>
+                              <option value="nequi">Nequi</option>
+                              <option value="bancolombia">Bancolombia</option>
+                              <option value="bold">Bold</option>
+                              <option value="daviplata">Daviplata</option>
+                              <option value="llave">Llave</option>
+                              <option value="parque">Parque</option>
                             </select>
                             </div>
 

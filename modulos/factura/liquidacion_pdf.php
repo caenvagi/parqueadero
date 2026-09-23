@@ -137,9 +137,12 @@ $query = "  SELECT
     C.desc_movimiento,
     C.valor_ingreso,
     C.valor_egreso,
+    C.user_login,
+    U4.nombre AS usuario_movimiento,
 
     -- Fpar en recibo
-    R.recibo_man
+    R.recibo_man,
+    R.tipo_pago
 
 FROM caja_liquidaciones AS CL
 
@@ -150,6 +153,7 @@ LEFT JOIN usuarios AS U3 ON CL.usuario_liquida = U3.id
 INNER JOIN caja_liquidaciones_detalle AS CLD ON CL.id_liquidacion = CLD.id_liquidacion
 
 INNER JOIN caja AS C  ON CLD.id_movimiento = C.id_movimiento
+LEFT JOIN usuarios AS U4 ON C.user_login = U4.id
 
 INNER JOIN recibo AS R ON C.recibo_id = R.recibo_id
 
@@ -172,10 +176,10 @@ $fpdf->SetFont('Arial', 'B', 9);
 $fpdf->SetFillColor(40, 40, 40);
 $fpdf->SetTextColor(255, 255, 255);
 
-$fpdf->Cell(10, 8, 'Id', 1, 0, 'C', true);
 $fpdf->Cell(25, 8, 'Fecha', 1, 0, 'C', true);
-$fpdf->Cell(12, 8, 'Rec', 1, 0, 'C', true);
-$fpdf->Cell(18, 8, 'F-PAR', 1, 0, 'C', true);
+$fpdf->Cell(10, 8, 'Rec', 1, 0, 'C', true);
+$fpdf->Cell(14, 8, 'F-PAR', 1, 0, 'C', true);
+$fpdf->Cell(16, 8, 'Medio', 1, 0, 'C', true);
 $fpdf->Cell(95, 8, 'Descripcion', 1, 0, 'C', true);
 $fpdf->Cell(18, 8, 'Ingreso', 1, 0, 'C', true);
 $fpdf->Cell(18, 8, 'Egreso', 1, 1, 'C', true);
@@ -186,21 +190,38 @@ $fpdf->SetFont('Arial', '', 7);
 
 $total_ingreso = 0;
 $total_egreso = 0;
+$resumen_usuario_pago = [];
 
 foreach ($rows as $row) {
 
 
     $total_ingreso += $row['valor_ingreso'];
     $total_egreso += $row['valor_egreso'];
+
+    $usuario_movimiento = $row['usuario_movimiento'] ?: 'Desconocido';
+    $tipo_pago = strtolower(trim($row['tipo_pago'] ?? '')) ?: 'no registrado';
+    $clave_resumen = (string) ($row['user_login'] ?? 'sin_usuario') . '|' . $tipo_pago;
+    if (!isset($resumen_usuario_pago[$clave_resumen])) {
+        $resumen_usuario_pago[$clave_resumen] = [
+            'usuario' => $usuario_movimiento,
+            'tipo_pago' => $tipo_pago,
+            'movimientos' => 0,
+            'ingreso' => 0,
+            'egreso' => 0,
+        ];
+    }
+    $resumen_usuario_pago[$clave_resumen]['movimientos']++;
+    $resumen_usuario_pago[$clave_resumen]['ingreso'] += (float) $row['valor_ingreso'];
+    $resumen_usuario_pago[$clave_resumen]['egreso'] += (float) $row['valor_egreso'];
     // Alternar color de fila
     static $fill = false;
     $fill = !$fill;
     $fpdf->SetFillColor(230, 230, 230);
 
-    $fpdf->Cell(10, 5, $row['id_movimiento'], 1, 0, 'C', $fill);
     $fpdf->Cell(25, 5, $row['fecha_movimiento'], 1, 0, 'C', $fill);
-    $fpdf->Cell(12, 5, $row['recibo_id'], 1, 0, 'L', $fill);
-    $fpdf->Cell(18, 5, $row['recibo_man'], 1, 0, 'L', $fill);    
+    $fpdf->Cell(10, 5, $row['recibo_id'], 1, 0, 'L', $fill);
+    $fpdf->Cell(14, 5, $row['recibo_man'], 1, 0, 'L', $fill);    
+    $fpdf->Cell(16, 5, ucfirst($row['tipo_pago'] ?? 'No registrado'), 1, 0, 'L', $fill);
     $fpdf->Cell(95, 5, $row['desc_movimiento'], 1, 0, 'L', $fill);
 
     // INGRESO
@@ -251,6 +272,40 @@ $fpdf->SetTextColor(0, 0, 0);
 $fpdf->Cell(160, 8, 'TOTAL A ENTREGAR', 1, 0, 'R');
 $fpdf->Cell(36, 8, number_format($total_ingreso - $total_egreso, 0, ",", "."), 1, 1, 'R');
 
+// RESUMEN POR USUARIO Y TIPO DE PAGO
+$fpdf->Ln(4);
+$fpdf->SetFont('Arial', 'B', 10);
+$fpdf->SetTextColor(0, 0, 0);
+$fpdf->Cell(197, 7, 'RESUMEN POR USUARIO Y TIPO DE PAGO', 1, 1, 'C');
+
+$fpdf->SetFont('Arial', 'B', 8);
+$fpdf->SetFillColor(40, 40, 40);
+$fpdf->SetTextColor(255, 255, 255);
+$fpdf->Cell(55, 7, 'Usuario', 1, 0, 'C', true);
+$fpdf->Cell(28, 7, 'Tipo de pago', 1, 0, 'C', true);
+$fpdf->Cell(14, 7, 'Mov.', 1, 0, 'C', true);
+$fpdf->Cell(34, 7, 'Ingresos', 1, 0, 'C', true);
+$fpdf->Cell(34, 7, 'Egresos', 1, 0, 'C', true);
+$fpdf->Cell(32, 7, 'Saldo', 1, 1, 'C', true);
+
+$fpdf->SetFont('Arial', '', 8);
+$fpdf->SetTextColor(0, 0, 0);
+$fill_resumen = false;
+foreach ($resumen_usuario_pago as $resumen) {
+    $saldo_resumen = $resumen['ingreso'] - $resumen['egreso'];
+    $fill_resumen = !$fill_resumen;
+    $fpdf->SetFillColor(230, 230, 230);
+    $fpdf->Cell(55, 6, $resumen['usuario'], 1, 0, 'L', $fill_resumen);
+    $fpdf->Cell(28, 6, ucfirst($resumen['tipo_pago']), 1, 0, 'L', $fill_resumen);
+    $fpdf->Cell(14, 6, $resumen['movimientos'], 1, 0, 'C', $fill_resumen);
+    $fpdf->SetTextColor(0, 128, 0);
+    $fpdf->Cell(34, 6, number_format($resumen['ingreso'], 0, ",", "."), 1, 0, 'R', $fill_resumen);
+    $fpdf->SetTextColor(255, 0, 0);
+    $fpdf->Cell(34, 6, number_format($resumen['egreso'], 0, ",", "."), 1, 0, 'R', $fill_resumen);
+    $fpdf->SetTextColor(0, 0, 0);
+    $fpdf->Cell(32, 6, number_format($saldo_resumen, 0, ",", "."), 1, 1, 'R', $fill_resumen);
+}
+
 $stmtObs = $pdo->prepare("
     SELECT observaciones 
     FROM caja_liquidaciones
@@ -265,12 +320,12 @@ $fpdf->SetTextColor(0, 0, 0);
 $fpdf->SetFont('Arial', 'B', 10);
 $fpdf->Ln(0);
 
-$fpdf->Cell(50, 7, 'OBSERVACIONES:', 1, 0, 'R');
+$fpdf->Cell(55, 7, 'OBSERVACIONES:', 1, 0, 'R');
 $fpdf->SetFont('Arial', '', 10);
 // Mover a la derecha antes de MultiCell
 $x = $fpdf->GetX();
 $y = $fpdf->GetY();
-$fpdf->MultiCell(146, 7, $obs, 1, 'L');
+$fpdf->MultiCell(142, 7, $obs, 1, 'L');
 // Volver a la misma línea si necesitas seguir
 $fpdf->SetXY($x + 144, $y);
 

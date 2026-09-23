@@ -76,6 +76,7 @@ veces a $printer->text()
                                 TIME(RE.fecha_fin) as horafin,
                                 RE.tiempo,
                                 RE.valor_pagado,
+                                RE.tipo_pago,
                                 RE.usuario,
                                 US.nombre as usuario,
                                 TT.tar_tiempo,
@@ -103,6 +104,7 @@ veces a $printer->text()
                                 TIME(RE.fecha_fin) as horafin,
                                 RE.tiempo,
                                 RE.valor_pagado,
+                                RE.tipo_pago,
                                 RE.usuario,
                                 US.nombre as usuario,
                                 TT.tar_tiempo,
@@ -160,6 +162,7 @@ $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->setTextSize(1, 1);$printer->text("Estadia      :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tiempo']."\n");
 // $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tar_tiempo']."\n");
 $printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 2);$printer->text("   $ ".number_format($row['valor_pagado'], 0, ",", ".")."\n");
+$printer->setTextSize(1, 1);$printer->text("Tipo de pago:");$printer->setTextSize(1, 2);$printer->text("   ".ucfirst($row['tipo_pago'] ?? 'No registrado')."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");
@@ -307,6 +310,7 @@ $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->setTextSize(1, 1);$printer->text("Estadia      :");$printer->setTextSize(1, 2);$printer->text("      ".$row1['tiempo']."\n");
 // $printer->setTextSize(1, 1);$printer->text("Tarifa       :");$printer->setTextSize(1, 2);$printer->text("      ".$row['tar_tiempo']."\n");
 $printer->setTextSize(1, 1);$printer->text("Valor a pagar:");$printer->setTextSize(2, 2);$printer->text("   $ ".number_format($row1['valor_pagado'], 0, ",", ".")."\n");
+$printer->setTextSize(1, 1);$printer->text("Tipo de pago:");$printer->setTextSize(1, 2);$printer->text("   ".ucfirst($row1['tipo_pago'] ?? 'No registrado')."\n");
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer->setTextSize(2, 1);
 $printer->text("------------------------\n");

@@ -14,6 +14,8 @@ $usuario = $_SESSION['id'];
 $fecha = date("Y-m-d");
 $placa = strtoupper(trim($_POST['placa'] ?? ''));
 $pago_id = $_POST['pagos'] ?? '';
+$tipo_pago = strtolower(trim($_POST['tipo_pago'] ?? ''));
+$tipos_pago_validos = ['efectivo', 'nequi', 'bancolombia', 'bold', 'daviplata', 'llave'];
 // Tipo de recibo: 'electronico' o 'manual'
 $recibo_tipo = $_POST['recibo_tipo'] ?? 'electronico';
 // Forzar FPAR en mayúsculas
@@ -22,6 +24,12 @@ $fpar = isset($_POST['FPAR']) ? strtoupper(trim($_POST['FPAR'])) : '';
 if ($recibo_tipo === 'manual' && $fpar === '') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['resultado' => 'ERROR', 'error' => 'FPAR es requerido para recibo manual']);
+    exit;
+}
+
+if (!in_array($tipo_pago, $tipos_pago_validos, true)) {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['resultado' => 'ERROR', 'error' => 'Seleccione un tipo de pago válido']);
     exit;
 }
 
@@ -190,12 +198,14 @@ try {
         SET estado = 'PAGADO',
             fecha = CURDATE(),
             plan = ?,
-            fecha_fin = ?
+            fecha_fin = ?,
+            tipo_pago = ?
         WHERE id = ?
     ");
     $update->execute([
         $plan_id,
         $fecha_fin,
+        $tipo_pago,
         $pago['id']
     ]);
 
@@ -212,10 +222,11 @@ try {
             tarifa_recibo,
             plan,
             valor_pagado,
+            tipo_pago,
             usuario,
             cierre
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
     ");
 
     $recibo->execute([
@@ -229,6 +240,7 @@ try {
         $categoria,
         $plan_id,
         $valor,
+        $tipo_pago,
         $usuario,
         'NO'
     ]);
@@ -287,9 +299,10 @@ try {
             valor,
             estado,
             usuario,
-            observacion
+            observacion,
+            tipo_pago
         )
-        VALUES (?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?)
     ");
 
     $nuevo->execute([
@@ -302,7 +315,8 @@ try {
         $valor,
         'PENDIENTE',
         $usuario,
-        $mes_anio
+        $mes_anio,
+        null
     ]);
 
     $pdo->commit();

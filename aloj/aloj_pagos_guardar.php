@@ -25,8 +25,8 @@ try {
         throw new Exception("El monto debe ser mayor a 0.");
     }
 
-    if (!in_array($metodo_pago, ['efectivo', 'tarjeta', 'transferencia'])) {
-        throw new Exception("Método de pago inválido.");
+    if (!in_array($metodo_pago, ['efectivo', 'nequi', 'bancolombia', 'bold', 'daviplata', 'llave'], true)) {
+        throw new Exception("Medio de pago inválido.");
     }
 
     if (!in_array($tipo_pago, ['abono', 'saldo'])) {
@@ -73,6 +73,7 @@ try {
             plan,
             valor_manual,
             valor_pagado,
+            tipo_pago,
             usuario,
             cierre,
             periodo
@@ -90,6 +91,7 @@ try {
             0,
             ?,
             ?,
+            ?,
             'NO',
             1
            
@@ -105,6 +107,7 @@ try {
         $reserva['fecha_ingreso'],
         $reserva['fecha_salida'],
         $monto,
+        $metodo_pago,
         $usuario_id
     ]);
         
